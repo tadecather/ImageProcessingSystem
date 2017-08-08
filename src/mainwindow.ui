@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="actionPrint_preview"/>
+    <addaction name="actionPrint_setting"/>
+    <addaction name="separator"/>
+    <addaction name="actionRecent_file"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuGrey">
+    <property name="title">
+     <string>Gray</string>
+    </property>
+    <addaction name="actionGraying"/>
+    <addaction name="actionGray_to_Clolr"/>
+    <addaction name="separator"/>
+    <addaction name="actionNegetive"/>
+    <addaction name="actionBinaryzation"/>
+    <addaction name="separator"/>
+    <addaction name="actionLinear_Stretch"/>
+    <addaction name="actionExponential_Stretch"/>
+    <addaction name="actionLogarithmic_Stretch"/>
+    <addaction name="separator"/>
+    <addaction name="actionPlot_Histogram"/>
+    <addaction name="actionBalance_Histogram"/>
+   </widget>
+   <widget class="QMenu" name="menuTransformation">
+    <property name="title">
+     <string>Transformation</string>
+    </property>
+    <addaction name="actionTranslation"/>
+    <addaction name="actionTranspose"/>
+    <addaction name="separator"/>
+    <addaction name="actionHorizontal_Inversion"/>
+    <addaction name="actionVertical_Inversion"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom"/>
+    <addaction name="separator"/>
+    <addaction name="actionClockwise_Rotation"/>
+    <addaction name="actionAnticlockwise_Rotation"/>
+   </widget>
+   <widget class="QMenu" name="menuTdp">
+    <property name="title">
+     <string>TDP</string>
+    </property>
+    <addaction name="actionFourier_transform"/>
+    <addaction name="actionWavelet_Transform"/>
+    <addaction name="actionDiscrete_Cosine_Transform"/>
+   </widget>
+   <widget class="QMenu" name="menuDivision">
+    <property name="title">
+     <string>Segmentation</string>
+    </property>
+    <addaction name="actionOtsu_Law_Threshold_Segmentation"/>
+    <addaction name="actionInteractive_Threshold_Segmentation"/>
+    <addaction name="separator"/>
+    <addaction name="actionRobert_Operator"/>
+    <addaction name="actionSobel_Operator"/>
+    <addaction name="actionPrewitt_Operator"/>
+    <addaction name="actionLaplacian_Operator"/>
+    <addaction name="actionGauss_Laplacian_Operator"/>
+    <addaction name="actionKrisch_Operator"/>
+    <addaction name="actionCustom_Edges"/>
+    <addaction name="separator"/>
+    <addaction name="actionRegion_Grow"/>
+    <addaction name="actionContour_Extraction"/>
+    <addaction name="actionBoundary_Tracking"/>
+    <addaction name="separator"/>
+    <addaction name="actionHough_Transformation"/>
+    <addaction name="actionHough_Transformation_Line_Detection"/>
+   </widget>
+   <widget class="QMenu" name="menuEnhancement">
+    <property name="title">
+     <string>Enhancement</string>
+    </property>
+    <addaction name="actionGaussian_Noise"/>
+    <addaction name="actionSalt_and_Pepper_Noise"/>
+    <addaction name="separator"/>
+    <addaction name="actionMean_Smoothing"/>
+    <addaction name="actionMedian_Smoothing"/>
+    <addaction name="actionWeighted_Smoothing"/>
+    <addaction name="actionChoose_Mask_Smoothing"/>
+    <addaction name="separator"/>
+    <addaction name="actionGradient_Sharpening"/>
+    <addaction name="actionLaplacian_Sharpening"/>
+    <addaction name="separator"/>
+    <addaction name="actionImage_Quality_Assessment"/>
+   </widget>
+   <widget class="QMenu" name="menuANN">
+    <property name="title">
+     <string>ANN</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuGrey"/>
+   <addaction name="menuTransformation"/>
+   <addaction name="menuTdp"/>
+   <addaction name="menuDivision"/>
+   <addaction name="menuEnhancement"/>
+   <addaction name="menuANN"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionPrint_preview">
+   <property name="text">
+    <string>Print Preview</string>
+   </property>
+  </action>
+  <action name="actionPrint_setting">
+   <property name="text">
+    <string>Print Setting</string>
+   </property>
+  </action>
+  <action name="actionRecent_file">
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionGraying">
+   <property name="text">
+    <string>Color to Gray</string>
+   </property>
+  </action>
+  <action name="actionGray_to_Clolr">
+   <property name="text">
+    <string>Gray to Color</string>
+   </property>
+  </action>
+  <action name="actionNegetive">
+   <property name="text">
+    <string>Negetive</string>
+   </property>
+  </action>
+  <action name="actionBinaryzation">
+   <property name="text">
+    <string>Binaryzation</string>
+   </property>
+  </action>
+  <action name="actionLinear_Stretch">
+   <property name="text">
+    <string>Linear Stretch</string>
+   </property>
+  </action>
+  <action name="actionExponential_Stretch">
+   <property name="text">
+    <string>Exponential Stretch</string>
+   </property>
+  </action>
+  <action name="actionLogarithmic_Stretch">
+   <property name="text">
+    <string>Logarithmic Stretch</string>
+   </property>
+  </action>
+  <action name="actionPlot_Histogram">
+   <property name="text">
+    <string>Plot Histogram</string>
+   </property>
+  </action>
+  <action name="actionBalance_Histogram">
+   <property name="text">
+    <string>Balance Histogram</string>
+   </property>
+  </action>
+  <action name="actionTranslation">
+   <property name="text">
+    <string>Translation</string>
+   </property>
+  </action>
+  <action name="actionTranspose">
+   <property name="text">
+    <string>Transpose</string>
+   </property>
+  </action>
+  <action name="actionHorizontal_Inversion">
+   <property name="text">
+    <string>Horizontal Inversion</string>
+   </property>
+  </action>
+  <action name="actionVertical_Inversion">
+   <property name="text">
+    <string>Vertical Inversion</string>
+   </property>
+  </action>
+  <action name="actionZoom">
+   <property name="text">
+    <string>Zoom</string>
+   </property>
+  </action>
+  <action name="actionClockwise_Rotation">
+   <property name="text">
+    <string>Clockwise Rotation</string>
+   </property>
+  </action>
+  <action name="actionAnticlockwise_Rotation">
+   <property name="text">
+    <string>Anticlockwise Rotation</string>
+   </property>
+  </action>
+  <action name="actionFourier_transform">
+   <property name="text">
+    <string>Fourier Transform</string>
+   </property>
+  </action>
+  <action name="actionWavelet_Transform">
+   <property name="text">
+    <string>Wavelet Transform</string>
+   </property>
+  </action>
+  <action name="actionDiscrete_Cosine_Transform">
+   <property name="text">
+    <string>Discrete Cosine Transform</string>
+   </property>
+  </action>
+  <action name="actionOtsu_Law_Threshold_Segmentation">
+   <property name="text">
+    <string>Otsu Law Threshold Segmentation</string>
+   </property>
+  </action>
+  <action name="actionInteractive_Threshold_Segmentation">
+   <property name="text">
+    <string>Interactive Threshold Segmentation</string>
+   </property>
+  </action>
+  <action name="actionRobert_Operator">
+   <property name="text">
+    <string>Robert Operator</string>
+   </property>
+  </action>
+  <action name="actionSobel_Operator">
+   <property name="text">
+    <string>Sobel Operator</string>
+   </property>
+  </action>
+  <action name="actionPrewitt_Operator">
+   <property name="text">
+    <string>Prewitt Operator</string>
+   </property>
+  </action>
+  <action name="actionLaplacian_Operator">
+   <property name="text">
+    <string>Laplacian Operator</string>
+   </property>
+  </action>
+  <action name="actionGauss_Laplacian_Operator">
+   <property name="text">
+    <string>Gauss-Laplacian Operator</string>
+   </property>
+  </action>
+  <action name="actionKrisch_Operator">
+   <property name="text">
+    <string>Krisch Operator</string>
+   </property>
+  </action>
+  <action name="actionCustom_Edges">
+   <property name="text">
+    <string>Custom Edges</string>
+   </property>
+  </action>
+  <action name="actionRegion_Grow">
+   <property name="text">
+    <string>Region Growing</string>
+   </property>
+  </action>
+  <action name="actionContour_Extraction">
+   <property name="text">
+    <string>Contour Extraction</string>
+   </property>
+  </action>
+  <action name="actionBoundary_Tracking">
+   <property name="text">
+    <string>Boundary Tracking</string>
+   </property>
+  </action>
+  <action name="actionHough_Transformation">
+   <property name="text">
+    <string>Hough Transformation</string>
+   </property>
+  </action>
+  <action name="actionHough_Transformation_Line_Detection">
+   <property name="text">
+    <string>Hough Transformation Line Detection</string>
+   </property>
+  </action>
+  <action name="actionGaussian_Noise">
+   <property name="text">
+    <string>Gaussian Noise</string>
+   </property>
+  </action>
+  <action name="actionSalt_and_Pepper_Noise">
+   <property name="text">
+    <string>Salt-and-Pepper Noise</string>
+   </property>
+  </action>
+  <action name="actionMean_Smoothing">
+   <property name="text">
+    <string>Mean Smoothing</string>
+   </property>
+  </action>
+  <action name="actionMedian_Smoothing">
+   <property name="text">
+    <string>Median Smoothing</string>
+   </property>
+  </action>
+  <action name="actionWeighted_Smoothing">
+   <property name="text">
+    <string>Weighted Smoothing</string>
+   </property>
+  </action>
+  <action name="actionChoose_Mask_Smoothing">
+   <property name="text">
+    <string>Choose Mask Smoothing</string>
+   </property>
+  </action>
+  <action name="actionGradient_Sharpening">
+   <property name="text">
+    <string>Gradient Sharpening</string>
+   </property>
+  </action>
+  <action name="actionLaplacian_Sharpening">
+   <property name="text">
+    <string>Laplacian Sharpening</string>
+   </property>
+  </action>
+  <action name="actionImage_Quality_Assessment">
+   <property name="text">
+    <string>Image Quality Assessment</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
