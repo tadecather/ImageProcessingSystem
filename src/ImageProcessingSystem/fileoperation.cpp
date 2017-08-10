@@ -4,25 +4,26 @@
 #include<QFile>
 #include<QMessageBox>
 #include<QWidget>
-//打开文件函数，传递QImage对象指针，如返回为NULL，表示传递失败
-static QImage * OP::open()
-{
-        QImage * img= new QImage();
-        QString fileName = QFileDialog::getOpenFileName(
-                    this, "open image file",
-                    ".",
-                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
+//只保留一个open函数通过文件名打开
+////打开文件函数，传递QImage对象指针，如返回为NULL，表示传递失败
+//static QImage * OP::open()
+//{
+//        QImage * img= new QImage();
+//        QString fileName = QFileDialog::getOpenFileName(
+//                    this, "open image file",
+//                    ".",
+//                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
 
-        if(fileName != "")
-            {
-                if(！img->load(fileName))
-                {
-                    delete img;
-                    img=NULL;
-                }
-        }
-        return img;
-}
+//        if(fileName != "")
+//            {
+//                if(！img->load(fileName))
+//                {
+//                    delete img;
+//                    img=NULL;
+//                }
+//        }
+//        return img;
+//}
 //重载open函数，通过文件名打开文件
 static QImage * OP::open(QString opFileName)
 {
@@ -91,6 +92,7 @@ static void OP::recentFile ()
 
 }
 
+
 //向外输出文件，成功返回true,失败返回false
 static bool OP::outputFile(const QImage & image){
         QFile* file = new QFile;
@@ -101,4 +103,89 @@ static bool OP::outputFile(const QImage & image){
         }
             image->save(file,"JPG",100);
         return true;
+}
+
+
+
+
+
+
+
+
+
+//保存最近打开的文件列表,当一开始运行程序的时候，先从文件中读取
+void MainWindow::saveRecentFile( const QStringList & qsl)
+{
+    QFile file("./rctFile.txt");
+    if(file.open(QIODevice::WriteOnly)){
+        QTextStream out(&file);
+        for(int i=0;i<qsl.length();i++){
+            out<<qsl.at(i)<<endl;
+        }
+        file.close();
+    }
+}
+//从文件中读出来
+void MainWindow::readFromRecentFile( QStringList & qsl)
+{
+      qsl.clear();
+     QFile file("./rctFile.txt");
+     if(file.open(QIODevice::ReadOnly)){
+         QTextStream in(&file);
+         QString str;
+         while((str=in.readLine())!=NULL)
+         {
+            qsl.append(str);
+         }
+         file.close();
+     }
+}
+
+
+//openbyname
+QImage *  MainWindow::open(QString opFileName)
+{
+
+    QFile fl(opFileName);
+    if(!fl.exists()){
+        QMessageBox::about(NULL,"fail","file does not exist");
+        return NULL;
+    }
+    else
+    {
+        if(!image->load(opFileName))
+        {
+           return NULL;
+        }
+        qstrl->append(opFileName);
+//        ui->menurecent_file->addAction(opFileName);
+           recentFileChanged();
+        return image;
+    }
+}
+
+
+//这个函数直接操作ui,可以考虑放在mainWindow中,或者传递一个MainWindow指针
+void MainWindow::recentFileChanged()
+{
+    ui->menurecent_file->clear();
+    ui->menurecent_file->addAction("clearAll");
+    if(qstrl->length()>0){
+        while(qstrl->length()>8){
+             qDebug()<<qstrl->takeFirst()<<endl;
+        }
+        for(int i=0;i<qstrl->length();i++){
+           ui->menurecent_file->addAction(qstrl->at(i));
+        }
+    }
+    this->qlqa=ui->menurecent_file->actions();
+    //qlqa为QList<QAction*>
+    if(qlqa.length()==2){
+        qDebug()<<"发射信号"<<endl;
+        emit mySignal(false);
+    }
+    else{
+        emit mySignal(true);
+    }
+
 }
