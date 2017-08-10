@@ -1,25 +1,27 @@
 ﻿#ifndef FILEOPERATION_H
 #define FILEOPERATION_H
 
-
-namespace Op {
-class FileOperation;
-}
-class FileOperation{
+#include<QImage>
+//namespace OP {
+//class FileOperation;
+//}
+class FileOperation:QObject{
+    Q_OBJECT
 public:
-    static QImage open();
     static QImage * open(QString opFileName);
-    static void save ();
+    static void save (const QImage & img);
     static bool saveAs ();
     static void print ();
     static void printPreview();
     static void printSetting();
     static void recentFile ();
     static void exit ();
-
+    static void recentFileChanged(QList<QAction*> &qlqa,QMenu & menu,QStringList & qstrl);
+    static void readFromRecentFile( QStringList & qsl);
+    static void saveRecentFile( const QStringList & qsl);
 private:
     static bool outputFile();
 private:
-    QString saveFileName,
-}
+//    static QString saveFileName;
+};
 #endif // FILEOPERATION_H

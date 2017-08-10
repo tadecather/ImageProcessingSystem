@@ -4,69 +4,51 @@
 #include<QFile>
 #include<QMessageBox>
 #include<QWidget>
+#include<QPrinter>
+#include<QPrintDialog>
+#include<QPrintPreviewDialog>
+#include<QTextStream>
+#include<QMenu>
 //只保留一个open函数通过文件名打开
-////打开文件函数，传递QImage对象指针，如返回为NULL，表示传递失败
-//static QImage * OP::open()
-//{
-//        QImage * img= new QImage();
-//        QString fileName = QFileDialog::getOpenFileName(
-//                    this, "open image file",
-//                    ".",
-//                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
 
-//        if(fileName != "")
-//            {
-//                if(！img->load(fileName))
-//                {
-//                    delete img;
-//                    img=NULL;
-//                }
-//        }
-//        return img;
-//}
-//重载open函数，通过文件名打开文件
-static QImage * OP::open(QString opFileName)
-{
-    QFile fl(opFileName);
-    if(!fl.exist){
-        QMessageBox::Information(NULL,"fail","file does not exist",QMessageBox::Ok);
-        return NULL;
-    }
-    else
-    {
-                if(！img->load(fileName))
-                {
-                    delete img;
-                    img=NULL;
-                }
-        return img;
-    }
 
+//向外输出文件，成功返回true,失败返回false
+static bool outputFile(const QImage & image,QString saveFileName){
+        QFile* file = new QFile;
+        file->setFileName(saveFileName);
+        bool ok =  file->open(QIODevice::WriteOnly);
+        if(!ok){
+            return false;
+        }
+            image.save(file,"JPG",100);
+        return true;
 }
 
-//保存指定QImage,参数为一个Qiamge的常引用，成功返回true,失败返回false
-static bool OP::save (const QImage & img)
-{
-    if(saveFileName.isEmpty()){
-        return this->saveAsFileSlot();
-    }
-    return outputFile(img);
-}
+
 //另存为函数，保存指定Qimage,参数为一个Qiamge的常引用，成功返回true,失败返回false
-static bool OP::saveAs ()
+static bool saveAs (const QImage & image)
 {
-    saveFileName = QFileDialog::getSaveFileName(this, "save file", QDir::currentPath());
+   QString saveFileName= QFileDialog::getSaveFileName(NULL, "save file", QDir::currentPath());
     if(saveFileName.isEmpty()){
         return false;
     }
-   return outputFile();
+   return outputFile(image,saveFileName);
 }
+//保存指定QImage,参数为一个Qiamge的常引用，成功返回true,失败返回false
+static bool save (const QImage & img,QString saveFileName)
+{
+    if(saveFileName.isEmpty()){
+        return saveAs(img);
+    }
+    return outputFile(img,saveFileName);
+}
+
 //打印函数
-static void OP::print ()
+static void print (QWidget& qwid)
 {
     QPrinter printer;
 //    QString printerName = printer.printerName();
-    QPrintDialog dlg(&printer, this);
+    QPrintDialog dlg(&printer, &qwid);
     if(dlg.exec() == QDialog::Accepted){
         QSize s = QSize(printer.logicalDpiX()*2, printer.logicalDpiY()*6);
         printer.setOutputFormat(QPrinter::NativeFormat);
@@ -74,12 +56,12 @@ static void OP::print ()
     return;
 }
 //打印预览，需要一个槽 具体哪里实现不清楚，槽的代码在下面注释里
-static void OP::printPreview(){
-    QPrintPreviewDialog dlg;
-    connect(&dlg, SIGNAL(paintRequested(QPrinter*)), this, SLOT(paintRequestedSlot(QPrinter*)));
-    dlg.exec();
-    return;
-}
+//static void printPreview(QWidget& qwid){
+//    QPrintPreviewDialog dlg;
+//    connect(&dlg, SIGNAL(paintRequested(QPrinter*)), &qwid, SLOT(paintRequestedSlot(QPrinter*)));
+//    dlg.exec();
+//    return;
+//}
 
 //void MainWindow::paintRequestedSlot(QPrinter *printer)
 //{
@@ -87,34 +69,9 @@ static void OP::printPreview(){
 //    scene->render(&painter);
 //}
 
-static void OP::recentFile ()
-{
-
-}
-
-
-//向外输出文件，成功返回true,失败返回false
-static bool OP::outputFile(const QImage & image){
-        QFile* file = new QFile;
-        file->setFileName(saveFileName);
-        bool ok =  file->open(QIODevice::WriteOnly);
-        if(!ok){
-            return false;
-        }
-            image->save(file,"JPG",100);
-        return true;
-}
-
-
-
-
-
-
-
-
 
 //保存最近打开的文件列表,当一开始运行程序的时候，先从文件中读取
-void MainWindow::saveRecentFile( const QStringList & qsl)
+void saveRecentFile( const QStringList & qsl)
 {
     QFile file("./rctFile.txt");
     if(file.open(QIODevice::WriteOnly)){
@@ -126,7 +83,7 @@ void MainWindow::saveRecentFile( const QStringList & qsl)
     }
 }
 //从文件中读出来
-void MainWindow::readFromRecentFile( QStringList & qsl)
+void readFromRecentFile( QStringList & qsl)
 {
       qsl.clear();
      QFile file("./rctFile.txt");
@@ -141,11 +98,33 @@ void MainWindow::readFromRecentFile( QStringList & qsl)
      }
 }
 
-
-//openbyname
-QImage *  MainWindow::open(QString opFileName)
+static void recentFileChanged(QList<QAction*> &qlqa,QMenu & menu,QStringList & qstrl)
 {
+    menu.clear();
+    menu.addAction("clearAll");
+    if(qstrl.length()>0){
+        while(qstrl.length()>8){
+             qstrl.takeFirst();
+        }
+        for(int i=0;i<qstrl.length();i++){
+           menu.addAction(qstrl.at(i));
+        }
+    }
+    qlqa=menu.actions();
+    //qlqa为QList<QAction*>
+    if(qlqa.length()==2){
+//        qDebug()<<"发射信号"<<endl;
+//        emit mySignal(false);
+    }
+    else{
+//        emit mySignal(true);
+    }
 
+}
+//openbyname
+static QImage *  open(QString opFileName,QStringList& qstrl)
+{
+    QImage *image =new QImage();
     QFile fl(opFileName);
     if(!fl.exists()){
         QMessageBox::about(NULL,"fail","file does not exist");
@@ -157,35 +136,13 @@ QImage *  MainWindow::open(QString opFileName)
         {
            return NULL;
         }
-        qstrl->append(opFileName);
+        qstrl.append(opFileName);
 //        ui->menurecent_file->addAction(opFileName);
-           recentFileChanged();
+//           recentFileChanged();
         return image;
     }
 }
 
 
 //这个函数直接操作ui,可以考虑放在mainWindow中,或者传递一个MainWindow指针
-void MainWindow::recentFileChanged()
-{
-    ui->menurecent_file->clear();
-    ui->menurecent_file->addAction("clearAll");
-    if(qstrl->length()>0){
-        while(qstrl->length()>8){
-             qDebug()<<qstrl->takeFirst()<<endl;
-        }
-        for(int i=0;i<qstrl->length();i++){
-           ui->menurecent_file->addAction(qstrl->at(i));
-        }
-    }
-    this->qlqa=ui->menurecent_file->actions();
-    //qlqa为QList<QAction*>
-    if(qlqa.length()==2){
-        qDebug()<<"发射信号"<<endl;
-        emit mySignal(false);
-    }
-    else{
-        emit mySignal(true);
-    }
 
-}
