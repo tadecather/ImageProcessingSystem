@@ -13,8 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    imagedisplay.cpp \
+    mytabwidget.cpp \
+    tabcontent.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    imagedisplay.h \
+    mytabwidget.h \
+    tabcontent.h
 
 FORMS    += mainwindow.ui

@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
+#include "imagedisplay.h"
+#include "MyTabWidget.h"
 
 namespace Ui {
 class MainWindow;
