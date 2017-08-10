@@ -18,7 +18,7 @@ public:
     ImageDisplay(QWidget * parent);
     ImageDisplay(QWidget * parent, QImage *image);
     ~ImageDisplay();
-    void showImage();
+    void updateImage();
     void showNULL();
     QImage* getImage();
     void setImage(QImage* image);

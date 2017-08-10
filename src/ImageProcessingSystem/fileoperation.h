@@ -1,15 +1,14 @@
 ﻿#ifndef FILEOPERATION_H
 #define FILEOPERATION_H
+#include <QImage>
 
-
-namespace Op {
+namespace OP {
 class FileOperation;
 }
 class FileOperation{
 public:
-    static QImage open();
     static QImage * open(QString opFileName);
-    static void save ();
+    static bool save (const QImage & img);
     static bool saveAs ();
     static void print ();
     static void printPreview();
@@ -20,6 +19,6 @@ public:
 private:
     static bool outputFile();
 private:
-    QString saveFileName,
-}
+    QString saveFileName;
+};
 #endif // FILEOPERATION_H

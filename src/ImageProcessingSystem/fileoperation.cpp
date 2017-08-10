@@ -6,43 +6,7 @@
 #include<QWidget>
 //只保留一个open函数通过文件名打开
 ////打开文件函数，传递QImage对象指针，如返回为NULL，表示传递失败
-//static QImage * OP::open()
-//{
-//        QImage * img= new QImage();
-//        QString fileName = QFileDialog::getOpenFileName(
-//                    this, "open image file",
-//                    ".",
-//                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
 
-//        if(fileName != "")
-//            {
-//                if(！img->load(fileName))
-//                {
-//                    delete img;
-//                    img=NULL;
-//                }
-//        }
-//        return img;
-//}
-//重载open函数，通过文件名打开文件
-static QImage * OP::open(QString opFileName)
-{
-    QFile fl(opFileName);
-    if(!fl.exist){
-        QMessageBox::Information(NULL,"fail","file does not exist",QMessageBox::Ok);
-        return NULL;
-    }
-    else
-    {
-                if(！img->load(fileName))
-                {
-                    delete img;
-                    img=NULL;
-                }
-        return img;
-    }
-
-}
 
 //保存指定QImage,参数为一个Qiamge的常引用，成功返回true,失败返回false
 static bool OP::save (const QImage & img)
@@ -114,7 +78,7 @@ static bool OP::outputFile(const QImage & image){
 
 
 //保存最近打开的文件列表,当一开始运行程序的时候，先从文件中读取
-void MainWindow::saveRecentFile( const QStringList & qsl)
+void OP::saveRecentFile( const QStringList & qsl)
 {
     QFile file("./rctFile.txt");
     if(file.open(QIODevice::WriteOnly)){
@@ -126,7 +90,7 @@ void MainWindow::saveRecentFile( const QStringList & qsl)
     }
 }
 //从文件中读出来
-void MainWindow::readFromRecentFile( QStringList & qsl)
+void OP::readFromRecentFile( QStringList & qsl)
 {
       qsl.clear();
      QFile file("./rctFile.txt");
@@ -143,7 +107,7 @@ void MainWindow::readFromRecentFile( QStringList & qsl)
 
 
 //openbyname
-QImage *  MainWindow::open(QString opFileName)
+QImage *  OP::open(QString opFileName)
 {
 
     QFile fl(opFileName);
@@ -166,7 +130,7 @@ QImage *  MainWindow::open(QString opFileName)
 
 
 //这个函数直接操作ui,可以考虑放在mainWindow中,或者传递一个MainWindow指针
-void MainWindow::recentFileChanged()
+void OP::recentFileChanged()
 {
     ui->menurecent_file->clear();
     ui->menurecent_file->addAction("clearAll");

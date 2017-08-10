@@ -8,8 +8,8 @@ TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
     //当前聚焦的imagedispy，0左1右
     focusOn = 0;
 
-    connect(imageDisplayL, SIGNAL(focusOnSignal()), this, SLOT(changeFocusImageDisplaySlot()));
-    connect(imageDisplayR, SIGNAL(focusOnSignal()), this, SLOT(changeFocusImageDisplaySlot()));
+    connect(imageDisplayL, &ImageDisplay::focusOnSignal, this, &TabContent::changeFocusImageDisplaySlot);
+    connect(imageDisplayR, &ImageDisplay::focusOnSignal, this, &TabContent::changeFocusImageDisplaySlot);
 
     QGridLayout *layout = new QGridLayout();
 
@@ -38,6 +38,15 @@ ImageDisplay* TabContent::getImageDisplayL()
 ImageDisplay* TabContent::getImageDisplayR()
 {
     return this->imageDisplayR;
+}
+
+//获取当前聚焦的ImageDisplay指针
+ImageDisplay* TabContent::getFocusedImageDisplay()
+{
+    if(focusOn == 0)
+        return imageDisplayL;
+    else
+        return imageDisplayR;
 }
 
 //槽函数，改变当前聚焦的imagedisplay对象

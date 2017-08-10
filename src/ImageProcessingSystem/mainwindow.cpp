@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-/*
+
     QImage *image = new QImage;
     QString fileName = QFileDialog::getOpenFileName(
                     this, "open image file",
@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tab->newTab(image);
 
     delete image;
-*/
+
 }
 
 MainWindow::~MainWindow()
