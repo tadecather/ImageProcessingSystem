@@ -23,6 +23,8 @@ static bool outputFile(const QImage & image,QString saveFileName){
             image.save(file,"JPG",100);
         return true;
 }
+////打开文件函数，传递QImage对象指针，如返回为NULL，表示传递失败
+
 
 
 //另存为函数，保存指定Qimage,参数为一个Qiamge的常引用，成功返回true,失败返回false
@@ -71,7 +73,11 @@ static void print (QWidget& qwid)
 
 
 //保存最近打开的文件列表,当一开始运行程序的时候，先从文件中读取
+<<<<<<< HEAD
 void saveRecentFile( const QStringList & qsl)
+=======
+void OP::saveRecentFile( const QStringList & qsl)
+>>>>>>> 33abbc92dc3186e6b515ae33b260903fe6e71f8d
 {
     QFile file("./rctFile.txt");
     if(file.open(QIODevice::WriteOnly)){
@@ -83,7 +89,11 @@ void saveRecentFile( const QStringList & qsl)
     }
 }
 //从文件中读出来
+<<<<<<< HEAD
 void readFromRecentFile( QStringList & qsl)
+=======
+void OP::readFromRecentFile( QStringList & qsl)
+>>>>>>> 33abbc92dc3186e6b515ae33b260903fe6e71f8d
 {
       qsl.clear();
      QFile file("./rctFile.txt");
@@ -122,7 +132,11 @@ static void recentFileChanged(QList<QAction*> &qlqa,QMenu & menu,QStringList & q
 
 }
 //openbyname
+<<<<<<< HEAD
 static QImage *  open(QString opFileName,QStringList& qstrl)
+=======
+QImage *  OP::open(QString opFileName)
+>>>>>>> 33abbc92dc3186e6b515ae33b260903fe6e71f8d
 {
     QImage *image =new QImage();
     QFile fl(opFileName);
@@ -145,4 +159,28 @@ static QImage *  open(QString opFileName,QStringList& qstrl)
 
 
 //这个函数直接操作ui,可以考虑放在mainWindow中,或者传递一个MainWindow指针
+<<<<<<< HEAD
+=======
+void OP::recentFileChanged()
+{
+    ui->menurecent_file->clear();
+    ui->menurecent_file->addAction("clearAll");
+    if(qstrl->length()>0){
+        while(qstrl->length()>8){
+             qDebug()<<qstrl->takeFirst()<<endl;
+        }
+        for(int i=0;i<qstrl->length();i++){
+           ui->menurecent_file->addAction(qstrl->at(i));
+        }
+    }
+    this->qlqa=ui->menurecent_file->actions();
+    //qlqa为QList<QAction*>
+    if(qlqa.length()==2){
+        qDebug()<<"发射信号"<<endl;
+        emit mySignal(false);
+    }
+    else{
+        emit mySignal(true);
+    }
+>>>>>>> 33abbc92dc3186e6b515ae33b260903fe6e71f8d
 

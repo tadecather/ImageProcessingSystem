@@ -14,6 +14,7 @@ public:
     ~TabContent();
     ImageDisplay* getImageDisplayL();
     ImageDisplay* getImageDisplayR();
+    ImageDisplay* getFocusedImageDisplay();
     int getFocus();
 
 signals:

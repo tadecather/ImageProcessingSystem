@@ -16,13 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
 		imagedisplay.cpp \
 		mytabwidget.cpp \
-		tabcontent.cpp \
-		fileoperation.cpp
+                tabcontent.cpp \
+                fileoperation.cpp
+
 
 HEADERS  += mainwindow.h \
 		imagedisplay.h \
 		mytabwidget.h \
-		tabcontent.h \
-		fileoperation.h  
+                tabcontent.h \
+                fileoperation.h
 
 FORMS    += mainwindow.ui

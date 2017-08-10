@@ -14,8 +14,8 @@ MyTabWidget::MyTabWidget(QWidget *parent, QImage *image):QTabWidget(parent)
     this->addTab(contentVec[0], "Label");
 
     //连接newTabSignal信号与增加Ta槽函数
-    connect(initContent->getImageDisplayL(), SIGNAL(newTabSignal()), this, SLOT(addTabSlot()));
-    connect(initContent->getImageDisplayR(), SIGNAL(newTabSignal()), this, SLOT(addTabSlot()));
+    connect(initContent->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+    connect(initContent->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
 
     //显示关闭按钮并连接槽函数
     this->setTabsClosable(true);
@@ -47,8 +47,8 @@ void MyTabWidget::newTab(QImage *image)
 
     this->addTab(contentVec[MyTabWidget::number], "Label");
     //连接新建标签页内TabContent内两个imagedisplay的newTabSignal信号与增加Tab槽函数
-    connect(content->getImageDisplayL(), SIGNAL(newTabSignal()), this, SLOT(addTabSlot()));
-    connect(content->getImageDisplayR(), SIGNAL(newTabSignal()), this, SLOT(addTabSlot()));
+    connect(content->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+    connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
 }
 
 void MyTabWidget::incNumber()
@@ -65,7 +65,7 @@ void MyTabWidget::decNumber()
 void MyTabWidget::closeTabSlot(int index)
 {
     this->widget(index)->deleteLater();
-    contentVec.erase(contentVec.begin()+index);
+    contentVec.erase(contentVec.begin() + index);
     contentVec[index] = NULL;
     MyTabWidget::decNumber();
 }

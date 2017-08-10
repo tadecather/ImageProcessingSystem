@@ -7,7 +7,7 @@ ImageDisplay::ImageDisplay(QWidget *parent):QGraphicsView(parent)
     this->createMenuActions();
     //每个构造函数中都需初始化Timer用于区分单击双击
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(mouseClick()));
+    connect(timer, &QTimer::timeout, this, &ImageDisplay::mouseClick);
     //用NULL初始化内容
     this->image = NULL;
     this->scene = new QGraphicsScene;
@@ -18,9 +18,11 @@ ImageDisplay::ImageDisplay(QWidget *parent):QGraphicsView(parent)
 //注意，此构造函数不接受image对象为空，留作备用
 ImageDisplay::ImageDisplay(QWidget *parent, QImage* image):QGraphicsView(parent)
 {
+    //每个构造函数中都需初始化右键菜单
     this->createMenuActions();
+    //每个构造函数中都需初始化Timer用于区分单击双击
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(mouseClick()));
+    connect(timer, &QTimer::timeout, this, &ImageDisplay::mouseClick);
 
     this->scene = new QGraphicsScene;
 
@@ -28,7 +30,7 @@ ImageDisplay::ImageDisplay(QWidget *parent, QImage* image):QGraphicsView(parent)
     if(image!=NULL)
     {
         this->image = new QImage(*image);
-        this->showImage();
+        this->updateImage();
     }
     else
     {
@@ -45,7 +47,7 @@ ImageDisplay::~ImageDisplay()
 }
 
 //展示当前image
-void ImageDisplay::showImage()
+void ImageDisplay::updateImage()
 {
     scene->addPixmap(QPixmap::fromImage(*image));
     this->setScene(scene);
@@ -55,10 +57,8 @@ void ImageDisplay::showImage()
 //展示一行“然而什么也没有”的字
 void ImageDisplay::showNULL()
 {
-
     scene->addText("然而什么也没有",QFont("Microsoft YaHei", 12, QFont::Normal));
     this->setScene(scene);
-    //this->resize(image->width()+10, image->height()+10);
     this->show();
 }
 
@@ -74,7 +74,7 @@ void ImageDisplay::setImage(QImage *image)
     if(this->image != NULL)
         delete this->image;
     this->image = new QImage(*image);
-    this->showImage();
+    this->updateImage();
 }
 
 //改变内部scence的大小
@@ -117,7 +117,7 @@ void ImageDisplay::createMenuActions()
 {
     menu = new QMenu;
     newTabAction = new QAction("创建新选项卡", this);
-    connect(newTabAction, SIGNAL(triggered()), this, SLOT(emitNewTabSlot()));
+    connect(newTabAction, &QAction::triggered, this, &ImageDisplay::emitNewTabSlot);
 }
 
 //设置右键菜单内容
@@ -131,5 +131,10 @@ void ImageDisplay::contextMenuEvent(QContextMenuEvent *event)
 //发射根据当前图片新建Tab信号
 void ImageDisplay::emitNewTabSlot()
 {
-    emit newTabSignal();
+    if(this->image != NULL)
+    {
+        emit newTabSignal();
+        return;
+    }
+    QMessageBox::warning(this, "错误", "空图片无法创建新选项卡！");
 }
