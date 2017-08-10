@@ -1,7 +1,8 @@
 ﻿#ifndef FILEOPERATION_H
 #define FILEOPERATION_H
 
-#include<QImage>
+#include <QImage>
+#include <QAction>
 //namespace OP {
 //class FileOperation;
 //}
