@@ -65,7 +65,13 @@ void MainWindow::openFileSlot()
 
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
 
-        myTab->newTab(image);
+
+    //如果没有打开文件，则不会创建标签页
+    if(!image == NULL){
+         myTab->newTab(image);
+    }
+
+
 }
 
 void MainWindow::saveFileSlot()
