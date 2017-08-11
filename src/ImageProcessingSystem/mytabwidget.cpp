@@ -61,22 +61,26 @@ void MyTabWidget::newTab(QImage *image)
     connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
 }
 
-//程序打开时的初始tab，左边ImageDisplay为空
-bool MyTabWidget::isNullInitTab()
+//获得某一页的左右ImageDisplay，参数为Tab页数、左右ImageDisplay（0左1右）
+ImageDisplay* MyTabWidget::getImageDisplay(int index, int LR)
 {
-    if(this->imageDisplayL->isNULL())
-        return true;
-    return false;
+    if(index >= 0 && index <= number)
+    {
+        if(LR == 0)
+            return contentVec[index]->getImageDisplayL();
+        else
+            return contentVec[index]->getImageDisplayR();
+    }
+    return NULL;
 }
 
-void MyTabWidget::setLeftImage(QImage *image)
+//设置某一页的ImageDisplay，参数为Tab页数、左右ImageDisplay（0左1右）
+void MyTabWidget::setImage(int index, int LR, QImage *image)
 {
-    imageDisplayL->setImage(image);
-}
-
-void MyTabWidget::setRightImage(QImage *image)
-{
-    imageDisplayR->setImage(image);
+    if(index >= 0 && index <= number)
+    {
+        contentVec[index]->setImage(LR, image);
+    }
 }
 
 void MyTabWidget::incNumber()

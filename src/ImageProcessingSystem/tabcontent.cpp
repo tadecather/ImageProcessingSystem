@@ -23,6 +23,7 @@ TabContent::TabContent(QWidget *parent) : QWidget(parent)
     this->setLayout(layout);
 }
 
+//构造两个空imagedisplay并使用image参数初始化左边的imagedisplay
 TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 {
     this->imageDisplayL = new ImageDisplay(this, image);
@@ -61,6 +62,20 @@ ImageDisplay* TabContent::getImageDisplayL()
 ImageDisplay* TabContent::getImageDisplayR()
 {
     return this->imageDisplayR;
+}
+
+void TabContent::setImage(int LR, QImage* image)
+{
+    if(LR)
+    {
+        //右
+        this->imageDisplayR->setImage(image);
+    }
+    else
+    {
+        //左
+        this->imageDisplayL->setImage(image);
+    }
 }
 
 //获取当前聚焦的ImageDisplay指针

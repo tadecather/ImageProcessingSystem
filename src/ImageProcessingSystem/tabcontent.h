@@ -15,6 +15,7 @@ public:
     ~TabContent();
     ImageDisplay* getImageDisplayL();
     ImageDisplay* getImageDisplayR();
+    void setImage(int LR, QImage* image);
     ImageDisplay* getFocusedImageDisplay();
     int getFocus();
 
