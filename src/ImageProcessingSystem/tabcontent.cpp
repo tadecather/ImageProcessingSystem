@@ -1,5 +1,28 @@
 #include "tabcontent.h"
 
+//构造两个空ImageDisplay
+TabContent::TabContent(QWidget *parent) : QWidget(parent)
+{
+    this->imageDisplayL = new ImageDisplay(this);
+    this->imageDisplayR = new ImageDisplay(this);
+
+    //当前聚焦的imagedispy，0左1右
+    focusOn = 0;
+
+    connect(imageDisplayL, &ImageDisplay::focusOnSignal, this, &TabContent::changeFocusImageDisplaySlot);
+    connect(imageDisplayR, &ImageDisplay::focusOnSignal, this, &TabContent::changeFocusImageDisplaySlot);
+
+    QGridLayout *layout = new QGridLayout();
+
+    layout->addWidget(imageDisplayL, 0, 0, 1, 1);
+    layout->addWidget(imageDisplayR, 0, 1, 1, 1);
+
+    layout->setColumnStretch(0, 1);
+    layout->setColumnStretch(1, 1);
+
+    this->setLayout(layout);
+}
+
 TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 {
     this->imageDisplayL = new ImageDisplay(this, image);

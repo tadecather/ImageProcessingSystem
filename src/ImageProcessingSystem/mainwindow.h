@@ -29,6 +29,7 @@ private:
     int imageHeight, imagewidth;
     QString saveFileName;
     QStringList* recentFileList;
+    MyTabWidget* myTab;
     Ui::MainWindow *ui;
 private slots:
     void openFileSlot();

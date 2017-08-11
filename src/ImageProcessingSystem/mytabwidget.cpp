@@ -1,8 +1,17 @@
 #include "mytabwidget.h"
 
 //当前有几个打开Tab标签
-int MyTabWidget::number = 0;
+int MyTabWidget::number = -1;
 
+//空标签内容
+MyTabWidget::MyTabWidget(QWidget *parent):QTabWidget(parent)
+{
+    //显示关闭按钮并连接槽函数
+    this->setTabsClosable(true);
+    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTabSlot(int)));
+}
+
+//现无用
 MyTabWidget::MyTabWidget(QWidget *parent, QImage *image):QTabWidget(parent)
 {
 
@@ -33,6 +42,7 @@ MyTabWidget::~MyTabWidget()
             contentVec[i] = NULL;
         }
     }
+    MyTabWidget::number = 0;
 }
 
 //新建一个标签页
@@ -49,6 +59,24 @@ void MyTabWidget::newTab(QImage *image)
     //连接新建标签页内TabContent内两个imagedisplay的newTabSignal信号与增加Tab槽函数
     connect(content->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
     connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+}
+
+//程序打开时的初始tab，左边ImageDisplay为空
+bool MyTabWidget::isNullInitTab()
+{
+    if(this->imageDisplayL->isNULL())
+        return true;
+    return false;
+}
+
+void MyTabWidget::setLeftImage(QImage *image)
+{
+    imageDisplayL->setImage(image);
+}
+
+void MyTabWidget::setRightImage(QImage *image)
+{
+    imageDisplayR->setImage(image);
 }
 
 void MyTabWidget::incNumber()
