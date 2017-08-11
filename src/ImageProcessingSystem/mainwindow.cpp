@@ -1,7 +1,7 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
-#include "greyimage.h"
+#include "imagegray.h"
 #include "graycommand.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPrint_preview, &QAction::triggered, this, &MainWindow::printPreViewSlot);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::exitSlot);
 
-//    grayOP 共9个操作
+    //grayOP 共9个操作
     connect(ui->actionGraying,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionGray_to_Clolr,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionNegetive,&QAction::triggered,this,&MainWindow::graySlot);
@@ -29,9 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionLogarithmic_Stretch,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionPlot_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionBalance_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
-
-    //test
-    connect(ui->actionGraying, &QAction::triggered, this, &MainWindow::colorToGreySlot);
 
 
     subMenu = new QMenu();
@@ -214,10 +211,8 @@ void MainWindow::setRecentFileEnableSlot(){
 
 void MainWindow::graySlot(){
 
-    //灰度化操作
     if(ui->actionGraying==QObject::sender())
     {
-        qDebug()<<"actiongraying operation...";
         if(MyTabWidget::getNumber() == -1)
         {
             QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟");
@@ -231,8 +226,7 @@ void MainWindow::graySlot(){
     if(ui->actionGray_to_Clolr==QObject::sender())
     {
         //用于测试
-        //commandStack->undo();
-        qDebug()<<"actionGray_to_Clolr operation...";
+        commandStack->undo();
     }
 
     if(ui->actionNegetive==QObject::sender())

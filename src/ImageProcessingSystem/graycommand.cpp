@@ -32,11 +32,13 @@ void GrayCommand::redo()
     {
         //处理左，结果放到右
         //静态算法处理imageAfter
+        ImageGray::colorToGrey(*imageAfter);
         mainTab->setImage(index, 1, imageAfter);
     }
     else
     {
         //静态算法处理imageAfter
+        ImageGray::colorToGrey(*imageAfter);
         mainTab->setImage(index, 0, imageRight);
         mainTab->setImage(index, 1, imageAfter);
     }

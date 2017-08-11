@@ -1,17 +1,17 @@
-#include "greyimage.h"
+#include "imagegray.h"
 #include "imagtranslate.h"
 
 #include "fileoperation.h"
 #include <QDebug>
 
-GreyImage::GreyImage()
+ImageGray::ImageGray()
 {
 
 }
 
 
 //传入一个 QImage 对象，返回一个 QImage 指针
-QImage * GreyImage::colorToGrey(QImage &image)
+QImage * ImageGray::colorToGrey(QImage &image)
 {
     int width = 0;
     int height = 0;

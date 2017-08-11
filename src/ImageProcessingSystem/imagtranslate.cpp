@@ -10,7 +10,6 @@ ImagTranslate::ImagTranslate()
  // return 一个QList<QRgb>* ，同时会改传进来的两个int ，用作返回图片原本的 宽 和 高
 QList<QRgb> * ImagTranslate::imageToList(const QImage &image,  int & width, int & height)
 {
-    qDebug() << image.width();
     width = image.width();
     height = image.height();
     QList<QRgb> *imgRGBList = new QList<QRgb>();

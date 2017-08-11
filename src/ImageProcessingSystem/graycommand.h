@@ -3,6 +3,7 @@
 
 #include<QUndoCommand>
 #include<QImage>
+#include "imagegray.h"
 #include"mytabwidget.h"
 
 class GrayCommand : public QUndoCommand

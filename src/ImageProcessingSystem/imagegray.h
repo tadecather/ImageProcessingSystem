@@ -3,10 +3,10 @@
 
 #include <QImage>
 
-class GreyImage
+class ImageGray
 {
 public:
-    GreyImage();
+    ImageGray();
     static QImage * colorToGrey(QImage &image);
 };
 
