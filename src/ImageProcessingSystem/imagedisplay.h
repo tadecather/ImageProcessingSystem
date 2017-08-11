@@ -20,7 +20,6 @@ public:
     ~ImageDisplay();
     void updateImage();
     void showNULL();
-    bool isNULL();
     QImage* getImage();
     void setImage(QImage* image);
     void newTab();
