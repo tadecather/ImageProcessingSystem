@@ -26,6 +26,7 @@ public:
     void newTab(QImage *image);
     static void incNumber();
     static void decNumber();
+    static int getNumber();
 private slots:
     void closeTabSlot(int index);
 public slots:

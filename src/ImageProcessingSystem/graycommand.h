@@ -3,27 +3,29 @@
 
 #include<QUndoCommand>
 #include<QImage>
+#include"mytabwidget.h"
 
-#include"imagedisplay.h"
 class GrayCommand : public QUndoCommand
 {
 private:
     QImage * imageLeft;
     QImage * imageRight;
     QImage * imageAfter;
+    int index;
+    MyTabWidget* mainTab;
 
 //    ImageDisplay * imgDisplayLf;
 //    ImageDisplay * imgDisplayRg;
 public:
 
 //     GrayCommand();
-  //  QImage * color2Gray(QImage & img);
+        QImage * color2Gray(QImage * img);
     // QUndoCommand interface
 public:
+    GrayCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
     void undo();
     void redo();
-    int id() const;
-    bool mergeWith(const QUndoCommand *other);
+    //bool mergeWith(const QUndoCommand *other);
 };
 
 

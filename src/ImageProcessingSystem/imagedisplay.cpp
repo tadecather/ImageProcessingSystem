@@ -71,10 +71,21 @@ QImage* ImageDisplay::getImage()
 //使用现有image重置内部image并显示
 void ImageDisplay::setImage(QImage *image)
 {
-    if(this->image != NULL)
-        delete this->image;
-    this->image = new QImage(*image);
-    this->updateImage();
+    if(image != NULL)
+    {
+        if(this->image != NULL)
+            delete this->image;
+        this->image = new QImage(*image);
+        this->updateImage();
+    }
+    else
+    {
+        if(this->image != NULL)
+            delete this->image;
+        this->image = NULL;
+        this->showNULL();
+    }
+
 }
 
 //改变内部scence的大小

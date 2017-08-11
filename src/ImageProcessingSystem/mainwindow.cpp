@@ -35,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
     ui->actionRecent_file->setMenu(subMenu);
 
+    //初始化command stack
+    commandStack = new QUndoStack(this);
+    QUndoView* view = new QUndoView(commandStack);
+    view->show();
+
     myTab = new MyTabWidget(this);
     MainWindow::setCentralWidget(myTab);
 
@@ -201,13 +206,21 @@ void MainWindow::graySlot(){
     //灰度化操作
     if(ui->actionGraying==QObject::sender())
     {
-        GrayCommand::
         qDebug()<<"actiongraying operation...";
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟");
+            return;
+        }
+        GrayCommand* command = new GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, 0);
+        commandStack->push(command);
     }
 
 
     if(ui->actionGray_to_Clolr==QObject::sender())
     {
+        //用于测试
+        //commandStack->undo();
         qDebug()<<"actionGray_to_Clolr operation...";
     }
 

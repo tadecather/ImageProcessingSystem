@@ -77,6 +77,11 @@ ImageDisplay* MyTabWidget::getImageDisplay(int index, int LR)
 //设置某一页的ImageDisplay，参数为Tab页数、左右ImageDisplay（0左1右）
 void MyTabWidget::setImage(int index, int LR, QImage *image)
 {
+    if(image == NULL)
+    {
+        contentVec[index]->getImageDisplayR()->setImage(NULL);
+        return;
+    }
     if(index >= 0 && index <= number)
     {
         contentVec[index]->setImage(LR, image);
@@ -91,6 +96,11 @@ void MyTabWidget::incNumber()
 void MyTabWidget::decNumber()
 {
     MyTabWidget::number--;
+}
+
+int MyTabWidget::getNumber()
+{
+    return MyTabWidget::number;
 }
 
 //关闭一个Tab标签页

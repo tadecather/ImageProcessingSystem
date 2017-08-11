@@ -5,6 +5,11 @@
 #include <QFileDialog>
 #include <QPrinter>
 #include <QPrintPreviewDialog>
+//以下四个头文件已在tabcontent包含，适时删除此处头文件
+#include <QUndoCommand>
+#include <QUndoStack>
+#include <QUndoGroup>
+#include <QUndoView>
 #include "imagedisplay.h"
 #include "MyTabWidget.h"
 
@@ -30,6 +35,7 @@ private:
     QString saveFileName;
     QStringList* recentFileList;
     MyTabWidget* myTab;
+    QUndoStack* commandStack;
     Ui::MainWindow *ui;
 private slots:
     void openFileSlot();
