@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,8 +13,23 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+		imagedisplay.cpp \
+		mytabwidget.cpp \
+		tabcontent.cpp \
+		fileoperation.cpp \
+		graycommand.cpp \
+		imagtranslate.cpp \
+    imagegray.cpp
 
-HEADERS  += mainwindow.h
+
+HEADERS  += mainwindow.h \
+		imagedisplay.h \
+		mytabwidget.h \
+		tabcontent.h \
+		fileoperation.h \
+		graycommand.h \
+		imagtranslate.h \
+    imagegray.h
 
 FORMS    += mainwindow.ui
