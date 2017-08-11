@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -35,8 +35,10 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
-
     void printPreviewSlot(QPrinter *printerPixmap);
+
+
+    void graySlot();
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();

@@ -17,13 +17,15 @@ SOURCES += main.cpp\
 		imagedisplay.cpp \
 		mytabwidget.cpp \
                 tabcontent.cpp \
-                fileoperation.cpp
+                fileoperation.cpp \
+    graycommand.cpp
 
 
 HEADERS  += mainwindow.h \
 		imagedisplay.h \
 		mytabwidget.h \
                 tabcontent.h \
-                fileoperation.h
+                fileoperation.h \
+    graycommand.h
 
 FORMS    += mainwindow.ui
