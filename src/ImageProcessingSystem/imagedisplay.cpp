@@ -46,6 +46,14 @@ ImageDisplay::~ImageDisplay()
     scene->deleteLater();
 }
 
+bool ImageDisplay::isNULL()
+{
+    qDebug()<<this->image;
+    if(this->image == NULL)
+        return true;
+    return false;
+}
+
 //展示当前image
 void ImageDisplay::updateImage()
 {

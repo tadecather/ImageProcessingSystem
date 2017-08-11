@@ -10,6 +10,7 @@ class TabContent : public QWidget
 {
     Q_OBJECT
 public:
+    TabContent(QWidget *parent);
     TabContent(QWidget *parent, QImage *image);
     ~TabContent();
     ImageDisplay* getImageDisplayL();

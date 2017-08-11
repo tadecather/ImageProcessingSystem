@@ -17,8 +17,12 @@ private:
     ImageDisplay *imageDisplayR;
     std::vector<TabContent*> contentVec;
 public:
+    MyTabWidget(QWidget *parent);
     MyTabWidget(QWidget *parent, QImage *image);
     ~MyTabWidget();
+    bool isNullInitTab();
+    void setLeftImage(QImage *image);
+    void setRightImage(QImage *image);
     void newTab(QImage *image);
     static void incNumber();
     static void decNumber();
