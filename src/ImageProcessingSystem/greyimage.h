@@ -1,6 +1,7 @@
 #ifndef GREYIMAGE_H
 #define GREYIMAGE_H
 
+#include <QImage>
 
 class GreyImage
 {

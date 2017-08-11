@@ -24,6 +24,7 @@ bool FileOperation::outputFile(const QImage & image,QString saveFileName){
         image.save(file, "JPG", 100);
 
         file->close();
+        delete file;
         return true;
 }
 
@@ -129,7 +130,7 @@ void FileOperation::recentFileChanged(MainWindow *mainwindow,QMenu &menu, QStrin
         }
         for(int i=0;i<qstrl.length();i++){
 
-            subAction  = new QAction();
+            subAction = new QAction();
             subAction->setText(qstrl.at(i));
             connect(subAction, &QAction::triggered, mainwindow, &MainWindow::openRecentFile);
             menu.addAction(subAction);

@@ -53,6 +53,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete subMenu;
+    if(image == NULL){
+        delete image;
+    }
+    delete recentFileList;
+    delete myTab;
     delete ui;
 }
 
@@ -179,7 +185,10 @@ void MainWindow::printPreviewSlot(QPrinter *printerPixmap)
 
 void MainWindow::colorToGreySlot()
 {
-    QImage * newImage = GreyImage::colorToGrey(image);
+    QImage * newImage = GreyImage::colorToGrey(*image);
+    myTab->setImage(0, 1, newImage);
+
+
 
 
 }
