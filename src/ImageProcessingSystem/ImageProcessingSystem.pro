@@ -16,16 +16,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
 		imagedisplay.cpp \
 		mytabwidget.cpp \
-                tabcontent.cpp \
-                fileoperation.cpp \
-    graycommand.cpp
+		tabcontent.cpp \
+		fileoperation.cpp \
+		graycommand.cpp \
+		imagtranslate.cpp
 
 
 HEADERS  += mainwindow.h \
 		imagedisplay.h \
 		mytabwidget.h \
-                tabcontent.h \
-                fileoperation.h \
-    graycommand.h
+		tabcontent.h \
+		fileoperation.h \
+		graycommand.h \
+		imagtranslate.h
+
 
 FORMS    += mainwindow.ui

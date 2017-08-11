@@ -10,10 +10,12 @@ class TabContent : public QWidget
 {
     Q_OBJECT
 public:
+    TabContent(QWidget *parent);
     TabContent(QWidget *parent, QImage *image);
     ~TabContent();
     ImageDisplay* getImageDisplayL();
     ImageDisplay* getImageDisplayR();
+    void setImage(int LR, QImage* image);
     ImageDisplay* getFocusedImageDisplay();
     int getFocus();
 

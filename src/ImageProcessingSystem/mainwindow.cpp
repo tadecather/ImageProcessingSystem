@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
     ui->actionRecent_file->setMenu(subMenu);
 
+    myTab = new MyTabWidget(this);
+    MainWindow::setCentralWidget(myTab);
 
 /*
     QImage *image = new QImage;
@@ -73,9 +75,12 @@ void MainWindow::openFileSlot()
 
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
 
-    // 显示图片
-    MyTabWidget *tab = new MyTabWidget(this, image);
-    MainWindow::setCentralWidget(tab);
+
+    //如果没有打开文件，则不会创建标签页
+    if(!image == NULL){
+         myTab->newTab(image);
+    }
+
 
 }
 
@@ -152,8 +157,7 @@ void MainWindow::openRecentFile(){
     qDebug()  << subAction->text();
     image = FileOperation::open(subAction->text(), *recentFileList);
 
-    MyTabWidget *tab = new MyTabWidget(this, image);
-    MainWindow::setCentralWidget(tab);
+    myTab->newTab(image);
 }
 
 
