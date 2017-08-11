@@ -1,8 +1,8 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
 #include "greyimage.h"
-
+#include "graycommand.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     image = NULL;
 
     ui->setupUi(this);
-
+    //fileOp
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::openFileSlot);
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveFileSlot);
     connect(ui->actionSave_as, &QAction::triggered, this, &MainWindow::saveAsFileSlot);
@@ -19,6 +19,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPrint_preview, &QAction::triggered, this, &MainWindow::printPreViewSlot);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::exitSlot);
 
+//    grayOP 共9个操作
+    connect(ui->actionGraying,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionGray_to_Clolr,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionNegetive,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionBinaryzation,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionLinear_Stretch,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionExponential_Stretch,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionLogarithmic_Stretch,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionPlot_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
+    connect(ui->actionBalance_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
 
     //test
     connect(ui->actionGraying, &QAction::triggered, this, &MainWindow::colorToGreySlot);
@@ -183,15 +193,6 @@ void MainWindow::printPreviewSlot(QPrinter *printerPixmap)
     painterPixmap.end();
 }
 
-void MainWindow::colorToGreySlot()
-{
-    QImage * newImage = GreyImage::colorToGrey(*image);
-    myTab->setImage(0, 1, newImage);
-
-
-
-
-}
 
 // 设置 image
 void MainWindow::setImage(QImage * newImg){
@@ -204,6 +205,59 @@ void MainWindow::setRecentFileEnableSlot(){
 
 
 
+
+
+void MainWindow::graySlot(){
+
+    //灰度化操作
+    if(ui->actionGraying==QObject::sender())
+    {
+        // GrayCommand::
+        qDebug()<<"actiongraying operation...";
+    }
+
+
+    if(ui->actionGray_to_Clolr==QObject::sender())
+    {
+        qDebug()<<"actionGray_to_Clolr operation...";
+    }
+
+    if(ui->actionNegetive==QObject::sender())
+    {
+        qDebug()<<"actionNegetive operation...";
+    }
+
+    if(ui->actionBinaryzation==QObject::sender())
+    {
+        qDebug()<<"actionBinaryzation operation...";
+    }
+
+    if(ui->actionLinear_Stretch==QObject::sender())
+    {
+        qDebug()<<"actionLinear_Stretch operation...";
+    }
+
+    if(ui->actionExponential_Stretch==QObject::sender())
+    {
+        qDebug()<<"actionExponential_Stretch operation...";
+    }
+
+    if(ui->actionLogarithmic_Stretch==QObject::sender())
+    {
+        qDebug()<<"actionLogarithmic_Stretch operation...";
+    }
+
+    if(ui->actionPlot_Histogram==QObject::sender())
+    {
+        qDebug()<<"actionPlot_Histogram operation...";
+    }
+
+    if(ui->actionBalance_Histogram==QObject::sender())
+    {
+        qDebug()<<"actionBalance_Histogram operation...";
+    }
+
+}
 
 
 
