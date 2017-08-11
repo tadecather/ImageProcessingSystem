@@ -25,6 +25,8 @@ public:
 private:
     QMenu *subMenu;
     QImage * image;
+    //暂时定义图片的高和宽
+    int imageHeight, imagewidth;
     QString saveFileName;
     QStringList* recentFileList;
     Ui::MainWindow *ui;

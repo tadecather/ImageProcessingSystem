@@ -78,9 +78,6 @@ public:
     QAction *actionImage_Quality_Assessment;
     QWidget *centralwidget;
     QVBoxLayout *verticalLayout;
-    QTabWidget *tabWidget;
-    QWidget *tab;
-    QWidget *tab_2;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuGrey;
@@ -199,16 +196,6 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         verticalLayout = new QVBoxLayout(centralwidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        tabWidget = new QTabWidget(centralwidget);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tab = new QWidget();
-        tab->setObjectName(QStringLiteral("tab"));
-        tabWidget->addTab(tab, QString());
-        tab_2 = new QWidget();
-        tab_2->setObjectName(QStringLiteral("tab_2"));
-        tabWidget->addTab(tab_2, QString());
-
-        verticalLayout->addWidget(tabWidget);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
@@ -310,7 +297,6 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -368,8 +354,6 @@ public:
         actionGradient_Sharpening->setText(QApplication::translate("MainWindow", "Gradient Sharpening", 0));
         actionLaplacian_Sharpening->setText(QApplication::translate("MainWindow", "Laplacian Sharpening", 0));
         actionImage_Quality_Assessment->setText(QApplication::translate("MainWindow", "Image Quality Assessment", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 2", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuGrey->setTitle(QApplication::translate("MainWindow", "Gray", 0));
         menuTransformation->setTitle(QApplication::translate("MainWindow", "Transformation", 0));
