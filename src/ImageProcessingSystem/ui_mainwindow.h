@@ -32,7 +32,6 @@ public:
     QAction *actionSave_as;
     QAction *actionPrint;
     QAction *actionPrint_preview;
-    QAction *actionPrint_setting;
     QAction *actionRecent_file;
     QAction *actionExit;
     QAction *actionGraying;
@@ -108,8 +107,6 @@ public:
         actionPrint->setObjectName(QStringLiteral("actionPrint"));
         actionPrint_preview = new QAction(MainWindow);
         actionPrint_preview->setObjectName(QStringLiteral("actionPrint_preview"));
-        actionPrint_setting = new QAction(MainWindow);
-        actionPrint_setting->setObjectName(QStringLiteral("actionPrint_setting"));
         actionRecent_file = new QAction(MainWindow);
         actionRecent_file->setObjectName(QStringLiteral("actionRecent_file"));
         actionExit = new QAction(MainWindow);
@@ -252,7 +249,6 @@ public:
         menuFile->addSeparator();
         menuFile->addAction(actionPrint);
         menuFile->addAction(actionPrint_preview);
-        menuFile->addAction(actionPrint_setting);
         menuFile->addSeparator();
         menuFile->addAction(actionRecent_file);
         menuFile->addSeparator();
@@ -328,7 +324,6 @@ public:
         actionSave_as->setText(QApplication::translate("MainWindow", "Save as", 0));
         actionPrint->setText(QApplication::translate("MainWindow", "Print", 0));
         actionPrint_preview->setText(QApplication::translate("MainWindow", "Print Preview", 0));
-        actionPrint_setting->setText(QApplication::translate("MainWindow", "Print Setting", 0));
         actionRecent_file->setText(QApplication::translate("MainWindow", "Open Recent", 0));
         actionExit->setText(QApplication::translate("MainWindow", "Exit", 0));
         actionGraying->setText(QApplication::translate("MainWindow", "Color to Gray", 0));

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QPrinter>
+#include <QPrintPreviewDialog>
 #include "imagedisplay.h"
 #include "MyTabWidget.h"
 
@@ -18,8 +20,27 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setImage(QImage *newImg);
+
 private:
+    QMenu *subMenu;
+    QImage * image;
+    QString saveFileName;
+    QStringList* recentFileList;
     Ui::MainWindow *ui;
+private slots:
+    void openFileSlot();
+    void saveFileSlot();
+    void saveAsFileSlot();
+    void printSlot();
+    void printPreViewSlot();
+    void exitSlot();
+
+    void printPreviewSlot(QPrinter *printerPixmap);
+public slots:
+    void setRecentFileEnableSlot();
+    void openRecentFile();
+    void clearAllRecentSlot();
 };
 
 #endif // MAINWINDOW_H

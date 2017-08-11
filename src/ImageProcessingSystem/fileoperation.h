@@ -1,28 +1,33 @@
 ﻿#ifndef FILEOPERATION_H
 #define FILEOPERATION_H
 
+#include "mainwindow.h"
+
 #include <QImage>
 #include <QAction>
-//namespace OP {
-//class FileOperation;
-//}
+#include<QPrinter>
+
 class FileOperation:QObject{
     Q_OBJECT
 public:
-    static QImage * open(QString opFileName);
-    static void save (const QImage & img);
-    static bool saveAs ();
-    static void print ();
-    static void printPreview();
+    static QImage * open(QString opFileName, QStringList& qstrl);
+    static bool save(const QImage & img,QString saveFileName);
+    static bool saveAs(const QImage & image);
+    static void print(QWidget *  qwid);
+    static void printPreview(QWidget * qwid);
     static void printSetting();
-    static void recentFile ();
-    static void exit ();
-    static void recentFileChanged(QList<QAction*> &qlqa,QMenu & menu,QStringList & qstrl);
+    static void recentFile( const QStringList & qsl);
+    static void exit();
+    static void recentFileChanged(MainWindow *mainWindow, QMenu &menu,QStringList & qstrl);
     static void readFromRecentFile( QStringList & qsl);
-    void saveRecentFile( const QStringList & qsl);
+    static void saveRecentFile( const QStringList & qsl);
 private:
-    static bool outputFile();
-private:
-//    static QString saveFileName;
+
+    void openRecentFile();
+    static bool outputFile(const QImage & image, QString saveFileName);
+signals:
+    //void changgeRecentFileSignal();
+private slots:
+    //void paintRequestedSlot(QPrinter *printer);
 };
 #endif // FILEOPERATION_H

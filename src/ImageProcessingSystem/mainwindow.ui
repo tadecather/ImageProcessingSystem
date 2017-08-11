@@ -35,7 +35,6 @@
     <addaction name="separator"/>
     <addaction name="actionPrint"/>
     <addaction name="actionPrint_preview"/>
-    <addaction name="actionPrint_setting"/>
     <addaction name="separator"/>
     <addaction name="actionRecent_file"/>
     <addaction name="separator"/>
@@ -163,11 +162,6 @@
   <action name="actionPrint_preview">
    <property name="text">
     <string>Print Preview</string>
-   </property>
-  </action>
-  <action name="actionPrint_setting">
-   <property name="text">
-    <string>Print Setting</string>
    </property>
   </action>
   <action name="actionRecent_file">
