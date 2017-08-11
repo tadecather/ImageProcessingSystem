@@ -1,6 +1,7 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
+#include "greyimage.h"
 #include "graycommand.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionLogarithmic_Stretch,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionPlot_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
     connect(ui->actionBalance_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
+
+    //test
+    connect(ui->actionGraying, &QAction::triggered, this, &MainWindow::colorToGreySlot);
 
 
     subMenu = new QMenu();
@@ -64,6 +68,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete subMenu;
+    if(image == NULL){
+        delete image;
+    }
+    delete recentFileList;
+    delete myTab;
     delete ui;
 }
 
@@ -187,6 +197,7 @@ void MainWindow::printPreviewSlot(QPrinter *printerPixmap)
     painterPixmap.drawPixmap(0, 0, pixmap);
     painterPixmap.end();
 }
+
 
 // 设置 image
 void MainWindow::setImage(QImage * newImg){

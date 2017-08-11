@@ -8,7 +8,7 @@ class ImagTranslate
 public:
     ImagTranslate();
 
-    static QList<QRgb> * imageToList(const QImage &image, int &width, int &height);
+    static QList<QRgb> * imageToList(const QImage &image, int & width, int & height);
     static QImage * listToImage(QList<QRgb> rgbList , int width, int height);
 };
 

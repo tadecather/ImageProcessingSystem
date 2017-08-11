@@ -1,4 +1,5 @@
 #include "imagtranslate.h"
+#include <QDebug>
 
 ImagTranslate::ImagTranslate()
 {
@@ -7,15 +8,16 @@ ImagTranslate::ImagTranslate()
 
 // 将图片转化为一个 QList 数组，需要参数为一个转化图片的 QImage 指针，以及两个int 类型的指针，
  // return 一个QList<QRgb>* ，同时会改传进来的两个int ，用作返回图片原本的 宽 和 高
-QList<QRgb> * ImagTranslate::imageToList(const QImage &image,  int &width, int &height)
+QList<QRgb> * ImagTranslate::imageToList(const QImage &image,  int & width, int & height)
 {
+    qDebug() << image.width();
     width = image.width();
     height = image.height();
     QList<QRgb> *imgRGBList = new QList<QRgb>();
     // 通过遍历得到各个点的 RGB 值
-    for(int i = 0; i < width; i++){
-        for(int j = 0; j < height; j++){
-            QRgb pixel = image.pixel(i,j);
+    for(int i = 0; i < image.height(); i++){
+        for(int j = 0; j < image.width(); j++){
+            QRgb pixel = image.pixel(j,i);
             int Red = qRed(pixel);
             int Green = qGreen(pixel);
             int Blue = qBlue(pixel);
@@ -24,7 +26,6 @@ QList<QRgb> * ImagTranslate::imageToList(const QImage &image,  int &width, int &
         }
     }
     return imgRGBList;
-
 }
 
 
