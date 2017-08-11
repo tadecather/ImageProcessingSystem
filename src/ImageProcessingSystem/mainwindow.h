@@ -38,8 +38,10 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
-
     void printPreviewSlot(QPrinter *printerPixmap);
+
+    //test processing image
+    void colorToGreySlot();
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();

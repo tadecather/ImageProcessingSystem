@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
+#include "greyimage.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPrint_preview, &QAction::triggered, this, &MainWindow::printPreViewSlot);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::exitSlot);
 
+
+    //test
+    connect(ui->actionGraying, &QAction::triggered, this, &MainWindow::colorToGreySlot);
 
 
     subMenu = new QMenu();
@@ -171,6 +175,13 @@ void MainWindow::printPreviewSlot(QPrinter *printerPixmap)
     painterPixmap.scale(x, y);
     painterPixmap.drawPixmap(0, 0, pixmap);
     painterPixmap.end();
+}
+
+void MainWindow::colorToGreySlot()
+{
+    QImage * newImage = GreyImage::colorToGrey(image);
+
+
 }
 
 // 设置 image
