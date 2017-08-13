@@ -14,9 +14,9 @@ QList<QRgb> * ImagTranslate::imageToList(const QImage &image,  int & width, int 
     height = image.height();
     QList<QRgb> *imgRGBList = new QList<QRgb>();
     // 通过遍历得到各个点的 RGB 值
-    for(int i = 0; i < image.height(); i++){
-        for(int j = 0; j < image.width(); j++){
-            QRgb pixel = image.pixel(j,i);
+    for(int i = 0; i < image.width(); i++){
+        for(int j = 0; j < image.height(); j++){
+            QRgb pixel = image.pixel(i,j);
             int Red = qRed(pixel);
             int Green = qGreen(pixel);
             int Blue = qBlue(pixel);

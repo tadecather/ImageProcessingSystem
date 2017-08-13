@@ -215,7 +215,7 @@ void MainWindow::graySlot(){
     {
         if(MyTabWidget::getNumber() == -1)
         {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟");
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
             return;
         }
         GrayCommand* command = new GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, 0);
@@ -231,40 +231,59 @@ void MainWindow::graySlot(){
 
     if(ui->actionNegetive==QObject::sender())
     {
+        //test
+        image = ImageGray::negetiveImage(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
         qDebug()<<"actionNegetive operation...";
     }
 
     if(ui->actionBinaryzation==QObject::sender())
     {
+        image = ImageGray::binaryzation(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
         qDebug()<<"actionBinaryzation operation...";
     }
 
     if(ui->actionLinear_Stretch==QObject::sender())
     {
+        image = ImageGray::linearStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
         qDebug()<<"actionLinear_Stretch operation...";
     }
 
     if(ui->actionExponential_Stretch==QObject::sender())
     {
+        image = ImageGray::exponentialStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
         qDebug()<<"actionExponential_Stretch operation...";
     }
 
     if(ui->actionLogarithmic_Stretch==QObject::sender())
     {
+        image = ImageGray::logarithmicStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
         qDebug()<<"actionLogarithmic_Stretch operation...";
     }
 
     if(ui->actionPlot_Histogram==QObject::sender())
     {
-        qDebug()<<"actionPlot_Histogram operation...";
+        //test
+        ImageGray::plotHistogram(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
     }
 
     if(ui->actionBalance_Histogram==QObject::sender())
     {
+        //test
+        image = ImageGray::balanceHistogram(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
+        ImageGray::plotHistogram(*image);
         qDebug()<<"actionBalance_Histogram operation...";
     }
 
 }
 
 
+// Question
+// 1. 第二个标签处理内容回到第一个标签内
+// 2. 双击选定直接保存图片容易覆盖原图，需要提示
+// 3. 双击选定 另存为 会直接保存原图，并不会保存选定的图片
 
