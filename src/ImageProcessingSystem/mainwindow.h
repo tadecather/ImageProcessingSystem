@@ -25,7 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void setImage(QImage *newImg);
+    void connectChangeImage(TabContent* tab);
 
 private:
     QMenu *subMenu;

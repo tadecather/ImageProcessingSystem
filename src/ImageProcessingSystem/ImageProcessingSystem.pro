@@ -18,7 +18,7 @@ SOURCES += main.cpp\
 		mytabwidget.cpp \
 		tabcontent.cpp \
 		fileoperation.cpp \
-		graycommand.cpp \
+                graycommand.cpp \
 		imagtranslate.cpp \
     imagegray.cpp
 
@@ -28,7 +28,7 @@ HEADERS  += mainwindow.h \
 		mytabwidget.h \
 		tabcontent.h \
 		fileoperation.h \
-		graycommand.h \
+                graycommand.h \
 		imagtranslate.h \
     imagegray.h
 

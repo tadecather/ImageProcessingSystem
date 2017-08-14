@@ -17,6 +17,7 @@ public:
     ImageDisplay* getImageDisplayR();
     void setImage(int LR, QImage* image);
     ImageDisplay* getFocusedImageDisplay();
+    QImage* getFocusedImage();
     int getFocus();
 
 signals:

@@ -59,6 +59,13 @@ void MyTabWidget::newTab(QImage *image)
     //连接新建标签页内TabContent内两个imagedisplay的newTabSignal信号与增加Tab槽函数
     connect(content->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
     connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+    this->setCurrentIndex(MyTabWidget::number);
+}
+
+QImage* MyTabWidget::getFocusedImage()
+{
+    TabContent* currentTabContent = (TabContent*)this->widget(MyTabWidget::getNumber());
+    return currentTabContent->getFocusedImage();
 }
 
 //获得某一页的左右ImageDisplay，参数为Tab页数、左右ImageDisplay（0左1右）
