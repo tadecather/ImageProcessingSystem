@@ -1,4 +1,4 @@
-﻿#include "graycommand.h"
+#include "graycommand.h"
 
 Gray2ColorCommand::Gray2ColorCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
 {
@@ -89,4 +89,3 @@ QImage * Gray2ColorCommand::color2Gray(QImage * img)
 
             return ret;
 }
-

@@ -1,4 +1,5 @@
-﻿#ifndef GRAYCOMMAND_H
+
+#ifndef GRAYCOMMAND_H
 #define GRAYCOMMAND_H
 
 #include<QUndoCommand>
@@ -27,4 +28,5 @@ public:
     //bool mergeWith(const QUndoCommand *other);
 };
 
-#endif
+
+#endif // GRAYCOMMAND_H
