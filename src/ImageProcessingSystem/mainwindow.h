@@ -33,6 +33,7 @@ private:
     //暂时定义图片的高和宽
     int imageHeight, imagewidth;
     QString saveFileName;
+    QString currentPath;
     QStringList* recentFileList;
     MyTabWidget* myTab;
     QUndoStack* commandStack;

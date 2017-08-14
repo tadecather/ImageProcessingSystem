@@ -21,7 +21,7 @@ bool FileOperation::outputFile(const QImage & image,QString saveFileName){
         if(!ok){
             return false;
         }
-        image.save(file, "JPG", 100);
+        image.save(file, 0, 100);
 
         file->close();
         delete file;
@@ -39,7 +39,7 @@ bool FileOperation::saveAs (const QImage & image)
    return outputFile(image,saveFileName);
 }
 //保存指定QImage,参数为一个Qiamge的常引用，成功返回true,失败返回false
-bool FileOperation::save (const QImage & img,QString saveFileName)
+bool FileOperation::save (const QImage & img, QString saveFileName)
 {
     if(saveFileName.isEmpty()){
         return saveAs(img);
@@ -161,6 +161,7 @@ QImage *  FileOperation::open(QString opFileName,QStringList& qstrl)
     {
         if(!image->load(opFileName))
         {
+           QMessageBox::about(NULL,"fail","file does not load");
            return NULL;
         }
         if(!qstrl.contains(opFileName))

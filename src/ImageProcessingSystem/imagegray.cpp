@@ -65,12 +65,13 @@ QImage *ImageGray::binaryzation(QImage &image)
 {
     QImage * binImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
 
+    // 获取二值化的阀值
+    int keyValue = getKeyValue(&image);
+    qDebug() << keyValue;
+
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
             int Gray = qRed(image.pixel(i, j));
-
-            // 获取二值化的阀值
-            int keyValue = 127;
             QRgb newPixel;
             if( Gray >= keyValue){
                 newPixel = qRgb(255, 255, 255);
@@ -162,7 +163,6 @@ QImage *ImageGray::logarithmicStretch(QImage &image)
 
     for(int i = 0; i < 256; i++){
         float temp = log2(1 + v * (i * 1.0 / 255)) / log2(v + 1);
-        qDebug() << temp;
         if(temp > 1){
             map[i] = 1 * 255;
         }else if(temp < 0){
@@ -172,7 +172,7 @@ QImage *ImageGray::logarithmicStretch(QImage &image)
         }
 
     }
-    qDebug() << log2(1 + v * (1 * 1.0 / 255)) / log2(v + 1);
+
 
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
@@ -247,8 +247,6 @@ QVector<int> ImageGray::countGrayHistogram(QImage *image)
             histgram[Red] ++;
         }
     }
-
-    qDebug() << histgram;
     return histgram;
 }
 
@@ -297,7 +295,65 @@ QImage *ImageGray::drawHistogram(QVector<int> grayHist)
 
     // 存储直方图
 //      FileOperation::saveAs(*hist);
-        return hist;
+    return hist;
+}
+
+// 得到二值化 的 (平均）阀值
+int ImageGray::getKeyValue(QImage *image)
+{
+    QVector<int> histgram = countGrayHistogram(image);
+
+    int sum = 0;
+    for(int i = 0; i < 256; i++){
+        sum += (i * histgram[i]);
+    }
+
+    int keyValue = sum / (image->width() * image->height());
+    return keyValue;
+}
+
+// 通过得到直方图的两个峰值，然后得到两个峰值之间的低谷值为阀值
+int ImageGray::getKeyValueHist(QImage *image)
+{
+    QVector<int> histgram = countGrayHistogram(image);
+
+
+    int indexMax = 0, indexSecondMax = 0;
+    int max = histgram[0], secondMax = 0;
+    for(int i = 1; i < 256; i++){
+        if(histgram[i] >= max){
+            secondMax = max;
+            max = histgram[i];
+            indexSecondMax = indexMax;
+            indexMax = i;
+        }else if(histgram[i] > secondMax && histgram[i] < max)
+        {
+            secondMax = histgram[i];
+            indexSecondMax = i;
+        }else{
+            continue;
+        }
+
+    }
+
+
+    if(indexMax < indexSecondMax){
+        int temp;
+        temp = indexMax;
+        indexMax = indexSecondMax;
+        indexSecondMax = temp;
+    }
+
+    int keyValue = histgram[indexSecondMax];
+    int indexKeyValue = indexSecondMax;
+    for(int i = indexSecondMax; i < indexMax; i++){
+        if(histgram[i] < keyValue){
+            keyValue = histgram[i];
+            indexKeyValue = i;
+        }
+    }
+
+    return indexKeyValue;
 }
 
 

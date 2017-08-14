@@ -20,6 +20,8 @@ public:
 private:
     static QVector<int> countGrayHistogram(QImage * image);
     static QImage * drawHistogram(QVector<int> grayHist);
+    static int getKeyValue(QImage * image);
+    static int getKeyValueHist(QImage *image);
 };
 
 #endif // GREYIMAGE_H

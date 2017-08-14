@@ -77,11 +77,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::openFileSlot()
 {
+    // 如果第一次打开，会打开程序所在的文件夹，如果已经打开，那么会打开上次打开的文件夹
+    QString fileName;
+    if(currentPath.isEmpty()){
+        fileName = QFileDialog::getOpenFileName(
+                        this, "open image file",
+                        ".",
+                        "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
+    } else{
+        fileName = QFileDialog::getOpenFileName(
+                        this, "open image file",
+                        currentPath,
+                        "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
+    }
 
-    QString fileName = QFileDialog::getOpenFileName(
-                    this, "open image file",
-                    ".",
-                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
+    QStringList filepath = fileName.split("/");
+
+    filepath.removeLast();
+
+    currentPath = filepath.join("/");
+    qDebug() << currentPath;
+
     saveFileName = fileName;
     image = FileOperation::open(fileName, *recentFileList);
 
