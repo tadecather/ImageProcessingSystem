@@ -87,6 +87,14 @@ ImageDisplay* TabContent::getFocusedImageDisplay()
         return imageDisplayR;
 }
 
+QImage* TabContent::getFocusedImage()
+{
+    if(focusOn == 0)
+        return imageDisplayL->getImage();
+    else
+        return imageDisplayR->getImage();
+}
+
 //槽函数，改变当前聚焦的imagedisplay对象
 void TabContent::changeFocusImageDisplaySlot()
 {

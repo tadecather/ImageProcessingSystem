@@ -24,6 +24,7 @@ public:
     ImageDisplay* getImageDisplay(int index, int LR);
     void setImage(int index, int LR, QImage* image);
     void newTab(QImage *image);
+    QImage* getFocusedImage();
     static void incNumber();
     static void decNumber();
     static int getNumber();

@@ -21,7 +21,7 @@ bool FileOperation::outputFile(const QImage & image,QString saveFileName){
         if(!ok){
             return false;
         }
-        image.save(file, "JPG", 100);
+        image.save(file, 0, 100);
 
         file->close();
         delete file;

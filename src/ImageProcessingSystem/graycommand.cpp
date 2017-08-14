@@ -1,12 +1,6 @@
 ﻿#include "graycommand.h"
 
-//GrayCommand::GrayCommand()
-//{
-
-//}
-
-//初始化一个GrayCommand
-GrayCommand::GrayCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
+Gray2ColorCommand::Gray2ColorCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
 {
     this->imageLeft = new QImage(*imageLeft);
     //this->imageRight = imageRight;
@@ -24,7 +18,7 @@ GrayCommand::GrayCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mai
     this->index = index;
 }
 
-void GrayCommand::redo()
+void Gray2ColorCommand::redo()
 {
     //处理
     //imageAfter = 拷贝构造 算法类：：灰度化算法(imageRight)
@@ -45,14 +39,14 @@ void GrayCommand::redo()
 
 }
 
-void GrayCommand::undo()
+void Gray2ColorCommand::undo()
 {
     QMessageBox::about(NULL, "About", "About this application");
         mainTab->setImage(index, 0, imageLeft);
         mainTab->setImage(index, 1, NULL);
 }
 
-QImage * GrayCommand::color2Gray(QImage * img)
+QImage * Gray2ColorCommand::color2Gray(QImage * img)
 {
 
             int height = img->height();
@@ -95,3 +89,4 @@ QImage * GrayCommand::color2Gray(QImage * img)
 
             return ret;
 }
+

@@ -98,11 +98,16 @@ void MainWindow::openFileSlot()
 
 void MainWindow::saveFileSlot()
 {
-    if(image == NULL){
+    if(myTab->getFocusedImage() == NULL)
+    {
         QMessageBox::information(this, "没有图片被选中", "请打开或者选择一张图片！");
         return;
     }
-
+    image = new QImage(*(myTab->getFocusedImage()));
+    //保存容易出错 于是添加对话框，使用户确认
+    QMessageBox::StandardButton result = QMessageBox::question(this, "保存确认", "这将会覆盖原图，确认保存吗？", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if(result == QMessageBox::No)
+        return;
     if(!FileOperation::save(*image, saveFileName)){
         QMessageBox::information(this, "Save Error", "save file error!");
     }
@@ -110,11 +115,12 @@ void MainWindow::saveFileSlot()
 
 void MainWindow::saveAsFileSlot()
 {
-    if(image == NULL){
+    if(myTab->getFocusedImage() == NULL)
+    {
         QMessageBox::information(this, "没有图片被选中", "请打开或者选择一张图片！");
         return;
     }
-
+    image = new QImage(*(myTab->getFocusedImage()));
     if(!FileOperation::saveAs(*image)){
         QMessageBox::information(this, "Save Error", "save file error!(1)");
     }
@@ -195,12 +201,6 @@ void MainWindow::printPreviewSlot(QPrinter *printerPixmap)
     painterPixmap.end();
 }
 
-
-// 设置 image
-void MainWindow::setImage(QImage * newImg){
-    image = newImg;
-}
-
 void MainWindow::setRecentFileEnableSlot(){
     ui->actionRecent_file->setEnabled(false);
 }
@@ -218,14 +218,13 @@ void MainWindow::graySlot(){
             QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
             return;
         }
-        GrayCommand* command = new GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, 0);
+        Gray2ColorCommand* command = new Gray2ColorCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
         commandStack->push(command);
     }
 
 
     if(ui->actionGray_to_Clolr==QObject::sender())
     {
-        //用于测试
         commandStack->undo();
     }
 
@@ -282,8 +281,18 @@ void MainWindow::graySlot(){
 }
 
 
+//两个问题
+//1. save的文件不能再次打开，而saveas的可以
+//2. 执行打开时，希望能记住上次的打开路径
+
 // Question
-// 1. 第二个标签处理内容回到第一个标签内
-// 2. 双击选定直接保存图片容易覆盖原图，需要提示
-// 3. 双击选定 另存为 会直接保存原图，并不会保存选定的图片
+//// 1. 第二个标签处理内容回到第一个标签内
+//// 2. 双击选定直接保存图片容易覆盖原图，需要提示
+//// 3. 双击选定 另存为 会直接保存原图，并不会保存选定的图片
+// 4. 第二张图片灰度化负相 第一张再灰度化结果不对
+
+//4. 新加： view中 鼠标拖动移动图片
+//5. 新加： view中 按住ctrl滚轮缩放
+
+//6. History类实现
 

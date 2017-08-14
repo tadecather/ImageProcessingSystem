@@ -57,6 +57,9 @@ void ImageDisplay::updateImage()
 //展示一行“然而什么也没有”的字
 void ImageDisplay::showNULL()
 {
+    if(scene != NULL)
+        delete scene;
+    this->scene = new QGraphicsScene;
     scene->addText("然而什么也没有",QFont("Microsoft YaHei", 12, QFont::Normal));
     this->setScene(scene);
     this->show();
@@ -75,7 +78,10 @@ void ImageDisplay::setImage(QImage *image)
     {
         if(this->image != NULL)
             delete this->image;
+        if(this->scene != NULL)
+            delete this->scene;
         this->image = new QImage(*image);
+        scene = new QGraphicsScene;
         this->updateImage();
     }
     else
