@@ -2,8 +2,13 @@
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
 #include "imagegray.h"
+
+//请将include Command类写在这条注释以下，优化时全部丢到一个新建的.h中去
 #include "graycommand.h"
 #include "negetivecommand.h"
+#include "binaryzationcommand.h"
+//请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -258,6 +263,20 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::graySlot(){
 
+//    示例代码
+//    //此行需改消息来源
+//    if(ui->actionGraying==QObject::sender())
+//    {
+//        if(MyTabWidget::getNumber() == -1)
+//        {
+//            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+//            return;
+//        }
+//        //此行需要改command类名
+//        Color2GrayCommand* command = new Color2GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+//        myTab->pushCurrentStack(command);
+//    }
+
     if(ui->actionGraying==QObject::sender())
     {
         if(MyTabWidget::getNumber() == -1)
@@ -272,7 +291,7 @@ void MainWindow::graySlot(){
 
     if(ui->actionGray_to_Clolr==QObject::sender())
     {
-        myTab->popCurrentStack();
+
     }
 
     if(ui->actionNegetive==QObject::sender())
@@ -284,14 +303,17 @@ void MainWindow::graySlot(){
         }
         NegetiveCommand* command = new NegetiveCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
         myTab->pushCurrentStack(command);
-        qDebug()<<myTab->getImageDisplay(0, 1)->width();
     }
 
     if(ui->actionBinaryzation==QObject::sender())
     {
-        image = ImageGray::binaryzation(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actionBinaryzation operation...";
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        BinaryzationCommand* command = new BinaryzationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionLinear_Stretch==QObject::sender())
@@ -369,18 +391,14 @@ void MainWindow::transformSlot()
 }
 
 
-//两个问题
-//1. save的文件不能再次打开，而saveas的可以
-//2. 执行打开时，希望能记住上次的打开路径
+//Questions:
+//1. 所有（静态）算法均应直接在传入的指针上进行修改，不用return
 
-// Question
-//// 1. 第二个标签处理内容回到第一个标签内
-//// 2. 双击选定直接保存图片容易覆盖原图，需要提示
-//// 3. 双击选定 另存为 会直接保存原图，并不会保存选定的图片
-// 4. 第二张图片灰度化负相 第一张再灰度化结果不对
+//注意，如需关联已实现的算法和mainwindow，示例已经做好（请确保算法已经实现上面的第一个question）：
+//ExampleCommand类为command的示例类，只需复制代码，改改名字，添加一句实现即可
+//mainwindow.cpp中，command的多重if判断区，头部也有示例，复制粘贴 改改就行
 
-//4. 新加： view中 鼠标拖动移动图片
-//5. 新加： view中 按住ctrl滚轮缩放
+//需要实现： view中 鼠标拖动移动图片
+//需要实现： view中 按住ctrl滚轮缩放
 
-//6. History类实现
 

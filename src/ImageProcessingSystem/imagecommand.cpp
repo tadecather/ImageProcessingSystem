@@ -2,7 +2,7 @@
 
 ImageCommand::ImageCommand()
 {
-
+    firstTime = true;
 }
 
 QString* ImageCommand::getName()

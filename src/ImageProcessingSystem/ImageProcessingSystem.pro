@@ -20,11 +20,13 @@ SOURCES += main.cpp\
                 fileoperation.cpp \
                 graycommand.cpp \
 		imagtranslate.cpp \
-		 imagetrans.cpp\
+                imagetrans.cpp\
                 imagegray.cpp \
     negetivecommand.cpp \
     commandlabel.cpp \
-    imagecommand.cpp
+    imagecommand.cpp \
+    examplecommand.cpp \
+    binaryzationcommand.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
 	    imagetrans.h\
 	    negetivecommand.h \
 	    commandlabel.h \
-	    imagecommand.h
+	    imagecommand.h \
+    examplecommand.h \
+    binaryzationcommand.h
 
 
 FORMS    += mainwindow.ui

@@ -22,8 +22,11 @@ public:
     QImage* getFocusedImage();
     int getFocus();
     QUndoStack* getStack();
-    void addLabel(QString* name);
-    void removeLabel();
+    void addLabel(CommandLabel* label);
+    void popLabel();
+    void redoLabel();
+    void removeLabelAfterIndex(int index);
+    std::vector<CommandLabel*> getLabels();
 
 signals:
 

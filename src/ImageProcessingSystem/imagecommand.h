@@ -10,6 +10,7 @@ public:
     QString* getName();
 protected:
     QString* name;
+    bool firstTime = true;
 };
 
 #endif // IMAGECOMMAND_H

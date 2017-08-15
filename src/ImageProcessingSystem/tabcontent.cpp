@@ -6,8 +6,10 @@ TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 {
     commandStack = new QUndoStack(this);
     commandHistory = new QWidget(this);
+    commandHistory->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     historyLayout = new QHBoxLayout();
+    //historyLayout->setAlignment(Qt::AlignLeft);
     commandHistory->setLayout(historyLayout);
 
     this->imageDisplayL = new ImageDisplay(this);
@@ -115,7 +117,6 @@ void TabContent::changeFocusImageDisplaySlot()
 void TabContent::updateCommandHistory()
 {
     //重绘当前history
-    //QMessageBox::information(NULL, "重绘当前history", "重绘");
     commandHistory->repaint();
     commandHistory->show();
 }
@@ -132,24 +133,48 @@ QUndoStack* TabContent::getStack()
 }
 
 
-void TabContent::addLabel(QString* name)
+void TabContent::addLabel(CommandLabel* label)
 {
-    CommandLabel* label = new CommandLabel(name);
     labels.push_back(label);
     historyLayout->addWidget(label);
-    commandHistory->show();
+    qDebug()<<label->width()<<label->height();
+
     commandHistory->repaint();
+    commandHistory->show();
 }
 
-//删掉最后一个label
-void TabContent::removeLabel()
+//置灰最后一个label
+void TabContent::popLabel()
 {
-    if(labels.size() == 0)
-        return;
-    //历史记录里删掉、vector里删掉
-    historyLayout->removeWidget(labels[labels.size()-1]);
-    delete labels[labels.size()-1];
-    labels.erase(labels.end()-1);
+    labels[commandStack->index()]->setGray();
     commandHistory->show();
-    commandHistory->repaint();
+}
+//置蓝最后一个label
+void TabContent::redoLabel()
+{
+    labels[commandStack->index()-1]->setBlue();
+    commandHistory->show();
+}
+
+//删掉某个index之后的所有Label
+//调用：当undo了一条或一条以上command后并不redo，而是新建command时，此时需要去掉所有undo过的标签
+void TabContent::removeLabelAfterIndex(int index)
+{
+    int removeAmount = labels.size() - index;
+    for(int i = 0; i < removeAmount; i++)
+    {
+        //历史记录中移除最后一个widget(commandlabel)
+        historyLayout->removeWidget(labels.at(labels.size()-1));
+        //析构对应的对象
+        delete labels.at(labels.size()-1);
+        //vector中移除
+        labels.erase(labels.end()-1);
+    }
+    commandHistory->show();
+}
+
+//获得该content的labels
+std::vector<CommandLabel*> TabContent::getLabels()
+{
+    return this->labels;
 }

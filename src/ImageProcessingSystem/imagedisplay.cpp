@@ -95,10 +95,14 @@ void ImageDisplay::setImage(QImage *image)
 //缩放view内的图片至合适大小
 void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
 {
+    //小图就别放大了撒
+    if(this->image->width()<viewWidth && this->image->height()<viewHeight)
+        return;
+
+    qDebug()<<viewWidth<<image->width();
     double dx = (double)viewWidth/(double)this->image->width();
     double dy = (double)viewHeight/(double)this->image->height();
 
-    qDebug()<<"dx:"<<dx<<"ratio:"<<scaleRatio;
     //如果缩放过了
     if(dx == scaleRatio || dy == scaleRatio)
         return;
@@ -108,9 +112,7 @@ void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
     {
         //按宽度缩放
         this->scaleRatio = dx;
-        qDebug()<<"dx:"<<dx<<"viewWidth:"<<viewWidth<<"image width:"<<image->width();
         this->scale(dx, dx);
-
         this->show();
     }
     else
@@ -118,7 +120,6 @@ void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
         //按高度缩放
         this->scaleRatio = dy;
         this->scale(dy, dy);
-
         this->show();
     }
 }

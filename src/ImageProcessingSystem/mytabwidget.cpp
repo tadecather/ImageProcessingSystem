@@ -65,8 +65,6 @@ void MyTabWidget::newTab(QImage *image)
     //增加静态变量的值
     MyTabWidget::incNumber();
 
-    //qDebug()<<contentVec[0]->width();
-
     this->addTab(contentVec[MyTabWidget::number], "Label");
 
 
@@ -77,23 +75,13 @@ void MyTabWidget::newTab(QImage *image)
     connect(this, &QTabWidget::currentChanged, content, &TabContent::updateCommandHistory);
     this->setCurrentIndex(MyTabWidget::number);
 
-    //如果是第一次新建页面，应该立刻重绘
-    if(this->currentIndex() == 0)
-    {
-        TabContent* currTab = (TabContent*)this->widget(this->currentIndex());
-
-    }
-
-
-    //重绘结束
-
     //第一次新建页面，立刻重绘选项卡左边的图片
     if(this->currentIndex() == 0)
     {
-        double dx = (double)this->getImageDisplay(MyTabWidget::number, 0)->width()/(double)this->getImageDisplay(MyTabWidget::number, 0)->getImage()->width();
-        this->getImageDisplay(MyTabWidget::number, 0)->scale(dx, dx);
+        int viewWidth = this->getImageDisplay(MyTabWidget::number, 0)->width();
+        int viewHeight = this->getImageDisplay(MyTabWidget::number, 0)->height();
+        this->getImageDisplay(MyTabWidget::number, 0)->scaleToView(viewWidth, viewHeight);
     }
-    //重绘结束
 
     connect(this, &QTabWidget::currentChanged, this, &MyTabWidget::scaleDisplayToView);
 }
@@ -110,21 +98,47 @@ QUndoStack* MyTabWidget::getCurrentStack()
     return currentTabContent->getStack();
 }
 
-//执行一条command，顺便加到history里
-void MyTabWidget::pushCurrentStack(ImageCommand* command)
+TabContent* MyTabWidget::getCurrentContent()
 {
-    this->getCurrentStack()->push(command);
-    //并添加到历史列表中
-    TabContent* currentTabContent = (TabContent*)this->currentWidget();
-    currentTabContent->addLabel(command->getName());
+    return (TabContent*)this->widget(this->currentIndex());
 }
 
-//撤销一条指令，顺便从history里删除
+//执行一条command，并加到history里
+void MyTabWidget::pushCurrentStack(ImageCommand* command)
+{
+    TabContent* currentTabContent = (TabContent*)this->currentWidget();
+
+    if(this->getCurrentStack()->canRedo())
+    {
+        //如果做指令之前，有已undo未redo的指令，不管几条，将其label全部删掉，保证栈顶的command未undo
+        //这种情况下 undoFramework会自动删掉已undo未redo的所有指令本身，因此只要删label即可
+        currentTabContent->removeLabelAfterIndex(this->getCurrentStack()->index());
+    }
+
+    //push该条command，自动调用redo
+    this->getCurrentStack()->push(command);
+
+    //新建一个标签，传给tabContent进行处理，即添加到history中并显示
+    CommandLabel* label = new CommandLabel(command->getName());
+    //连接该标签的单击事件和doToCommand方法
+    connect(label, &CommandLabel::clicked, this, &MyTabWidget::doToCommand);
+    currentTabContent->addLabel(label);
+}
+
+//undo Stack栈顶的指令，并将label从history里置灰、显示
 void MyTabWidget::popCurrentStack()
 {
     this->getCurrentStack()->undo();
     TabContent* currentTabContent = (TabContent*)this->currentWidget();
-    currentTabContent->removeLabel();
+    currentTabContent->popLabel();
+}
+
+//redo Stack栈顶的指令，并将label从history里还原成蓝色、显示
+void MyTabWidget::redoCurrentStack()
+{
+    this->getCurrentStack()->redo();
+    TabContent* currentTabContent = (TabContent*)this->currentWidget();
+    currentTabContent->redoLabel();
 }
 
 //获得某一页的左右ImageDisplay，参数为Tab页数、左右ImageDisplay（0左1右）
@@ -154,6 +168,7 @@ void MyTabWidget::setImage(int index, int LR, QImage *image)
     }
 }
 
+//此number用于存储标签页数量，从0开始
 void MyTabWidget::incNumber()
 {
     MyTabWidget::number++;
@@ -180,6 +195,8 @@ void MyTabWidget::closeTabSlot(int index)
 
 void MyTabWidget::scaleDisplayToView(int index)
 {
+    if(this->number == 0)
+        return;
     ImageDisplay* displayL = getImageDisplay(currentIndex(), 0);
     ImageDisplay* displayR = getImageDisplay(currentIndex(), 1);
     if(displayL != NULL)
@@ -205,5 +222,52 @@ void MyTabWidget::addTabSlot()
 {
     ImageDisplay* sender = (ImageDisplay*)QObject::sender();
     this->newTab(sender->getImage());
+}
+
+//重要槽函数
+//undo/redo to 被点击的command
+void MyTabWidget::doToCommand()
+{
+    CommandLabel* label = (CommandLabel*)QObject::sender();
+    std::vector<CommandLabel*> labels = this->getCurrentContent()->getLabels();
+    //该label在labels中的序号，即它对应的command在stack中的序号
+    //序号：
+    int commandIndex = -1;
+    for(unsigned int i = 0; i < labels.size(); i++)
+    {
+        if(label == labels[i])
+        {
+            commandIndex = i;
+            break;
+        }
+    }
+    if(commandIndex == -1)
+    {
+        qDebug()<<"为什么 为什么不存在这条指令";
+        return;
+    }
+
+    //该command有两种情况:
+    //1. 未undo(蓝色)，则：从currentCommand undo至这条command的下一条command
+    //判断能否undo，只需判断它在stack中的序号，即刚刚求得的commandIndex，和stack.index的大小即可
+    if(commandIndex < this->getCurrentContent()->getStack()->index())
+    {
+        //从currentCommand undo到这条command的下一条
+        int commandNeedToUndo = this->getCurrentContent()->getStack()->index() - commandIndex-1;
+        for(int i = 0; i < commandNeedToUndo; i++)
+        {
+            this->popCurrentStack();
+        }
+    }
+    //2. 已undo 则从currentCommand redo至这条command
+    //即commandIndex >= this->getCurrentContent()->getStack()->index()
+    else
+    {
+        int commandNeedToRedo = commandIndex - this->getCurrentContent()->getStack()->index()+1;
+        for(int i = 0; i < commandNeedToRedo; i++)
+        {
+            this->redoCurrentStack();
+        }
+    }
 }
 

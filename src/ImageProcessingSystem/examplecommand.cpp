@@ -1,11 +1,15 @@
-#include "negetivecommand.h"
+#include "examplecommand.h"
 
-NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
+//这是样例command的实现
+
+
+//构造函数
+ExampleCommand::ExampleCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
 {
-    name = new QString("反相");
+    //这里填写指令名称，这个名称将显示在History里，如“灰度化”
+    name = new QString("名称");
 
     this->imageLeft = new QImage(*imageLeft);
-    //this->imageRight = imageRight;
     if(imageRight == NULL)
     {
         this->imageRight = NULL;
@@ -20,11 +24,18 @@ NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWid
     this->index = index;
 }
 
-void NegetiveCommand::redo()
+//redo方法
+void ExampleCommand::redo()
 {
-    //处理
+    //此处firstTime为bool类型变量
+    //用于标识此command是否为新建（第一次执行redo）
+    //因为撤销后的指令再执行"重做"操作会再次调用redo，导致处理两次
     if(firstTime)
-        ImageGray::negetiveImage(*imageAfter);
+    {
+        //此处调用算法类的静态方法处理*ImageAfter
+        //类似于
+        //ImageGray::negetiveImage(*imageAfter);
+    }
     if(this->imageRight == NULL)
     {
         mainTab->setImage(index, 1, imageAfter);
@@ -34,10 +45,12 @@ void NegetiveCommand::redo()
         mainTab->setImage(index, 0, imageRight);
         mainTab->setImage(index, 1, imageAfter);
     }
+    //标记为已经过处理
     firstTime = false;
 }
 
-void NegetiveCommand::undo()
+//undo方法
+void ExampleCommand::undo()
 {
     if(this->imageRight == NULL)
     {

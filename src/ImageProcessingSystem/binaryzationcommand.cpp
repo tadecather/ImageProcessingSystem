@@ -1,11 +1,10 @@
-#include "negetivecommand.h"
+#include "binaryzationcommand.h"
 
-NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
+BinaryzationCommand::BinaryzationCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
 {
-    name = new QString("反相");
+    name = new QString("二值化");
 
     this->imageLeft = new QImage(*imageLeft);
-    //this->imageRight = imageRight;
     if(imageRight == NULL)
     {
         this->imageRight = NULL;
@@ -20,11 +19,13 @@ NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWid
     this->index = index;
 }
 
-void NegetiveCommand::redo()
+
+void BinaryzationCommand::redo()
 {
-    //处理
     if(firstTime)
-        ImageGray::negetiveImage(*imageAfter);
+    {
+        ImageGray::binaryzation(*imageAfter);
+    }
     if(this->imageRight == NULL)
     {
         mainTab->setImage(index, 1, imageAfter);
@@ -37,7 +38,7 @@ void NegetiveCommand::redo()
     firstTime = false;
 }
 
-void NegetiveCommand::undo()
+void BinaryzationCommand::undo()
 {
     if(this->imageRight == NULL)
     {

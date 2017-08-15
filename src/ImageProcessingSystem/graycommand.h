@@ -6,7 +6,9 @@
 #include<QImage>
 #include <QString>
 #include "imagegray.h"
-#include"mytabwidget.h"
+//#include"mytabwidget.h"
+
+class MyTabWidget;
 
 class Color2GrayCommand : public ImageCommand
 {
