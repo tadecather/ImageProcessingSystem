@@ -2,12 +2,13 @@
 #ifndef GRAYCOMMAND_H
 #define GRAYCOMMAND_H
 
-#include<QUndoCommand>
+#include"imagecommand.h"
 #include<QImage>
+#include <QString>
 #include "imagegray.h"
 #include"mytabwidget.h"
 
-class Gray2ColorCommand : public QUndoCommand
+class Color2GrayCommand : public ImageCommand
 {
 private:
     QImage * imageLeft;
@@ -20,11 +21,11 @@ public:
 
 //     GrayCommand();
         QImage * color2Gray(QImage * img);
-    // QUndoCommand interface
 public:
-    Gray2ColorCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
+    Color2GrayCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
     void undo();
     void redo();
+    QString* getName();
     //bool mergeWith(const QUndoCommand *other);
 };
 

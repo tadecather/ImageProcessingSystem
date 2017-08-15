@@ -27,6 +27,7 @@ public:
 
     void connectChangeImage(TabContent* tab);
 
+
 private:
     QMenu *subMenu;
     QImage * image;
@@ -52,6 +53,9 @@ public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();
     void clearAllRecentSlot();
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // MAINWINDOW_H

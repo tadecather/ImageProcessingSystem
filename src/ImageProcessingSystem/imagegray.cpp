@@ -46,17 +46,17 @@ QImage *ImageGray::GrayToColor(QImage &image)
 // 图片负相处理
 QImage *ImageGray::negetiveImage(QImage &image)
 {
-    QImage * negImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
+    image.convertToFormat(QImage::Format_ARGB32);
 
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
             int Gray = qRed(image.pixel(i, j));
             QRgb newPixel = qRgb(255 - Gray, 255 - Gray, 255 - Gray);
-            negImage->setPixel(i, j, newPixel);
+            image.setPixel(i, j, newPixel);
         }
     }
 
-    return negImage;
+    return &image;
 }
 
 

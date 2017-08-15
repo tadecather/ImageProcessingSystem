@@ -3,6 +3,7 @@
 #include "fileoperation.h"
 #include "imagegray.h"
 #include "graycommand.h"
+#include "negetivecommand.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //初始化command stack
     commandStack = new QUndoStack(this);
     QUndoView* view = new QUndoView(commandStack);
-    view->show();
+    //view->show();
 
     myTab = new MyTabWidget(this);
     MainWindow::setCentralWidget(myTab);
@@ -114,7 +115,7 @@ void MainWindow::openFileSlot()
 
 void MainWindow::saveFileSlot()
 {
-    if(myTab->getFocusedImage() == NULL)
+    if(myTab->widget(myTab->currentIndex()) == NULL || myTab->getFocusedImage() == NULL)
     {
         QMessageBox::information(this, "没有图片被选中", "请打开或者选择一张图片！");
         return;
@@ -221,8 +222,30 @@ void MainWindow::setRecentFileEnableSlot(){
     ui->actionRecent_file->setEnabled(false);
 }
 
+//调整窗口大小后 所有图片缩放到合适大小
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    ImageDisplay* displayL = myTab->getImageDisplay(myTab->currentIndex(), 0);
+    ImageDisplay* displayR = myTab->getImageDisplay(myTab->currentIndex(), 1);
+    if(displayL != NULL)
+    {
+        if(displayL->getImage() == NULL) return;
+        int viewWidth = displayL->width();
+        int viewHeight = displayL->height();
+        qDebug()<<viewWidth<<viewHeight;
+        displayL->scaleToView(viewWidth, viewHeight);
+    }
 
+    if(displayR != NULL)
+    {
+        if(displayR->getImage() == NULL) return;
+        int viewWidth = displayR->width();
+        int viewHeight = displayR->height();
+        qDebug()<<viewWidth<<viewHeight;
+        displayR->scaleToView(viewWidth, viewHeight);
+    }
 
+}
 
 
 void MainWindow::graySlot(){
@@ -234,22 +257,26 @@ void MainWindow::graySlot(){
             QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
             return;
         }
-        Gray2ColorCommand* command = new Gray2ColorCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
-        commandStack->push(command);
+        Color2GrayCommand* command = new Color2GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
 
 
     if(ui->actionGray_to_Clolr==QObject::sender())
     {
-        commandStack->undo();
+        myTab->popCurrentStack();
     }
 
     if(ui->actionNegetive==QObject::sender())
     {
-        //test
-        image = ImageGray::negetiveImage(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actionNegetive operation...";
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        NegetiveCommand* command = new NegetiveCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
+        qDebug()<<myTab->getImageDisplay(0, 1)->width();
     }
 
     if(ui->actionBinaryzation==QObject::sender())

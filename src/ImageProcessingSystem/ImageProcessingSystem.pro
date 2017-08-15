@@ -21,7 +21,9 @@ SOURCES += main.cpp\
                 graycommand.cpp \
 		imagtranslate.cpp \
                 imagegray.cpp \
-    negetivecommand.cpp
+    negetivecommand.cpp \
+    commandlabel.cpp \
+    imagecommand.cpp
 
 HEADERS  += mainwindow.h \
 		imagedisplay.h \
@@ -31,6 +33,8 @@ HEADERS  += mainwindow.h \
                 graycommand.h \
 		imagtranslate.h \
     imagegray.h \
-    negetivecommand.h
+    negetivecommand.h \
+    commandlabel.h \
+    imagecommand.h
 
 FORMS    += mainwindow.ui
