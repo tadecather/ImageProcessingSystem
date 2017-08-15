@@ -17,21 +17,28 @@ SOURCES += main.cpp\
 		imagedisplay.cpp \
 		mytabwidget.cpp \
 		tabcontent.cpp \
-		fileoperation.cpp \
-		graycommand.cpp \
+                fileoperation.cpp \
+                graycommand.cpp \
 		imagtranslate.cpp \
-    imagegray.cpp \
-    imagetrans.cpp
+		 imagetrans.cpp\
+                imagegray.cpp \
+    negetivecommand.cpp \
+    commandlabel.cpp \
+    imagecommand.cpp
 
 
 HEADERS  += mainwindow.h \
 		imagedisplay.h \
 		mytabwidget.h \
 		tabcontent.h \
-		fileoperation.h \
-		graycommand.h \
+                fileoperation.h \
+                graycommand.h \
 		imagtranslate.h \
-    imagegray.h \
-    imagetrans.h
+	    imagegray.h \
+	    imagetrans.h\
+	    negetivecommand.h \
+	    commandlabel.h \
+	    imagecommand.h
+
 
 FORMS    += mainwindow.ui

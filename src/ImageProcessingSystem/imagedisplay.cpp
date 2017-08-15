@@ -12,6 +12,7 @@ ImageDisplay::ImageDisplay(QWidget *parent):QGraphicsView(parent)
     this->image = NULL;
     this->scene = new QGraphicsScene;
     this->showNULL();
+    this->scaleRatio = 1;
 }
 
 //使用现有的image对象初始化一个ImageDisplay对象，QWidget *parent用于初始化其父类QGraphicsView
@@ -36,7 +37,7 @@ ImageDisplay::ImageDisplay(QWidget *parent, QImage* image):QGraphicsView(parent)
     {
         //如果传入image对象为空
     }
-
+    this->scaleRatio = 1;
 }
 
 ImageDisplay::~ImageDisplay()
@@ -57,7 +58,10 @@ void ImageDisplay::updateImage()
 //展示一行“然而什么也没有”的字
 void ImageDisplay::showNULL()
 {
-    scene->addText("然而什么也没有",QFont("Microsoft YaHei", 12, QFont::Normal));
+    if(scene != NULL)
+        delete scene;
+    this->scene = new QGraphicsScene;
+    //scene->addText("然而什么也没有",QFont("Microsoft YaHei", 12, QFont::Normal));
     this->setScene(scene);
     this->show();
 }
@@ -88,10 +92,35 @@ void ImageDisplay::setImage(QImage *image)
 
 }
 
-//改变内部scence的大小
-void ImageDisplay::resizeScene(int x, int y)
+//缩放view内的图片至合适大小
+void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
 {
-    this->scene->setSceneRect(0,0,x,y);
+    double dx = (double)viewWidth/(double)this->image->width();
+    double dy = (double)viewHeight/(double)this->image->height();
+
+    qDebug()<<"dx:"<<dx<<"ratio:"<<scaleRatio;
+    //如果缩放过了
+    if(dx == scaleRatio || dy == scaleRatio)
+        return;
+
+    this->resetTransform();
+    if(image->width() >= image->height())
+    {
+        //按宽度缩放
+        this->scaleRatio = dx;
+        qDebug()<<"dx:"<<dx<<"viewWidth:"<<viewWidth<<"image width:"<<image->width();
+        this->scale(dx, dx);
+
+        this->show();
+    }
+    else
+    {
+        //按高度缩放
+        this->scaleRatio = dy;
+        this->scale(dy, dy);
+
+        this->show();
+    }
 }
 
 //鼠标按下的时间，内timer用于区分单击双击，建议值200到300
@@ -137,6 +166,16 @@ void ImageDisplay::contextMenuEvent(QContextMenuEvent *event)
     menu->clear();
     menu->addAction(newTabAction);
     menu->exec(QCursor::pos());
+}
+
+double ImageDisplay::getScaleRatio()
+{
+    return this->scaleRatio;
+}
+
+void ImageDisplay::setScaleRatio(double s)
+{
+    this->scaleRatio = s;
 }
 
 //发射根据当前图片新建Tab信号

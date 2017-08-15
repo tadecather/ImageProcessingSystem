@@ -23,12 +23,15 @@ public:
     QImage* getImage();
     void setImage(QImage* image);
     void newTab();
-    void resizeScene(int x, int y);
+    void resize(double x, double y);
     void mousePressEvent(QMouseEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
     void setFocusBorder(bool b);
+    void scaleToView(int viewWidth, int viewHeight);
     void createMenuActions();
     void contextMenuEvent(QContextMenuEvent *event);
+    double getScaleRatio();
+    void setScaleRatio(double s);
 
 private:
     QImage* image;
@@ -36,6 +39,7 @@ private:
     QTimer* timer;
     QMenu* menu;
     QAction* newTabAction;
+    double scaleRatio;
 
 signals:
     void newTabSignal();

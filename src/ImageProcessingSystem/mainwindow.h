@@ -26,7 +26,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void setImage(QImage *newImg);
+    void connectChangeImage(TabContent* tab);
+
 
 private:
     QMenu *subMenu;
@@ -34,6 +35,7 @@ private:
     //暂时定义图片的高和宽
     int imageHeight, imagewidth;
     QString saveFileName;
+    QString currentPath;
     QStringList* recentFileList;
     MyTabWidget* myTab;
     QUndoStack* commandStack;
@@ -53,6 +55,9 @@ public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();
     void clearAllRecentSlot();
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // MAINWINDOW_H
