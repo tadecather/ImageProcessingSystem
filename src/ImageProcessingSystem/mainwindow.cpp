@@ -31,6 +31,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionBalance_Histogram,&QAction::triggered,this,&MainWindow::graySlot);
 
 
+    //transformation 共5个操作
+    connect(ui->actionClockwise_Rotation,&QAction::triggered,this,&MainWindow::transformSlot);
+    connect(ui->actionHorizontal_Inversion,&QAction::triggered,this,&MainWindow::transformSlot);
+    connect(ui->actionVertical_Inversion,&QAction::triggered,this,&MainWindow::transformSlot);
+    connect(ui->actionTranspose,&QAction::triggered,this,&MainWindow::transformSlot);
+    connect(ui->actionAnticlockwise_Rotation,&QAction::triggered,this,&MainWindow::transformSlot);
+
+
     subMenu = new QMenu();
     FileOperation::readFromRecentFile(*recentFileList);
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
@@ -279,6 +287,43 @@ void MainWindow::graySlot(){
         qDebug()<<"actionBalance_Histogram operation...";
     }
 
+}
+
+void MainWindow::transformSlot()
+{
+
+    if(ui->actionClockwise_Rotation==QObject::sender())
+    {
+        //test
+        image = imagetrans::imgClockwiseRotate90(*image);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+    if(ui->actionAnticlockwise_Rotation==QObject::sender())
+    {
+        //test
+        image = imagetrans::imgAnticlockwiseRotate90(*image);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+    if(ui->actionHorizontal_Inversion==QObject::sender())
+    {
+        image = imagetrans::imgHorizontalInversion(*image);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+    if(ui->actionVertical_Inversion==QObject::sender())
+    {
+        image = imagetrans::imgVerticalInversion(*image);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+    if(ui->actionTranspose==QObject::sender())
+    {
+        image = imagetrans::imgTranspose(*image);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
 }
 
 

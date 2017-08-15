@@ -20,7 +20,8 @@ SOURCES += main.cpp\
 		fileoperation.cpp \
 		graycommand.cpp \
 		imagtranslate.cpp \
-    imagegray.cpp
+    imagegray.cpp \
+    imagetrans.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -30,6 +31,7 @@ HEADERS  += mainwindow.h \
 		fileoperation.h \
 		graycommand.h \
 		imagtranslate.h \
-    imagegray.h
+    imagegray.h \
+    imagetrans.h
 
 FORMS    += mainwindow.ui

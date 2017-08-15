@@ -12,6 +12,7 @@
 #include <QUndoView>
 #include "imagedisplay.h"
 #include "MyTabWidget.h"
+#include "imagetrans.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,6 +47,7 @@ private slots:
     void exitSlot();
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
+    void transformSlot();
 
 public slots:
     void setRecentFileEnableSlot();
