@@ -128,24 +128,32 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
         {
             oneline.push_back((float)qRed(*(line+j)));
         }
-        //   顺手先对行进行哈尔小波变换
-        for(int j =0;2*j< newWidth;++j)
-        {
-            oneline.at(j) = 0.5*(oneline.at(2*j)+oneline.at(2*j+1));
-            oneline.at(j+newWidth/2) = 0.5*(oneline.at(2*j)-oneline.at(2*j+1));
-        }
+
+
         //将每一行加入矩阵中
         tmp.push_back(oneline);
     }
-    //对列进行哈尔小波变换
+    vector<vector<float>> ltmp = tmp;
+
     for(int i =0;i<newWidth;++i)
     {
         for(int j=0;2*j<newHeight;++j)
         {
             //tmp.at(a).at(b)
             //a表示行，b表示列，a行b列
-            tmp.at(j).at(i) = 0.5*(tmp.at(2*j).at(i)+tmp.at(2*j).at(i));
-            tmp.at(j+newHeight/2).at(i) = 0.5*(tmp.at(2*j).at(i)-tmp.at(2*j).at(i));
+            ltmp.at(j).at(i) =(tmp.at(2*j).at(i)+tmp.at(2*j+1).at(i))/2;
+            ltmp.at(j+newHeight/2).at(i) = (tmp.at(2*j).at(i)-tmp.at(2*j+1).at(i))/2;
+        }
+    }
+
+    vector<vector<float>> result = ltmp;
+    //对列进行哈尔小波变换
+
+    for(int i = 0;i < newHeight;++i)
+    {
+        for(int j = 0;2*j<newWidth;++j){
+            result.at(i).at(j) = (ltmp.at(i).at(2*j)+ltmp.at(i).at(2*j+1))/2;
+            result.at(i).at(j+newWidth/2) =(ltmp.at(i).at(2*j)-ltmp.at(i).at(2*j+1))/2;
         }
     }
     //再将tmp矩阵的值赋回图像
@@ -154,7 +162,7 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
         QRgb *line = (QRgb*)newImg->scanLine(i);
         for(int j =0;j < newWidth;++j)
         {
-            int grey = (int) tmp.at(i).at(j);
+            int grey = (int) result.at(i).at(j);
             line[j] = qRgb(grey,grey,grey);
         }
     }

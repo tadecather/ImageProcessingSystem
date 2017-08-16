@@ -401,11 +401,16 @@ void MainWindow::transDomainProcessSlot()
     if(ui->actionWavelet_Transform==QObject::sender())
     {
         qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = myTab->getImageDisplay(0, 1)->getImage();
         image = imgTransformdomainprocessing
                 ::imgSetValidPic(*image);
         qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = imgTransformdomainprocessing::
+                imgHaarWaveletTransform(*image);
         myTab->setImage(0, 1, image);
         qDebug()<<"actiontransformation operation...";
+        //
+
     }
 }
 
