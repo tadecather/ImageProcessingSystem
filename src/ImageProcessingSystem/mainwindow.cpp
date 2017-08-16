@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
-    connect(ui->actionWavelet_Transform,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+//    connect(ui->menuWavelet_Transform->action,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
 
 
@@ -489,7 +489,7 @@ void MainWindow::enhancementSlot()
 void MainWindow::transDomainProcessSlot()
 {
 
-    if(ui->actionWavelet_Transform==QObject::sender())
+    if(ui->menuWavelet_Transform==QObject::sender())
     {
         qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
         image = imgTransformdomainprocessing

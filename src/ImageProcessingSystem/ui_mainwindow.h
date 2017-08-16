@@ -18,7 +18,6 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -50,9 +49,6 @@ public:
     QAction *actionZoom;
     QAction *actionClockwise_Rotation;
     QAction *actionAnticlockwise_Rotation;
-    QAction *actionFourier_transform;
-    QAction *actionWavelet_Transform;
-    QAction *actionDiscrete_Cosine_Transform;
     QAction *actionOtsu_Law_Threshold_Segmentation;
     QAction *actionInteractive_Threshold_Segmentation;
     QAction *actionRobert_Operator;
@@ -76,6 +72,17 @@ public:
     QAction *actionGradient_Sharpening;
     QAction *actionLaplacian_Sharpening;
     QAction *actionImage_Quality_Assessment;
+    QAction *actionHaar_Wavelet;
+    QAction *actionHaar_Wavelet_Inversion;
+    QAction *actionset_whf_coeffecient_zero;
+    QAction *actionHard_Threshold_Method;
+    QAction *actionSoft_Threshold_Method;
+    QAction *actionDCT;
+    QAction *actionDCTI;
+    QAction *actionFFT;
+    QAction *actionIFFT;
+    QAction *actionEFFT;
+    QAction *actionIEFFT;
     QWidget *centralwidget;
     QVBoxLayout *verticalLayout;
     QMenuBar *menubar;
@@ -83,6 +90,9 @@ public:
     QMenu *menuGrey;
     QMenu *menuTransformation;
     QMenu *menuTdp;
+    QMenu *menuWavelet_Transform;
+    QMenu *menuDiscrete_Cosine_Transform;
+    QMenu *menuFourier_Transform;
     QMenu *menuDivision;
     QMenu *menuEnhancement;
     QMenu *menuANN;
@@ -140,12 +150,6 @@ public:
         actionClockwise_Rotation->setObjectName(QStringLiteral("actionClockwise_Rotation"));
         actionAnticlockwise_Rotation = new QAction(MainWindow);
         actionAnticlockwise_Rotation->setObjectName(QStringLiteral("actionAnticlockwise_Rotation"));
-        actionFourier_transform = new QAction(MainWindow);
-        actionFourier_transform->setObjectName(QStringLiteral("actionFourier_transform"));
-        actionWavelet_Transform = new QAction(MainWindow);
-        actionWavelet_Transform->setObjectName(QStringLiteral("actionWavelet_Transform"));
-        actionDiscrete_Cosine_Transform = new QAction(MainWindow);
-        actionDiscrete_Cosine_Transform->setObjectName(QStringLiteral("actionDiscrete_Cosine_Transform"));
         actionOtsu_Law_Threshold_Segmentation = new QAction(MainWindow);
         actionOtsu_Law_Threshold_Segmentation->setObjectName(QStringLiteral("actionOtsu_Law_Threshold_Segmentation"));
         actionInteractive_Threshold_Segmentation = new QAction(MainWindow);
@@ -192,11 +196,32 @@ public:
         actionLaplacian_Sharpening->setObjectName(QStringLiteral("actionLaplacian_Sharpening"));
         actionImage_Quality_Assessment = new QAction(MainWindow);
         actionImage_Quality_Assessment->setObjectName(QStringLiteral("actionImage_Quality_Assessment"));
+        actionHaar_Wavelet = new QAction(MainWindow);
+        actionHaar_Wavelet->setObjectName(QStringLiteral("actionHaar_Wavelet"));
+        actionHaar_Wavelet_Inversion = new QAction(MainWindow);
+        actionHaar_Wavelet_Inversion->setObjectName(QStringLiteral("actionHaar_Wavelet_Inversion"));
+        actionset_whf_coeffecient_zero = new QAction(MainWindow);
+        actionset_whf_coeffecient_zero->setObjectName(QStringLiteral("actionset_whf_coeffecient_zero"));
+        actionHard_Threshold_Method = new QAction(MainWindow);
+        actionHard_Threshold_Method->setObjectName(QStringLiteral("actionHard_Threshold_Method"));
+        actionSoft_Threshold_Method = new QAction(MainWindow);
+        actionSoft_Threshold_Method->setObjectName(QStringLiteral("actionSoft_Threshold_Method"));
+        actionDCT = new QAction(MainWindow);
+        actionDCT->setObjectName(QStringLiteral("actionDCT"));
+        actionDCTI = new QAction(MainWindow);
+        actionDCTI->setObjectName(QStringLiteral("actionDCTI"));
+        actionFFT = new QAction(MainWindow);
+        actionFFT->setObjectName(QStringLiteral("actionFFT"));
+        actionIFFT = new QAction(MainWindow);
+        actionIFFT->setObjectName(QStringLiteral("actionIFFT"));
+        actionEFFT = new QAction(MainWindow);
+        actionEFFT->setObjectName(QStringLiteral("actionEFFT"));
+        actionIEFFT = new QAction(MainWindow);
+        actionIEFFT->setObjectName(QStringLiteral("actionIEFFT"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         verticalLayout = new QVBoxLayout(centralwidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -209,6 +234,12 @@ public:
         menuTransformation->setObjectName(QStringLiteral("menuTransformation"));
         menuTdp = new QMenu(menubar);
         menuTdp->setObjectName(QStringLiteral("menuTdp"));
+        menuWavelet_Transform = new QMenu(menuTdp);
+        menuWavelet_Transform->setObjectName(QStringLiteral("menuWavelet_Transform"));
+        menuDiscrete_Cosine_Transform = new QMenu(menuTdp);
+        menuDiscrete_Cosine_Transform->setObjectName(QStringLiteral("menuDiscrete_Cosine_Transform"));
+        menuFourier_Transform = new QMenu(menuTdp);
+        menuFourier_Transform->setObjectName(QStringLiteral("menuFourier_Transform"));
         menuDivision = new QMenu(menubar);
         menuDivision->setObjectName(QStringLiteral("menuDivision"));
         menuEnhancement = new QMenu(menubar);
@@ -262,9 +293,21 @@ public:
         menuTransformation->addSeparator();
         menuTransformation->addAction(actionClockwise_Rotation);
         menuTransformation->addAction(actionAnticlockwise_Rotation);
-        menuTdp->addAction(actionFourier_transform);
-        menuTdp->addAction(actionWavelet_Transform);
-        menuTdp->addAction(actionDiscrete_Cosine_Transform);
+        menuTdp->addAction(menuFourier_Transform->menuAction());
+        menuTdp->addAction(menuWavelet_Transform->menuAction());
+        menuTdp->addAction(menuDiscrete_Cosine_Transform->menuAction());
+        menuWavelet_Transform->addAction(actionHaar_Wavelet);
+        menuWavelet_Transform->addAction(actionHaar_Wavelet_Inversion);
+        menuWavelet_Transform->addAction(actionset_whf_coeffecient_zero);
+        menuWavelet_Transform->addAction(actionHard_Threshold_Method);
+        menuWavelet_Transform->addAction(actionSoft_Threshold_Method);
+        menuDiscrete_Cosine_Transform->addAction(actionDCT);
+        menuDiscrete_Cosine_Transform->addAction(actionDCTI);
+        menuFourier_Transform->addAction(actionFFT);
+        menuFourier_Transform->addAction(actionIFFT);
+        menuFourier_Transform->addSeparator();
+        menuFourier_Transform->addAction(actionEFFT);
+        menuFourier_Transform->addAction(actionIEFFT);
         menuDivision->addAction(actionOtsu_Law_Threshold_Segmentation);
         menuDivision->addAction(actionInteractive_Threshold_Segmentation);
         menuDivision->addSeparator();
@@ -297,8 +340,6 @@ public:
 
         retranslateUi(MainWindow);
 
-
-
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
 
@@ -328,9 +369,6 @@ public:
         actionZoom->setText(QApplication::translate("MainWindow", "Zoom", 0));
         actionClockwise_Rotation->setText(QApplication::translate("MainWindow", "Clockwise Rotation", 0));
         actionAnticlockwise_Rotation->setText(QApplication::translate("MainWindow", "Anticlockwise Rotation", 0));
-        actionFourier_transform->setText(QApplication::translate("MainWindow", "Fourier Transform", 0));
-        actionWavelet_Transform->setText(QApplication::translate("MainWindow", "Wavelet Transform", 0));
-        actionDiscrete_Cosine_Transform->setText(QApplication::translate("MainWindow", "Discrete Cosine Transform", 0));
         actionOtsu_Law_Threshold_Segmentation->setText(QApplication::translate("MainWindow", "Otsu Law Threshold Segmentation", 0));
         actionInteractive_Threshold_Segmentation->setText(QApplication::translate("MainWindow", "Interactive Threshold Segmentation", 0));
         actionRobert_Operator->setText(QApplication::translate("MainWindow", "Robert Operator", 0));
@@ -354,10 +392,24 @@ public:
         actionGradient_Sharpening->setText(QApplication::translate("MainWindow", "Gradient Sharpening", 0));
         actionLaplacian_Sharpening->setText(QApplication::translate("MainWindow", "Laplacian Sharpening", 0));
         actionImage_Quality_Assessment->setText(QApplication::translate("MainWindow", "Image Quality Assessment", 0));
+        actionHaar_Wavelet->setText(QApplication::translate("MainWindow", "Haar Wavelet", 0));
+        actionHaar_Wavelet_Inversion->setText(QApplication::translate("MainWindow", "Haar Wavelet Inversion", 0));
+        actionset_whf_coeffecient_zero->setText(QApplication::translate("MainWindow", "Set WHF Coefficient Zero", 0));
+        actionHard_Threshold_Method->setText(QApplication::translate("MainWindow", "Hard Threshold Method", 0));
+        actionSoft_Threshold_Method->setText(QApplication::translate("MainWindow", "Soft Threshold Method", 0));
+        actionDCT->setText(QApplication::translate("MainWindow", "DCT", 0));
+        actionDCTI->setText(QApplication::translate("MainWindow", "DCTI", 0));
+        actionFFT->setText(QApplication::translate("MainWindow", "FFT", 0));
+        actionIFFT->setText(QApplication::translate("MainWindow", "IFFT", 0));
+        actionEFFT->setText(QApplication::translate("MainWindow", "EFFT", 0));
+        actionIEFFT->setText(QApplication::translate("MainWindow", "IEFFT", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuGrey->setTitle(QApplication::translate("MainWindow", "Gray", 0));
         menuTransformation->setTitle(QApplication::translate("MainWindow", "Transformation", 0));
         menuTdp->setTitle(QApplication::translate("MainWindow", "TDP", 0));
+        menuWavelet_Transform->setTitle(QApplication::translate("MainWindow", "Wavelet Transform", 0));
+        menuDiscrete_Cosine_Transform->setTitle(QApplication::translate("MainWindow", "Discrete Cosine Transform", 0));
+        menuFourier_Transform->setTitle(QApplication::translate("MainWindow", "Fourier Transform", 0));
         menuDivision->setTitle(QApplication::translate("MainWindow", "Segmentation", 0));
         menuEnhancement->setTitle(QApplication::translate("MainWindow", "Enhancement", 0));
         menuANN->setTitle(QApplication::translate("MainWindow", "ANN", 0));
