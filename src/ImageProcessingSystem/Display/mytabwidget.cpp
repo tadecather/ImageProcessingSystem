@@ -248,16 +248,21 @@ void MyTabWidget::doToCommand()
     }
 
     //该command有两种情况:
-    //1. 未undo(蓝色)，则：从currentCommand undo至这条command的下一条command
+    //1. 未undo(蓝色)，则：从currentCommand undo至这条command的
     //判断能否undo，只需判断它在stack中的序号，即刚刚求得的commandIndex，和stack.index的大小即可
     if(commandIndex < this->getCurrentContent()->getStack()->index())
     {
-        //从currentCommand undo到这条command的下一条
-        int commandNeedToUndo = this->getCurrentContent()->getStack()->index() - commandIndex-1;
+        //从currentCommand undo到这
+        int commandNeedToUndo = this->getCurrentContent()->getStack()->index() - commandIndex -1;
+        qDebug()<<commandNeedToUndo;
+        //第一条command也得支持撤销（致刚打开图片的状态）
+        if(commandNeedToUndo == 0)
+            this->popCurrentStack();
         for(int i = 0; i < commandNeedToUndo; i++)
         {
             this->popCurrentStack();
         }
+
     }
     //2. 已undo 则从currentCommand redo至这条command
     //即commandIndex >= this->getCurrentContent()->getStack()->index()

@@ -7,7 +7,11 @@
 #include "graycommand.h"
 #include "negetivecommand.h"
 #include "binaryzationcommand.h"
+#include "gnoisecommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
+
+//临时include 及时清空
+#include "imageenhancement.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,6 +48,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionTranspose,&QAction::triggered,this,&MainWindow::transformSlot);
     connect(ui->actionAnticlockwise_Rotation,&QAction::triggered,this,&MainWindow::transformSlot);
 
+    //Enhancement 共9个操作
+    connect(ui->actionGaussian_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionSalt_and_Pepper_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionMean_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionMedian_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionWeighted_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionChoose_Mask_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionGradient_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionLaplacian_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    	
     //    TDP 共三个大模块
     connect(ui->actionWavelet_Transform,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
@@ -392,6 +407,54 @@ void MainWindow::transformSlot()
         image = imagetrans::imgTranspose(*image);
         myTab->setImage(0, 1, image);
         qDebug()<<"actiontransformation operation...";
+    }
+}
+
+void MainWindow::enhancementSlot()
+{
+    if(ui->actionGaussian_Noise==QObject::sender())
+    {
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        //对话框输入三个值：mu, sigma, k
+
+        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
+    }
+    if(ui->actionSalt_and_Pepper_Noise==QObject::sender())
+    {
+
+    }
+    if(ui->actionMean_Smoothing==QObject::sender())
+    {
+
+    }
+    if(ui->actionMedian_Smoothing==QObject::sender())
+    {
+
+    }
+    if(ui->actionWeighted_Smoothing==QObject::sender())
+    {
+
+    }
+    if(ui->actionChoose_Mask_Smoothing==QObject::sender())
+    {
+
+    }
+    if(ui->actionGradient_Sharpening==QObject::sender())
+    {
+
+    }
+    if(ui->actionLaplacian_Sharpening==QObject::sender())
+    {
+
+    }
+    if(ui->actionImage_Quality_Assessment==QObject::sender())
+    {
+
     }
 }
 

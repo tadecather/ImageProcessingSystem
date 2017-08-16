@@ -10,7 +10,6 @@ CommandLabel::CommandLabel(QString *name)
     this->setFont(font);
     this->setStyleSheet("color:white; border-radius:3px;background-color: #66ccff;");
     this->setAutoFillBackground(true);
-    //this->setPalette(QPalette(QColor(102, 204, 255)));
 }
 
 QString* CommandLabel::getName()

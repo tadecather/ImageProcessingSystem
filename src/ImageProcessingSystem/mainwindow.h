@@ -50,6 +50,7 @@ private slots:
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
     void transformSlot();
+    void enhancementSlot();
     void transDomainProcessSlot();
 
 public slots:
