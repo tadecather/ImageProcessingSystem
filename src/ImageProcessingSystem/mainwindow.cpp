@@ -39,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionTranspose,&QAction::triggered,this,&MainWindow::transformSlot);
     connect(ui->actionAnticlockwise_Rotation,&QAction::triggered,this,&MainWindow::transformSlot);
 
+    //    TDP 共三个大模块
+    connect(ui->actionWavelet_Transform,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
+
+
 
     subMenu = new QMenu();
     FileOperation::readFromRecentFile(*recentFileList);
@@ -367,6 +372,22 @@ void MainWindow::transformSlot()
         qDebug()<<"actiontransformation operation...";
     }
 }
+
+void MainWindow::transDomainProcessSlot()
+{
+
+    if(ui->actionWavelet_Transform==QObject::sender())
+    {
+        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = imgTransformdomainprocessing
+                ::imgSetValidPic(*image);
+        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+}
+
+
 
 
 //两个问题

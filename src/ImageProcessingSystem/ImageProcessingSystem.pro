@@ -24,7 +24,8 @@ SOURCES += main.cpp\
                 imagegray.cpp \
     negetivecommand.cpp \
     commandlabel.cpp \
-    imagecommand.cpp
+    imagecommand.cpp \
+    imgtransformdomainprocessing.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
 	    imagetrans.h\
 	    negetivecommand.h \
 	    commandlabel.h \
-	    imagecommand.h
+	    imagecommand.h \
+    imgtransformdomainprocessing.h
 
 
 FORMS    += mainwindow.ui

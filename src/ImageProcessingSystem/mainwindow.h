@@ -13,7 +13,7 @@
 #include "imagedisplay.h"
 #include "MyTabWidget.h"
 #include "imagetrans.h"
-
+#include "imgtransformdomainprocessing.h"
 namespace Ui {
 class MainWindow;
 }
@@ -50,6 +50,7 @@ private slots:
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
     void transformSlot();
+    void transDomainProcessSlot();
 
 public slots:
     void setRecentFileEnableSlot();
