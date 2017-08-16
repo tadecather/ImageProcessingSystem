@@ -14,43 +14,49 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-		imagedisplay.cpp \
-		mytabwidget.cpp \
-		tabcontent.cpp \
-                fileoperation.cpp \
-                graycommand.cpp \
-		imagtranslate.cpp \
-                imagetrans.cpp\
-                imagegray.cpp \
-    negetivecommand.cpp \
-    commandlabel.cpp \
-    imagecommand.cpp \
-    imgtransformdomainprocessing.cpp\
-    examplecommand.cpp \
-    binaryzationcommand.cpp \
-    historyarea.cpp \
-    imageenhancement.cpp \
-    gnoisecommand.cpp
+        Display/imagedisplay.cpp \
+        Display/mytabwidget.cpp \
+        Display/tabcontent.cpp \
+        Utilities/fileoperation.cpp \
+        ImageCommands/graycommand.cpp \
+        Utilities/imagtranslate.cpp \
+        Algorithms/imagetrans.cpp\
+        Algorithms/imagegray.cpp \
+        ImageCommands/negetivecommand.cpp \
+        Display/commandlabel.cpp \
+        ImageCommands/imagecommand.cpp \
+        Algorithms/imgtransformdomainprocessing.cpp\
+        ImageCommands/examplecommand.cpp \
+        ImageCommands/binaryzationcommand.cpp \
+        Display\historyarea.cpp \
+        Algorithms/imageenhancement.cpp \
+        ImageCommands/gnoisecommand.cpp
 
 
 
 HEADERS  += mainwindow.h \
-		imagedisplay.h \
-		mytabwidget.h \
-		tabcontent.h \
-                fileoperation.h \
-                graycommand.h \
-		imagtranslate.h \
-	    imagegray.h \
-	    imagetrans.h\
-	    negetivecommand.h \
-	    commandlabel.h \
-	    imagecommand.h \
-    imgtransformdomainprocessing.h\
-    examplecommand.h \
-    binaryzationcommand.h \
-    historyarea.h \
-    imageenhancement.h \
-    gnoisecommand.h
+        Display/imagedisplay.h \
+        Display/mytabwidget.h \
+        Display/tabcontent.h \
+        Utilities/fileoperation.h \
+        ImageCommands/graycommand.h \
+        Utilities/imagtranslate.h \
+        Algorithms/imagegray.h \
+        Algorithms/imagetrans.h\
+        ImageCommands/negetivecommand.h \
+        Display/commandlabel.h \
+        ImageCommands/imagecommand.h \
+        Algorithms/imgtransformdomainprocessing.h\
+        ImageCommands/examplecommand.h \
+        ImageCommands/binaryzationcommand.h \
+        Display/historyarea.h \
+        Algorithms/imageenhancement.h \
+        ImageCommands/gnoisecommand.h
 
 FORMS    += mainwindow.ui
+
+INCLUDEPATH += Algorithms/
+INCLUDEPATH += Display/
+INCLUDEPATH += ImageCommands/
+INCLUDEPATH += Utilities/
+
