@@ -27,7 +27,9 @@ SOURCES += main.cpp\
     imagecommand.cpp \
     examplecommand.cpp \
     binaryzationcommand.cpp \
-    historyarea.cpp
+    historyarea.cpp \
+    imageenhancement.cpp \
+    gnoisecommand.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -44,7 +46,9 @@ HEADERS  += mainwindow.h \
 	    imagecommand.h \
     examplecommand.h \
     binaryzationcommand.h \
-    historyarea.h
+    historyarea.h \
+    imageenhancement.h \
+    gnoisecommand.h
 
 
 FORMS    += mainwindow.ui
