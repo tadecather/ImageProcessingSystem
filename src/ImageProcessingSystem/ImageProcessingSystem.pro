@@ -25,11 +25,13 @@ SOURCES += main.cpp\
     negetivecommand.cpp \
     commandlabel.cpp \
     imagecommand.cpp \
+    imgtransformdomainprocessing.cpp\
     examplecommand.cpp \
     binaryzationcommand.cpp \
     historyarea.cpp \
     imageenhancement.cpp \
     gnoisecommand.cpp
+
 
 
 HEADERS  += mainwindow.h \
@@ -44,11 +46,11 @@ HEADERS  += mainwindow.h \
 	    negetivecommand.h \
 	    commandlabel.h \
 	    imagecommand.h \
+    imgtransformdomainprocessing.h\
     examplecommand.h \
     binaryzationcommand.h \
     historyarea.h \
     imageenhancement.h \
     gnoisecommand.h
-
 
 FORMS    += mainwindow.ui

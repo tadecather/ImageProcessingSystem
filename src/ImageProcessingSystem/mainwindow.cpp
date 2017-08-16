@@ -58,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionGradient_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
     connect(ui->actionLaplacian_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    	
+    //    TDP 共三个大模块
+    connect(ui->actionWavelet_Transform,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
 
 
 
@@ -453,6 +457,23 @@ void MainWindow::enhancementSlot()
 
     }
 }
+
+void MainWindow::transDomainProcessSlot()
+{
+
+    if(ui->actionWavelet_Transform==QObject::sender())
+    {
+        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = imgTransformdomainprocessing
+                ::imgSetValidPic(*image);
+        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        myTab->setImage(0, 1, image);
+        qDebug()<<"actiontransformation operation...";
+    }
+}
+
+
+
 
 //Questions:
 //1. 所有（静态）算法均应直接在传入的指针上进行修改，不用return

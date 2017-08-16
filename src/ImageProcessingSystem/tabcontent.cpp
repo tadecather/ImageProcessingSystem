@@ -1,5 +1,4 @@
-#include "tabcontent.h"
-
+﻿#include "tabcontent.h"
 
 //构造两个空imagedisplay并使用image参数初始化左边的imagedisplay
 TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
