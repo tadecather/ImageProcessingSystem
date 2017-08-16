@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QCursor>
+#include <QWheelEvent>
 
 //展示图片用的ImageDisplay类
 class ImageDisplay : public QGraphicsView
@@ -30,6 +31,7 @@ public:
     void scaleToView(int viewWidth, int viewHeight);
     void createMenuActions();
     void contextMenuEvent(QContextMenuEvent *event);
+    void wheelEvent(QWheelEvent* event);
     double getScaleRatio();
     void setScaleRatio(double s);
 

@@ -14,9 +14,6 @@ class MyTabWidget;
 class ExampleCommand : public ImageCommand
 {
 private:
-    QImage * imageLeft;
-    QImage * imageRight;
-    QImage * imageAfter;
     int index;
     MyTabWidget* mainTab;
 public:

@@ -13,6 +13,10 @@ ImageDisplay::ImageDisplay(QWidget *parent):QGraphicsView(parent)
     this->scene = new QGraphicsScene;
     this->showNULL();
     this->scaleRatio = 1;
+    this->setDragMode(QGraphicsView::ScrollHandDrag);
+    this->setStyleSheet(QString::fromUtf8("border:2px solid gray"));
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 //使用现有的image对象初始化一个ImageDisplay对象，QWidget *parent用于初始化其父类QGraphicsView
@@ -38,6 +42,7 @@ ImageDisplay::ImageDisplay(QWidget *parent, QImage* image):QGraphicsView(parent)
         //如果传入image对象为空
     }
     this->scaleRatio = 1;
+    this->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 ImageDisplay::~ImageDisplay()
@@ -99,13 +104,14 @@ void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
     if(this->image->width()<viewWidth && this->image->height()<viewHeight)
         return;
 
-    qDebug()<<viewWidth<<image->width();
     double dx = (double)viewWidth/(double)this->image->width();
     double dy = (double)viewHeight/(double)this->image->height();
 
     //如果缩放过了
     if(dx == scaleRatio || dy == scaleRatio)
+    {
         return;
+    }
 
     this->resetTransform();
     if(image->width() >= image->height())
@@ -127,6 +133,7 @@ void ImageDisplay::scaleToView(int viewWidth, int viewHeight)
 //鼠标按下的时间，内timer用于区分单击双击，建议值200到300
 void ImageDisplay::mousePressEvent(QMouseEvent *event)
 {
+    QGraphicsView::mousePressEvent(event);
     timer->start(200);
 }
 
@@ -148,9 +155,9 @@ void ImageDisplay::mouseClick()
 void ImageDisplay::setFocusBorder(bool b)
 {
     if(b)
-        this->setStyleSheet(QString::fromUtf8("border:1px solid black"));
+        this->setStyleSheet(QString::fromUtf8("border:2px solid black"));
     else
-        this->setStyleSheet(QString::fromUtf8("border:1px solid gray"));
+        this->setStyleSheet(QString::fromUtf8("border:2px solid gray"));
 }
 
 //初始化右键菜单
@@ -167,6 +174,26 @@ void ImageDisplay::contextMenuEvent(QContextMenuEvent *event)
     menu->clear();
     menu->addAction(newTabAction);
     menu->exec(QCursor::pos());
+}
+
+void ImageDisplay::wheelEvent(QWheelEvent* event)
+{
+    if(event->delta()<0)
+    {
+        if(scaleRatio <= 0.1)
+            return;
+        this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        this->scale(0.93, 0.93);
+        scaleRatio-=0.07;
+    }
+    if(event->delta()>0)
+    {
+        if(scaleRatio >= 5)
+            return;
+        this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        this->scale(1.07, 1.07);
+        scaleRatio+=0.07;
+    }
 }
 
 double ImageDisplay::getScaleRatio()

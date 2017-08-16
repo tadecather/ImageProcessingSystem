@@ -5,12 +5,18 @@
 TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 {
     commandStack = new QUndoStack(this);
+
+    //history
     commandHistory = new QWidget(this);
     commandHistory->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
     historyLayout = new QHBoxLayout();
-    //historyLayout->setAlignment(Qt::AlignLeft);
     commandHistory->setLayout(historyLayout);
+
+    //滚动区域
+    historyArea = new HistoryArea(this);
+    historyArea->setWidget(commandHistory);
+    historyArea->setWidgetResizable(true);
+    historyArea->setStyleSheet("background-color:transparent;");
 
     this->imageDisplayL = new ImageDisplay(this);
     imageDisplayL->setImage(image);
@@ -27,11 +33,12 @@ TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 
     layout->addWidget(imageDisplayL, 0, 0, 1, 1);
     layout->addWidget(imageDisplayR, 0, 1, 1, 1);
-    layout->addWidget(commandHistory, 1, 0, 1, 2);
+    //layout->addWidget(commandHistory, 1, 0, 1, 2);
+    layout->addWidget(historyArea, 1, 0, 1, 2);
 
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
-    layout->setRowStretch(0, 2);
+    layout->setRowStretch(0, 14);
     layout->setRowStretch(1, 1);
 
     this->setLayout(layout);
@@ -114,12 +121,6 @@ void TabContent::changeFocusImageDisplaySlot()
     }
 }
 
-void TabContent::updateCommandHistory()
-{
-    //重绘当前history
-    commandHistory->repaint();
-    commandHistory->show();
-}
 
 int TabContent::getFocus()
 {
@@ -137,9 +138,7 @@ void TabContent::addLabel(CommandLabel* label)
 {
     labels.push_back(label);
     historyLayout->addWidget(label);
-    qDebug()<<label->width()<<label->height();
 
-    commandHistory->repaint();
     commandHistory->show();
 }
 
@@ -170,7 +169,6 @@ void TabContent::removeLabelAfterIndex(int index)
         //vector中移除
         labels.erase(labels.end()-1);
     }
-    commandHistory->show();
 }
 
 //获得该content的labels

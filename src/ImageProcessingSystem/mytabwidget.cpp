@@ -72,7 +72,7 @@ void MyTabWidget::newTab(QImage *image)
     connect(content->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
     connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
     //连接切换tab页面和tabcontent重绘history
-    connect(this, &QTabWidget::currentChanged, content, &TabContent::updateCommandHistory);
+    //connect(this, &QTabWidget::currentChanged, content, &TabContent::updateCommandHistory);
     this->setCurrentIndex(MyTabWidget::number);
 
     //第一次新建页面，立刻重绘选项卡左边的图片

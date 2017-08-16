@@ -13,9 +13,6 @@ class MyTabWidget;
 class Color2GrayCommand : public ImageCommand
 {
 private:
-    QImage * imageLeft;
-    QImage * imageRight;
-    QImage * imageAfter;
     int index;
     MyTabWidget* mainTab;
 

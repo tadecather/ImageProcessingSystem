@@ -11,9 +11,6 @@ class MyTabWidget;
 class BinaryzationCommand : public ImageCommand
 {
 private:
-    QImage * imageLeft;
-    QImage * imageRight;
-    QImage * imageAfter;
     int index;
     MyTabWidget* mainTab;
 public:

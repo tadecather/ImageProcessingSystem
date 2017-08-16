@@ -398,7 +398,8 @@ void MainWindow::transformSlot()
 //ExampleCommand类为command的示例类，只需复制代码，改改名字，添加一句实现即可
 //mainwindow.cpp中，command的多重if判断区，头部也有示例，复制粘贴 改改就行
 
-//需要实现： view中 鼠标拖动移动图片
-//需要实现： view中 按住ctrl滚轮缩放
 
 
+//content中的history改为qscrollarea
+
+//新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。

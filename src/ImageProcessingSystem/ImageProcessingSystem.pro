@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     commandlabel.cpp \
     imagecommand.cpp \
     examplecommand.cpp \
-    binaryzationcommand.cpp
+    binaryzationcommand.cpp \
+    historyarea.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
 	    commandlabel.h \
 	    imagecommand.h \
     examplecommand.h \
-    binaryzationcommand.h
+    binaryzationcommand.h \
+    historyarea.h
 
 
 FORMS    += mainwindow.ui

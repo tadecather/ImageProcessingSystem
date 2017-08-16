@@ -2,8 +2,10 @@
 
 CommandLabel::CommandLabel(QString *name)
 {
-    this->setText(name->split("", QString::SkipEmptyParts).join("\n"));
+    this->setText(*name);
+    this->setAlignment(Qt::AlignCenter);
     this->name = new QString(*name);
+    this->setFixedWidth(200);
     QFont font ("Microsoft YaHei", 17, QFont::Light);
     this->setFont(font);
     this->setStyleSheet("color:white; border-radius:3px;background-color: #66ccff;");
