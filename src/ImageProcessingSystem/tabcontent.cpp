@@ -4,10 +4,18 @@
 TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 {
     commandStack = new QUndoStack(this);
-    commandHistory = new QWidget(this);
 
+    //history
+    commandHistory = new QWidget(this);
+    commandHistory->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     historyLayout = new QHBoxLayout();
     commandHistory->setLayout(historyLayout);
+
+    //滚动区域
+    historyArea = new HistoryArea(this);
+    historyArea->setWidget(commandHistory);
+    historyArea->setWidgetResizable(true);
+    historyArea->setStyleSheet("background-color:transparent;");
 
     this->imageDisplayL = new ImageDisplay(this);
     imageDisplayL->setImage(image);
@@ -24,11 +32,12 @@ TabContent::TabContent(QWidget *parent, QImage *image) : QWidget(parent)
 
     layout->addWidget(imageDisplayL, 0, 0, 1, 1);
     layout->addWidget(imageDisplayR, 0, 1, 1, 1);
-    layout->addWidget(commandHistory, 1, 0, 1, 2);
+    //layout->addWidget(commandHistory, 1, 0, 1, 2);
+    layout->addWidget(historyArea, 1, 0, 1, 2);
 
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
-    layout->setRowStretch(0, 2);
+    layout->setRowStretch(0, 14);
     layout->setRowStretch(1, 1);
 
     this->setLayout(layout);
@@ -111,13 +120,6 @@ void TabContent::changeFocusImageDisplaySlot()
     }
 }
 
-void TabContent::updateCommandHistory()
-{
-    //重绘当前history
-    //QMessageBox::information(NULL, "重绘当前history", "重绘");
-    commandHistory->repaint();
-    commandHistory->show();
-}
 
 int TabContent::getFocus()
 {
@@ -131,24 +133,45 @@ QUndoStack* TabContent::getStack()
 }
 
 
-void TabContent::addLabel(QString* name)
+void TabContent::addLabel(CommandLabel* label)
 {
-    CommandLabel* label = new CommandLabel(name);
     labels.push_back(label);
     historyLayout->addWidget(label);
+
     commandHistory->show();
-    commandHistory->repaint();
 }
 
-//删掉最后一个label
-void TabContent::removeLabel()
+//置灰最后一个label
+void TabContent::popLabel()
 {
-    if(labels.size() == 0)
-        return;
-    //历史记录里删掉、vector里删掉
-    historyLayout->removeWidget(labels[labels.size()-1]);
-    delete labels[labels.size()-1];
-    labels.erase(labels.end()-1);
+    labels[commandStack->index()]->setGray();
     commandHistory->show();
-    commandHistory->repaint();
+}
+//置蓝最后一个label
+void TabContent::redoLabel()
+{
+    labels[commandStack->index()-1]->setBlue();
+    commandHistory->show();
+}
+
+//删掉某个index之后的所有Label
+//调用：当undo了一条或一条以上command后并不redo，而是新建command时，此时需要去掉所有undo过的标签
+void TabContent::removeLabelAfterIndex(int index)
+{
+    int removeAmount = labels.size() - index;
+    for(int i = 0; i < removeAmount; i++)
+    {
+        //历史记录中移除最后一个widget(commandlabel)
+        historyLayout->removeWidget(labels.at(labels.size()-1));
+        //析构对应的对象
+        delete labels.at(labels.size()-1);
+        //vector中移除
+        labels.erase(labels.end()-1);
+    }
+}
+
+//获得该content的labels
+std::vector<CommandLabel*> TabContent::getLabels()
+{
+    return this->labels;
 }

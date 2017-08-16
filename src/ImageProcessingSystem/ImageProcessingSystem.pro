@@ -20,12 +20,16 @@ SOURCES += main.cpp\
                 fileoperation.cpp \
                 graycommand.cpp \
 		imagtranslate.cpp \
-		 imagetrans.cpp\
+                imagetrans.cpp\
                 imagegray.cpp \
     negetivecommand.cpp \
     commandlabel.cpp \
     imagecommand.cpp \
-    imgtransformdomainprocessing.cpp
+    imgtransformdomainprocessing.cpp\
+    examplecommand.cpp \
+    binaryzationcommand.cpp \
+    historyarea.cpp
+
 
 
 HEADERS  += mainwindow.h \
@@ -40,7 +44,9 @@ HEADERS  += mainwindow.h \
 	    negetivecommand.h \
 	    commandlabel.h \
 	    imagecommand.h \
-    imgtransformdomainprocessing.h
-
+    imgtransformdomainprocessing.h\
+    examplecommand.h \
+    binaryzationcommand.h \
+    historyarea.h
 
 FORMS    += mainwindow.ui

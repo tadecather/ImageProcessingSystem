@@ -64,7 +64,6 @@ QImage *ImageGray::negetiveImage(QImage &image)
 QImage *ImageGray::binaryzation(QImage &image)
 {
     QImage * binImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
-
     // 获取二值化的阀值
     int keyValue = getKeyValue(&image);
     qDebug() << keyValue;

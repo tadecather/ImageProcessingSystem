@@ -8,6 +8,7 @@
 #include <QUndoGroup>
 #include "imagecommand.h"
 #include <QUndoStack>
+#include <algorithm>
 #include "tabcontent.h"
 
 //自定义的TabWidget类
@@ -30,8 +31,10 @@ public:
     void newTab(QImage *image);
     QImage* getFocusedImage();
     QUndoStack* getCurrentStack();
+    TabContent* getCurrentContent();
     void pushCurrentStack(ImageCommand* command);
     void popCurrentStack();
+    void redoCurrentStack();
     static void incNumber();
     static void decNumber();
     static int getNumber();
@@ -40,6 +43,7 @@ private slots:
     void scaleDisplayToView(int index);
 public slots:
     void addTabSlot();
+    void doToCommand();
 
 };
 
