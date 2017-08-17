@@ -128,8 +128,6 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
         {
             oneline.push_back((float)qRed(*(line+j)));
         }
-
-
         //将每一行加入矩阵中
         tmp.push_back(oneline);
     }
@@ -168,5 +166,60 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
     }
     return newImg;
 }
+
+void imgTransformdomainprocessing::imgHaarWaveletTransformInversion(QImage *img)
+{
+    int height = img->height(),
+        width = img->width();
+    vector<vector<float>> tmp;
+    for(int i = 0;i < height;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j<width;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        tmp.push_back(oneline);
+    }
+
+     vector<vector<float>> ltmp =tmp;
+    for(int i = 0;2*i < height;++i)
+    {
+        for(int j = 0;j<width;++j){
+            ltmp.at(2*i).at(j)   = tmp.at(i).at(j)+tmp.at(i+height/2).at(j);
+            ltmp.at(2*i+1).at(j) = tmp.at(i).at(j)-tmp.at(i+height/2).at(j);
+        }
+    }
+//    for(int i =0;i<newWidth;++i)
+//    {
+//        for(int j=0;2*j<newHeight;++j)
+//        {
+//            //tmp.at(a).at(b)
+//            //a表示行，b表示列，a行b列
+//            ltmp.at(j).at(i) =(tmp.at(2*j).at(i)+tmp.at(2*j+1).at(i))/2;
+//            ltmp.at(j+newHeight/2).at(i) = (tmp.at(2*j).at(i)-tmp.at(2*j+1).at(i))/2;
+//        }
+//    }
+    vector<vector<float>> result = ltmp;
+   for(int i = 0;i < height;++i)
+   {
+       for(int j = 0;2*j<width;++j){
+           result.at(i).at(2*j)   = ltmp.at(i).at(j)+ltmp.at(i).at(j+width/2);
+           result.at(i).at(2*j+1) = ltmp.at(i).at(j)-ltmp.at(i).at(j+width/2);
+       }
+   }
+   for(int i = 0;i < height;++i)
+   {
+       QRgb *line = (QRgb*)img->scanLine(i);
+       for(int j =0;j < width;++j)
+       {
+           int grey = (int) result.at(i).at(j);
+           line[j] = qRgb(grey,grey,grey);
+       }
+   }
+}
+
+
 
 
