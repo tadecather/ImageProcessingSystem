@@ -262,7 +262,6 @@ void MyTabWidget::doToCommand()
         {
             this->popCurrentStack();
         }
-
     }
     //2. 已undo 则从currentCommand redo至这条command
     //即commandIndex >= this->getCurrentContent()->getStack()->index()

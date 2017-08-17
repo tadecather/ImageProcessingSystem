@@ -7,13 +7,13 @@ int ImageEnhancement::phase = 0;
 
 ImageEnhancement::ImageEnhancement()
 {
-    srand((unsigned int)(time(NULL)));
 }
 //以下是外部接口
 
 //添加高斯噪声。mu为均值, sigma为方差，k为噪声系数，均需外部传入
 void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, int k)
 {
+    srand((unsigned int)(time(NULL)));
     int width = 0;
     int height = 0;
     //得到一个从左到右，从上到下遍历的RGB像素点QList
@@ -25,10 +25,6 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
         int Red = qRed(pixel) + k*GenerateGaussianNoise(0, 1);
         if(Red > 255) Red = 255;
         if(Red < 0) Red = 0;
-        if(i==1000)
-        {
-            qDebug()<<qRed(pixel)<<Red;
-        }
         int Green = qGreen(pixel)+ k*GenerateGaussianNoise(0, 1);
         if(Green > 255) Green = 255;
         if(Green < 0) Green = 0;
@@ -41,6 +37,31 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
     }
     delete rgbList;
     qDebug()<<"done";
+}
+
+void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
+{
+    srand((unsigned int)(time(NULL)));
+    //像素点个数
+    for(int i = 0; i < image->width()*image->height()*(1.0-snr); i++)
+    {
+
+        //qDebug()<<x<<y<<image->width()<<image->height();
+        QRgb newPixel;
+        if(rand()%2)
+        {
+            newPixel = qRgb(0, 0, 0);
+        }
+        else
+        {
+            newPixel = qRgb(255, 255, 255);
+        }
+        int x = (int)(rand()*1.0/RAND_MAX*(double)image->width());
+        if(x == image->width()) x--;
+        int y = (int)(rand()*1.0/RAND_MAX*(double)image->height());
+        if(y == image->height()) y--;
+        image->setPixel(x, y, newPixel);
+    }
 }
 
 //以下是内部方法

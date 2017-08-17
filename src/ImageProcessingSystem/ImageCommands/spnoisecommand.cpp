@@ -1,10 +1,10 @@
-#include "gnoisecommand.h"
+#include "spnoisecommand.h"
 
-//mu为均值，sigma为方差，k为系数
-GNoiseCommand::GNoiseCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index, double mu, double sigma, double k)
+//构造函数
+SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, double snr)
 {
     //这里填写指令名称，这个名称将显示在History里，如“灰度化”
-    name = new QString("高斯噪声");
+    name = new QString("椒盐噪声");
 
     this->imageLeft = new QImage(*imageLeft);
     if(imageRight == NULL)
@@ -19,14 +19,12 @@ GNoiseCommand::GNoiseCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget*
     }
     this->mainTab = mainTab;
     this->index = index;
-    this->mu = mu;
-    this->sigma = sigma;
-    this->k = k;
+    this->snr = snr;
+    qDebug()<<snr;
 }
 
-
 //redo方法
-void GNoiseCommand::redo()
+void SpNoiseCommand::redo()
 {
     //此处firstTime为bool类型变量
     //用于标识此command是否为新建（第一次执行redo）
@@ -35,7 +33,8 @@ void GNoiseCommand::redo()
     {
         //此处调用算法类的静态方法处理*ImageAfter
         //类似于
-        ImageEnhancement::AddGaussianNoise(imageAfter, mu, sigma, k);
+        //ImageGray::negetiveImage(*imageAfter);
+        ImageEnhancement::AddSaltPepperNoise(imageAfter, snr);
     }
     if(this->imageRight == NULL)
     {
@@ -51,7 +50,7 @@ void GNoiseCommand::redo()
 }
 
 //undo方法
-void GNoiseCommand::undo()
+void SpNoiseCommand::undo()
 {
     if(this->imageRight == NULL)
     {

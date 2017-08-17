@@ -31,7 +31,11 @@ SOURCES += main.cpp\
         Display\historyarea.cpp \
         Algorithms/imageenhancement.cpp \
         ImageCommands/gnoisecommand.cpp \
+        Display/gnoiseargsdialog.cpp \
+        ImageCommands/spnoisecommand.cpp \
+        Display/spnoiseargsdialog.cpp \
         Algorithms/dct.cpp
+
 
 
 
@@ -53,6 +57,9 @@ HEADERS  += mainwindow.h \
         Display/historyarea.h \
         Algorithms/imageenhancement.h \
         ImageCommands/gnoisecommand.h \
+        Display/gnoiseargsdialog.h \
+        ImageCommands/spnoisecommand.h \
+        Display/spnoiseargsdialog.h \
         Algorithms/dct.h
 
 FORMS    += mainwindow.ui

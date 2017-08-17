@@ -11,6 +11,7 @@ class ImageEnhancement
 public:
     ImageEnhancement();
     static void AddGaussianNoise(QImage* image, double mu, double sigma, int k);
+    static void AddSaltPepperNoise(QImage* image, double snr);
 private:
     static double GenerateGaussianNoise(double mu, double sigma);
     static double V1, V2, S;
