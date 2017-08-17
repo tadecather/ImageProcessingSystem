@@ -30,7 +30,12 @@ SOURCES += main.cpp\
         ImageCommands/binaryzationcommand.cpp \
         Display\historyarea.cpp \
         Algorithms/imageenhancement.cpp \
-        ImageCommands/gnoisecommand.cpp
+        ImageCommands/gnoisecommand.cpp \
+        Display/gnoiseargsdialog.cpp \
+        ImageCommands/spnoisecommand.cpp \
+        Display/spnoiseargsdialog.cpp \
+        Algorithms/dct.cpp
+
 
 
 
@@ -51,7 +56,11 @@ HEADERS  += mainwindow.h \
         ImageCommands/binaryzationcommand.h \
         Display/historyarea.h \
         Algorithms/imageenhancement.h \
-        ImageCommands/gnoisecommand.h
+        ImageCommands/gnoisecommand.h \
+        Display/gnoiseargsdialog.h \
+        ImageCommands/spnoisecommand.h \
+        Display/spnoiseargsdialog.h \
+        Algorithms/dct.h
 
 FORMS    += mainwindow.ui
 

@@ -8,10 +8,13 @@
 #include "negetivecommand.h"
 #include "binaryzationcommand.h"
 #include "gnoisecommand.h"
+#include "spnoisecommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
-//临时include 及时清空
-#include "imageenhancement.h"
+//请将include display类写在以下
+#include "gnoiseargsdialog.h"
+#include "spnoiseargsdialog.h"
+//以上
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -60,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
-    connect(ui->actionWavelet_Transform,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+//    connect(ui->menuWavelet_Transform->action,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
 
 
@@ -77,6 +80,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     myTab = new MyTabWidget(this);
     MainWindow::setCentralWidget(myTab);
+
+    //测试代码
+
 
 /*
     QImage *image = new QImage;
@@ -420,13 +426,35 @@ void MainWindow::enhancementSlot()
             return;
         }
         //对话框输入三个值：mu, sigma, k
-
-        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        GNoiseArgsDialog* dialog = new GNoiseArgsDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getMu(), dialog->getSigma(), dialog->getK());
+        dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionSalt_and_Pepper_Noise==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        //对话框输入一个值：snr
+        SPNoiseArgsDialog* dialog = new SPNoiseArgsDialog(this);
+        qDebug()<<dialog->getSnr();
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        qDebug()<<"snr:"<<dialog->getSnr();
+        SpNoiseCommand* command = new SpNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSnr());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionMean_Smoothing==QObject::sender())
     {
@@ -461,7 +489,7 @@ void MainWindow::enhancementSlot()
 void MainWindow::transDomainProcessSlot()
 {
 
-    if(ui->actionWavelet_Transform==QObject::sender())
+    if(ui->menuWavelet_Transform==QObject::sender())
     {
         image = myTab->getImageDisplay(0, 1)->getImage();
         image = imgTransformdomainprocessing
