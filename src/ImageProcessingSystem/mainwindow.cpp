@@ -12,6 +12,7 @@
 
 //临时include 及时清空
 #include "imageenhancement.h"
+#include "dct.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -60,7 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
-//    connect(ui->menuWavelet_Transform->action,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
 
 
@@ -469,6 +471,18 @@ void MainWindow::transDomainProcessSlot()
         qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
         myTab->setImage(0, 1, image);
         qDebug()<<"actiontransformation operation...";
+    }
+
+    if(ui->actionDCT==QObject::sender())
+    {
+        image = DCT::dctNewImage(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+
+        myTab->setImage(0, 1, image);
+    }
+
+    if(ui->actionDCTI==QObject::sender())
+    {
+
     }
 }
 
