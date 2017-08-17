@@ -64,6 +64,55 @@ void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
     }
 }
 
+QImage *ImageEnhancement::MeanSmoothing(QImage* image)
+{
+//    int width = image->width();
+//    int height = image->height();
+//    //得到一个从左到右，从上到下遍历的RGB像素点QList
+//    QList<QRgb> * rgbList =  ImagTranslate::imageToList(*image, width, height);
+//    QList<QRgb> * afterList = new QList<QRgb>();
+//    //每个像素点，取周围9个均值
+//    for(int i = 0; i < width * height; i++){
+//        QRgb pixel = rgbList->at(i);
+
+
+//        QRgb newPixel = qRgb(Red, Green, Blue);
+//    }
+//    // i % width 得到目前像素点的列值，i /width 得到当前像素点的行值
+//    image->setPixel(i / height , i % height, newPixel);
+//    delete rgbList;
+//    qDebug()<<"done";
+    int x = 0;
+    int y = 0;
+    QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());
+    for(x = 0; x < image->width(); x++)
+    {
+        for(y = 0; y < image->height(); y++)
+        {
+            //得到周围8个
+            int sum = 0;
+            int times = 0;
+            for(int a = x - 1; a <= x + 1; a++)
+            {
+                for(int b = y - 1; b <= y + 1; b++)
+                {
+                    if(a>=0&&a<image->width()&&b>=0&&b<image->height())
+                    {
+                        times++;
+                        sum+=qRed(image->pixel(a, b));
+                    }
+                }
+            }
+            sum = sum / 9;
+            QRgb newPixel = qRgb(sum, sum, sum);
+            afterSmooth->setPixel(x, y, newPixel);
+        }
+    }
+    delete image;
+    image = NULL;
+    return afterSmooth;
+}
+
 //以下是内部方法
 
 //产生高斯噪声数值
