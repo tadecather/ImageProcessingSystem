@@ -1,5 +1,7 @@
 #include "dct.h"
 
+#include "fileoperation.h"
+
 #include <QDebug>
 #include <math.h>
 
@@ -48,6 +50,9 @@ QImage *DCT::dctNewImage(QImage &image)
     // 将数据进行分块，传入参数为 图像灰度表示矩阵，以及分块的参数
     QVector<QVector<QVector <double>>> grayImageDivoded = getDivodedImage(grayImage, 8);
 
+    // 删除无用的 grayImage 矩阵
+    delete(*grayImage);
+
     // 获取处理系数矩阵与转置矩阵
     QVector<QVector<double>> translateMatrix = getTranslateMatrix(8);
     QVector<QVector<double>> translateMatrixT = matrixTranslate(translateMatrix);
@@ -62,73 +67,43 @@ QImage *DCT::dctNewImage(QImage &image)
         }
     }
 
-    qDebug() << grayImageDivoded[0][0];
-
     int newWidth = image.width() + ((8 - (image.width() % 8)) % 8);
     int newHeight = image.height() + ((8 - (image.height() % 8)) % 8);
 
     QImage * dctImage = new QImage(newWidth, newHeight, QImage::Format_RGB888);
     for(int i = 0; i < newWidth; i++){
         for( int j = 0; j < newHeight; j++){
-               double grayDCT = grayImageDivoded[(i/8)*(newHeight/8)+j/8][i%8][j%8];
+               double grayDCT = grayImageDivoded[(i/8)*(newHeight/8)+j/8][i%8][j%8] * 255;
                QRgb pixel = qRgb(grayDCT, grayDCT, grayDCT);
                dctImage->setPixel(i , j, pixel);
         }
     }
+
+
+    //保存处理之后的频域 图
+    FileOperation::save(*dctImage, "dct.jpg");
 
 
     // 恢复DCT
+    // 暂时将数据逆变换放在了 正变换之后直接进行，因为需要保存数据等一些其他的操作
 
 
-
-    QImage *dctedImage = dctINewImage(grayImageDivoded);
-
-
-
-
-
-    return dctedImage;
-}
-
-// 分块逆DCT
-QImage *DCT::dctINewImage(QImage &image){
-
-    QVector<QVector<double>> grayImage = getGrayImageMatrix(image);
-    qDebug() << grayImage[1];
-
-    QVector<QVector<QVector <double>>> grayImageDivoded = getDivodedImage(grayImage, 8);
-
-    QVector<QVector<double>> translateMatrix = getTranslateMatrix(8);
-    QVector<QVector<double>> translateMatrixT = matrixTranslate(translateMatrix);
-
-    for(int i = 0; i < grayImageDivoded.length(); i++){
-        QVector<QVector<double>> tempMatrix = mulityMatrix(translateMatrixT, grayImageDivoded[i]);
-        QVector<QVector<double>> tempMatrix0 = mulityMatrix(tempMatrix, translateMatrix);
-        grayImageDivoded[i] = tempMatrix0;
-
-        if( i % 1000 == 0){
-            qDebug() << i;
-        }
+    // 选择依次保留图片
+    for(int n = 1; n < 8 + 1; n++){
+        QVector<QVector<QVector<double>>> partDataMatrix = getPartData(grayImageDivoded, n);
+        //传入图扩大之后图片的宽和高，和数组，进行复原操作
+        QImage *dctedImage = dctINewImage(partDataMatrix, newWidth, newHeight);
+        QString name = "dct" + QString::number(n, 10) + ".jpg";
+        FileOperation::save(*dctedImage, name);
+        delete(dctedImage);
     }
 
-    int newWidth = image.width();
-    int newHeight = image.height();
-
-
-    QImage * dctImage = new QImage(newWidth, newHeight, QImage::Format_RGB888);
-    for(int i = 0; i < newWidth; i++){
-        for( int j = 0; j < newHeight; j++){
-               double grayDCT = grayImageDivoded[(i/8)*(newHeight/8)+j/8][i%8][j%8];
-               QRgb pixel = qRgb(grayDCT, grayDCT, grayDCT);
-               dctImage->setPixel(i , j, pixel);
-        }
-    }
     return dctImage;
 }
 
 
 // 分块逆DCT
-QImage *DCT::dctINewImage(QVector<QVector<QVector <double>>> dctData){
+QImage *DCT::dctINewImage(QVector<QVector<QVector <double>>> dctData, int newWidth, int newHeight){
 
 
 
@@ -144,9 +119,6 @@ QImage *DCT::dctINewImage(QVector<QVector<QVector <double>>> dctData){
             qDebug() << i;
         }
     }
-
-    int newWidth = dctData.length();
-    int newHeight = dctData[0].length();
 
 
     QImage * dctImage = new QImage(newWidth, newHeight, QImage::Format_RGB888);
@@ -313,6 +285,29 @@ QVector<QVector<QVector<double> > > DCT::getDivodedImage(QVector<QVector<double>
         }
     }
     return divodedImageMatrix;
+}
+
+QVector<QVector<QVector<double>>> DCT::getPartData(QVector<QVector<QVector<double>>> grayImageDivoded, int n)
+{
+
+    int lengthM = grayImageDivoded.length();
+    int widthM = grayImageDivoded[0].length();
+    int heightM = grayImageDivoded[0][0].length();
+
+    QVector<QVector<QVector<double>>> partMatrix(lengthM, QVector<QVector<double>>(widthM, QVector<double>(heightM)));
+    for(int i = 0; i < lengthM; i++){
+        for(int p = 0; p < widthM; p++){
+            for(int q = 0; q < heightM; q++){
+                if( p < n && q < n){
+                    partMatrix[i][p][q] = grayImageDivoded[i][p][q];
+                } else {
+                    partMatrix[i][p][q] = 0;
+                }
+            }
+        }
+    }
+
+    return partMatrix;
 }
 
 

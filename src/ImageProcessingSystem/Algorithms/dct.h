@@ -13,7 +13,7 @@ public:
    static QImage * dctIImage(QImage & image);
 
    static QImage * dctINewImage(QImage &image);
-   static QImage * dctINewImage(QVector<QVector<QVector <double>>> dctData);
+   static QImage * dctINewImage(QVector<QVector<QVector <double>>> dctData, int newWidth, int newHeight);
 
    static QVector<QVector<double>> getGrayImageMatrix(QImage &image);
 
@@ -24,6 +24,8 @@ public:
    static QVector<QVector<double> > matrixTranslate(QVector<QVector<double> >);
 
    static QVector<QVector<QVector <double>>> getDivodedImage(QVector<QVector<double>> grayImage, int n);
+
+   static QVector<QVector<QVector<double>>> getPartData(QVector<QVector<QVector<double>>>  grayImage, int n);
 };
 
 #endif // DCT_H
