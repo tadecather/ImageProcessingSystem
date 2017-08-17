@@ -25,8 +25,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    void connectChangeImage(TabContent* tab);
+    //判断当前图片有没有经过灰度化
+    bool afterGray();
 
 
 private:
@@ -53,6 +53,7 @@ private slots:
     void transformSlot();
     void enhancementSlot();
     void transDomainProcessSlot();
+    void segmentationSlot();
 
 public slots:
     void setRecentFileEnableSlot();

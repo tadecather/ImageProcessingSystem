@@ -9,12 +9,18 @@
 #include "binaryzationcommand.h"
 #include "gnoisecommand.h"
 #include "spnoisecommand.h"
+#include "msmoothcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
+
+//临时include 及时清空
+#include "imageenhancement.h"
+#include "dct.h"
+#include "imagesegmentation.h"
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
 #include "spnoiseargsdialog.h"
-//以上
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -64,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     	
     //    TDP 共三个大模块
 
+
             //小波变换5个子菜单
             connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
             connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
@@ -71,6 +78,24 @@ MainWindow::MainWindow(QWidget *parent) :
             connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
             connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
+    connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
+    //  Segmentation 模块 14个操作
+    connect(ui->actionOtsu_Law_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionInteractive_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRobert_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionSobel_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionPrewitt_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionLaplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionGauss_Laplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionKrisch_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionCustom_Edges,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRegion_Grow,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionContour_Extraction,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionBoundary_Tracking,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation_Line_Detection,&QAction::triggered,this,&MainWindow::segmentationSlot);
 
 
 
@@ -121,6 +146,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool MainWindow::afterGray()
+{
+    QUndoStack* currStack = myTab->getCurrentStack();
+    for(int i = 0; i < currStack->index(); i++)
+    {
+        ImageCommand* command = (ImageCommand*)currStack->command(i);
+        if(*(command->getName()) == "灰度化")
+            return true;
+    }
+    return false;
+}
 
 void MainWindow::openFileSlot()
 {
@@ -465,10 +501,22 @@ void MainWindow::enhancementSlot()
     }
     if(ui->actionMean_Smoothing==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
+            return;
+        }
+        MSmoothCommand* command = new MSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionMedian_Smoothing==QObject::sender())
     {
+
 
     }
     if(ui->actionWeighted_Smoothing==QObject::sender())
@@ -527,21 +575,94 @@ void MainWindow::transDomainProcessSlot()
     {
 
     }
+
+    if(ui->actionDCT==QObject::sender())
+    {
+        image = DCT::dctNewImage(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+
+        myTab->setImage(0, 1, image);
+    }
+
+    if(ui->actionDCTI==QObject::sender())
+    {
+
+    }
+}
+
+//ImaegSegmentation 模块
+void MainWindow::segmentationSlot()
+{
+    if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
+    {
+        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
+    }
+
+    if(ui->actionInteractive_Threshold_Segmentation == QObject::sender()){
+
+    }
+
+    if(ui->actionRobert_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionSobel_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionPrewitt_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionLaplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionKrisch_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionCustom_Edges == QObject::sender()){
+
+    }
+
+    if(ui->actionRegion_Grow == QObject::sender()){
+
+    }
+
+    if(ui->actionContour_Extraction == QObject::sender()){
+
+    }
+
+    if(ui->actionBoundary_Tracking == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
+
+    }
+
+
 }
 
 
 
 
-//Questions:
-//1. 所有（静态）算法均应直接在传入的指针上进行修改，不用return
+//注意
+//现静态算法可以有返回值，具体调用变化，见exampleCommand类中,redo方法的注释
+//只是有一点，一定记得在算法的最后delete掉传入的参数并赋NULL，这是为了防止内存泄漏
 
-//注意，如需关联已实现的算法和mainwindow，示例已经做好（请确保算法已经实现上面的第一个question）：
+//如需关联已实现的算法和mainwindow，示例已经做好：
 //ExampleCommand类为command的示例类，只需复制代码，改改名字，添加一句实现即可
 //mainwindow.cpp中，command的多重if判断区，头部也有示例，复制粘贴 改改就行
-
-
-
-//content中的history改为qscrollarea
 
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
 

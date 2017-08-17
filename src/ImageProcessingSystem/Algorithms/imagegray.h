@@ -11,14 +11,14 @@ public:
     static QImage * colorToGrey(QImage &image);
     static QImage * GrayToColor(QImage &image);
     static QImage * negetiveImage(QImage &image);
-    static QImage * binaryzation(QImage &image);
+    static QImage * binaryzation(QImage &image, int keyValue = 127);
     static QImage * linearStretch(QImage &image);
     static QImage * exponentialStretch(QImage &image);
     static QImage * logarithmicStretch(QImage &image);
     static QImage * plotHistogram(QImage &image);
     static QImage * balanceHistogram(QImage &image);
-private:
     static QVector<int> countGrayHistogram(QImage * image);
+private:
     static QImage * drawHistogram(QVector<int> grayHist);
     static int getKeyValue(QImage * image);
     static int getKeyValueHist(QImage *image);
