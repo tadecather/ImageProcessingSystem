@@ -34,7 +34,8 @@ SOURCES += main.cpp\
         Display/gnoiseargsdialog.cpp \
         ImageCommands/spnoisecommand.cpp \
         Display/spnoiseargsdialog.cpp \
-        Algorithms/dct.cpp
+        Algorithms/dct.cpp \
+    Algorithms/imagesegmentation.cpp
 
 
 
@@ -60,7 +61,8 @@ HEADERS  += mainwindow.h \
         Display/gnoiseargsdialog.h \
         ImageCommands/spnoisecommand.h \
         Display/spnoiseargsdialog.h \
-        Algorithms/dct.h
+        Algorithms/dct.h \
+    Algorithms/imagesegmentation.h
 
 FORMS    += mainwindow.ui
 

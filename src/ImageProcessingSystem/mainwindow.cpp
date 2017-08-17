@@ -15,6 +15,7 @@
 //临时include 及时清空
 #include "imageenhancement.h"
 #include "dct.h"
+#include "imagesegmentation.h"
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
 #include "spnoiseargsdialog.h"
@@ -69,6 +70,22 @@ MainWindow::MainWindow(QWidget *parent) :
     //    TDP 共三个大模块
     connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
+    //  Segmentation 模块 14个操作
+    connect(ui->actionOtsu_Law_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionInteractive_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRobert_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionSobel_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionPrewitt_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionLaplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionGauss_Laplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionKrisch_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionCustom_Edges,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRegion_Grow,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionContour_Extraction,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionBoundary_Tracking,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation_Line_Detection,&QAction::triggered,this,&MainWindow::segmentationSlot);
 
 
 
@@ -515,6 +532,70 @@ void MainWindow::transDomainProcessSlot()
     {
 
     }
+}
+
+//ImaegSegmentation 模块
+void MainWindow::segmentationSlot()
+{
+    if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
+    {
+        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
+    }
+
+    if(ui->actionInteractive_Threshold_Segmentation == QObject::sender()){
+
+    }
+
+    if(ui->actionRobert_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionSobel_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionPrewitt_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionLaplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionKrisch_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionCustom_Edges == QObject::sender()){
+
+    }
+
+    if(ui->actionRegion_Grow == QObject::sender()){
+
+    }
+
+    if(ui->actionContour_Extraction == QObject::sender()){
+
+    }
+
+    if(ui->actionBoundary_Tracking == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
+
+    }
+
+
 }
 
 
