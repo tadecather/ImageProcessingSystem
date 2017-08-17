@@ -9,6 +9,7 @@
 #include "binaryzationcommand.h"
 #include "gnoisecommand.h"
 #include "spnoisecommand.h"
+#include "msmoothcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -136,6 +137,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool MainWindow::afterGray()
+{
+    QUndoStack* currStack = myTab->getCurrentStack();
+    for(int i = 0; i < currStack->index(); i++)
+    {
+        ImageCommand* command = (ImageCommand*)currStack->command(i);
+        if(*(command->getName()) == "灰度化")
+            return true;
+    }
+    return false;
+}
 
 void MainWindow::openFileSlot()
 {
@@ -480,10 +492,22 @@ void MainWindow::enhancementSlot()
     }
     if(ui->actionMean_Smoothing==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
+            return;
+        }
+        MSmoothCommand* command = new MSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionMedian_Smoothing==QObject::sender())
     {
+
 
     }
     if(ui->actionWeighted_Smoothing==QObject::sender())
@@ -601,15 +625,12 @@ void MainWindow::segmentationSlot()
 
 
 
-//Questions:
-//1. 所有（静态）算法均应直接在传入的指针上进行修改，不用return
+//注意
+//现静态算法可以有返回值，具体调用变化，见exampleCommand类中,redo方法的注释
+//只是有一点，一定记得在算法的最后delete掉传入的参数并赋NULL，这是为了防止内存泄漏
 
-//注意，如需关联已实现的算法和mainwindow，示例已经做好（请确保算法已经实现上面的第一个question）：
+//如需关联已实现的算法和mainwindow，示例已经做好：
 //ExampleCommand类为command的示例类，只需复制代码，改改名字，添加一句实现即可
 //mainwindow.cpp中，command的多重if判断区，头部也有示例，复制粘贴 改改就行
-
-
-
-//content中的history改为qscrollarea
 
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。

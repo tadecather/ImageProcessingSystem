@@ -35,7 +35,9 @@ SOURCES += main.cpp\
         ImageCommands/spnoisecommand.cpp \
         Display/spnoiseargsdialog.cpp \
         Algorithms/dct.cpp \
-    Algorithms/imagesegmentation.cpp
+    	Algorithms/imagesegmentation.cpp \
+    	ImageCommands/msmoothcommand.cpp
+
 
 
 
@@ -62,7 +64,8 @@ HEADERS  += mainwindow.h \
         ImageCommands/spnoisecommand.h \
         Display/spnoiseargsdialog.h \
         Algorithms/dct.h \
-    Algorithms/imagesegmentation.h
+        Algorithms/imagesegmentation.h \
+        ImageCommands/msmoothcommand.h
 
 FORMS    += mainwindow.ui
 
