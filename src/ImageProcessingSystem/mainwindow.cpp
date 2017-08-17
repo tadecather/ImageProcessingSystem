@@ -63,7 +63,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
-//    connect(ui->menuWavelet_Transform->action,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
+            //小波变换5个子菜单
+            connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
 
 
 
@@ -488,17 +495,36 @@ void MainWindow::enhancementSlot()
 
 void MainWindow::transDomainProcessSlot()
 {
-
-    if(ui->menuWavelet_Transform==QObject::sender())
+    //小波变换5个子操作
+    if(ui->actionHaar_Wavelet==QObject::sender())
     {
         image = myTab->getImageDisplay(0, 1)->getImage();
         image = imgTransformdomainprocessing
                 ::imgSetValidPic(*image);
         image = imgTransformdomainprocessing::
-                imgHaarWaveletTransform(*image);
+                imgHaarWaveletTransform(*image,waveCount);
         myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
-        //
+        qDebug()<<"wavecount:"<<waveCount;
+
+    }
+    if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
+    {
+        imgTransformdomainprocessing::imgHaarWaveletTransformInversion(image,waveCount);
+         myTab->setImage(0, 1, image);
+         qDebug()<<"wavecount:"<<waveCount;
+    }
+    if(ui->actionset_whf_coeffecient_zero==QObject::sender())
+    {
+        imgTransformdomainprocessing::imgSetWHFCoefficientZero(image,waveCount);
+         myTab->setImage(0, 1, image);
+         qDebug()<<"wavecount:"<<waveCount;
+    }
+    if(ui->actionHard_Threshold_Method==QObject::sender())
+    {
+
+    }
+    if(ui->actionSoft_Threshold_Method==QObject::sender())
+    {
 
     }
 }
@@ -518,3 +544,5 @@ void MainWindow::transDomainProcessSlot()
 //content中的history改为qscrollarea
 
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
+
+//在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
