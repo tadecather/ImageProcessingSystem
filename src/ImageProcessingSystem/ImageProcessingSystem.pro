@@ -42,7 +42,7 @@ SOURCES += main.cpp\
 				Display/meansmoothargsdialog.cpp \
 				Algorithms/imagesegmentation.cpp 
 
->>>>>>> 379162b4f722843ac67751a5b170c5b011938810
+
 
 
 
