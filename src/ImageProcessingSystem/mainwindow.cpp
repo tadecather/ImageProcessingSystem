@@ -12,6 +12,7 @@
 #include "meansmoothcommand.h"
 #include "mediansmoothcommand.h"
 #include "weightedsmoothcommand.h"
+#include "selectivemasksmooothcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -477,7 +478,7 @@ void MainWindow::enhancementSlot()
         }
         //对话框输入一个值：snr
         SPNoiseArgsDialog* dialog = new SPNoiseArgsDialog(this);
-        qDebug()<<dialog->getSnr();
+        //qDebug()<<dialog->getSnr();
         if(dialog->exec() == QDialog::Rejected)
         {
             dialog->deleteLater();
@@ -552,7 +553,13 @@ void MainWindow::enhancementSlot()
     }
     if(ui->actionChoose_Mask_Smoothing==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        SelectiveMaskSmooothCommand* command = new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
     {

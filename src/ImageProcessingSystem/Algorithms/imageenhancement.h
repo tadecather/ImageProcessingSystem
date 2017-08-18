@@ -17,6 +17,7 @@ public:
     static QImage* MeanSmoothing(QImage* image, int size);
     static QImage* MedianSmoothing(QImage* image, int size);
     static QImage* GaussianSmoothing(QImage* image, int size, int theta);
+    static QImage* SelectiveMaskSmoothing(QImage* image);
 private:
     static double GenerateGaussianNoise(double mu, double sigma);
     static double V1, V2, S;

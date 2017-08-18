@@ -197,6 +197,168 @@ QImage* ImageEnhancement::GaussianSmoothing(QImage* image, int size, int theta)
     return afterSmooth;
 }
 
+//选择式掩模平滑
+QImage* ImageEnhancement::SelectiveMaskSmoothing(QImage* image)
+{
+    //拷贝构造，这样边缘两个像素就略过不管了
+    QImage* afterSmooth = new QImage(*image);
+    //9个掩模对应的 均值
+    double mu[9] = {-1.0};
+    //9个掩模对应的 方差
+    double sigma[9] = {-1.0};
+    //中心像素周围的25个像素，默认0
+    int mask[5][5] = {-1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1,
+                     -1, -1, -1, -1, -1};
+    int x, y, a, b;
+    //待设置的pixel
+    QRgb newPixel;
+    //每个像素，取得它周围25个像素
+    for(x = 2; x < image->width()-2; x++)
+    {
+        for(y = 2; y < image->height()-2; y++)
+        {
+            //中心像素为pixel(x, y)
+            for(a = x - 2; a <= x + 2; a++)
+            {
+                for(b = y - 2; b <= y + 2; b++)
+                {
+                    //为mask赋值
+                    mask[a - x + 2][b - y + 2] = qRed(image->pixel(a, b));
+                    //这个mask没有问题!!
+                }
+            }
+            //得到每个中心像素的mask, x,y为该中心像素坐标
+            //针对计算9种模板的均值、方差，将方差最小的模板的方差赋给pixel(x, y)
+            //模板1
+            mu[0] = (mask[1][1]+mask[1][2]+mask[1][3]+mask[2][1]+mask[2][2]+mask[2][3]+mask[3][1]+mask[3][2]+mask[3][3])/9;
+            sigma[0] = mask[1][1]*mask[1][1]
+                      +mask[1][2]*mask[1][2]
+                      +mask[1][3]*mask[1][3]
+                      +mask[2][1]*mask[2][1]
+                      +mask[2][2]*mask[2][2]
+                      +mask[2][3]*mask[2][3]
+                      +mask[3][1]*mask[3][1]
+                      +mask[3][2]*mask[3][2]
+                      +mask[3][3]*mask[3][3]
+                      -9*(mu[0]*mu[0]);
+
+            //模板2
+            mu[1] = (mask[0][1]+mask[1][1]+mask[0][2]+mask[1][2]+mask[2][2]+mask[0][3]+mask[1][3])/7;
+            sigma[1] = mask[0][1]*mask[0][1]
+                       +mask[1][1]*mask[1][1]
+                       +mask[0][2]*mask[0][2]
+                       +mask[1][2]*mask[1][2]
+                       +mask[2][2]*mask[2][2]
+                       +mask[0][3]*mask[0][3]
+                       +mask[1][3]*mask[1][3]
+                       -7*(mu[1]*mu[1]);
+            //模板3
+            mu[2] = (mask[1][0]+mask[2][0]+mask[3][0]+mask[1][1]+mask[2][1]+mask[3][1]+mask[2][2])/7;
+            sigma[2] = mask[1][0]*mask[1][0]
+                    +mask[2][0]*mask[2][0]
+                    +mask[3][0]*mask[3][0]
+                    +mask[1][1]*mask[1][1]
+                    +mask[2][1]*mask[2][1]
+                    +mask[3][1]*mask[3][1]
+                    +mask[2][2]*mask[2][2]
+                    -7*(mu[2]*mu[2]);
+            //模板4
+            mu[3] = (mask[3][1]+mask[4][1]+mask[2][2]+mask[3][2]+mask[4][2]+mask[3][3]+mask[4][3])/7;
+            sigma[3] = mask[3][1]*mask[3][1]
+                    +mask[4][1]*mask[4][1]
+                    +mask[2][2]*mask[2][2]
+                    +mask[3][2]*mask[3][2]
+                    +mask[4][2]*mask[4][2]
+                    +mask[3][3]*mask[3][3]
+                    +mask[4][3]*mask[4][3]
+                    -7*(mu[3]*mu[3]);
+            //模板5
+            mu[4] = (mask[2][2]+mask[1][3]+mask[2][3]+mask[3][3]+mask[1][4]+mask[2][4]+mask[3][4])/7;
+            sigma[4] = mask[2][2]*mask[2][2]
+                    +mask[1][3]*mask[1][3]
+                    +mask[2][3]*mask[2][3]
+                    +mask[3][3]*mask[3][3]
+                    +mask[1][4]*mask[1][4]
+                    +mask[2][4]*mask[2][4]
+                    +mask[3][4]*mask[3][4]
+                    -7*(mu[4]*mu[4]);
+            //模板6
+            mu[5] = (mask[0][0]+mask[1][0]+mask[0][1]+mask[1][1]+mask[2][1]+mask[1][2]+mask[2][2])/7;
+            sigma[5] = mask[0][0]*mask[0][0]
+                    +mask[1][0]*mask[1][0]
+                    +mask[0][1]*mask[0][1]
+                    +mask[1][1]*mask[1][1]
+                    +mask[2][1]*mask[2][1]
+                    +mask[1][2]*mask[1][2]
+                    +mask[2][2]*mask[2][2]
+                    -7*(mu[5]*mu[5]);
+            //模板7
+            mu[6] = (mask[3][0]+mask[4][0]+mask[2][1]+mask[3][1]+mask[4][1]+mask[2][2]+mask[3][2])/7;
+            sigma[6] = mask[3][0]*mask[3][0]
+                    +mask[4][0]*mask[4][0]
+                    +mask[2][1]*mask[2][1]
+                    +mask[3][1]*mask[3][1]
+                    +mask[4][1]*mask[4][1]
+                    +mask[2][2]*mask[2][2]
+                    +mask[3][2]*mask[3][2]
+                    -7*(mu[6]*mu[6]);
+            //模板8
+            mu[7] = (mask[2][2]+mask[3][2]+mask[2][3]+mask[3][3]+mask[4][3]+mask[3][4]+mask[4][4])/7;
+            sigma[7] = mask[2][2]*mask[2][2]
+                    +mask[3][2]*mask[3][2]
+                    +mask[2][3]*mask[2][3]
+                    +mask[3][3]*mask[3][3]
+                    +mask[4][3]*mask[4][3]
+                    +mask[3][4]*mask[3][4]
+                    +mask[4][4]*mask[4][4]
+                    -7*(mu[7]*mu[7]);
+            //模板9
+            mu[8] = (mask[1][2]+mask[2][2]+mask[0][3]+mask[1][3]+mask[2][3]+mask[0][4]+mask[1][4])/7;
+            sigma[8] = mask[1][2]*mask[1][2]
+                    +mask[2][2]*mask[2][2]
+                    +mask[0][3]*mask[0][3]
+                    +mask[1][3]*mask[1][3]
+                    +mask[2][3]*mask[2][3]
+                    +mask[0][4]*mask[0][4]
+                    +mask[1][4]*mask[1][4]
+                    -7*(mu[8]*mu[8]);
+
+            //取得最小的方差序号， 为minSigmaIndex
+            int minSigma = sigma[0];
+            int minSigmaIndex = 0;
+            for(int i = 0; i <= 8; i++)
+            {
+                if(sigma[i]<minSigma)
+                {
+                    minSigma = sigma[i];
+                    minSigmaIndex = i;
+                }
+            }
+
+            //取方差最小的掩模的均值，作为新像素点的值
+            int result = mu[minSigmaIndex];
+            newPixel = qRgb(result, result, result);
+            afterSmooth->setPixel(x, y, newPixel);
+
+//            //输出"选择性掩模测试图"的结果
+//            if(x==2&&y==2)
+//            std::cout<<"mask at (2, 2) :"<<minSigmaIndex<<"\n";
+//            if(x==8&&y==2)
+//            std::cout<<"mask at (8, 2) :"<<minSigmaIndex<<"\n";
+//            if(x==14&&y==2)
+//            std::cout<<"mask at (14, 2) :"<<minSigmaIndex<<"\n";
+
+        }
+    }
+    delete image;
+    image = NULL;
+    return afterSmooth;
+}
+
+
 //以下是内部方法
 
 //产生高斯噪声数值
