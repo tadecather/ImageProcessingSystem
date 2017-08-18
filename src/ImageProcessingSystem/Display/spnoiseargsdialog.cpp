@@ -10,8 +10,13 @@ SPNoiseArgsDialog::SPNoiseArgsDialog(QWidget *parent) : QDialog(parent)
     //输入框
     snrEdit = new QLineEdit("0.0", this);
 
+    //输入限制
+    QRegExp regx("^[0].[0-9][0-9]$");
+    QValidator *validator = new QRegExpValidator(regx, this);
+    snrEdit->setValidator(validator);
+
     //确定按钮
-    confirm = new QPushButton("确认", this);
+    confirm = new QPushButton("确定", this);
     confirm->setDefault(true);
 
     //取消按钮
@@ -51,8 +56,6 @@ SPNoiseArgsDialog::~SPNoiseArgsDialog()
 
 double SPNoiseArgsDialog::getSnr()
 {
-    if(this->snr > 1 || this->snr < 0)
-        return 1;
     return this->snr;
 }
 

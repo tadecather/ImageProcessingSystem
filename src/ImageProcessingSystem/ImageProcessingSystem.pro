@@ -35,7 +35,11 @@ SOURCES += main.cpp\
         ImageCommands/spnoisecommand.cpp \
         Display/spnoiseargsdialog.cpp \
         Algorithms/dct.cpp \
-    ImageCommands/msmoothcommand.cpp
+    ImageCommands/mediansmoothcommand.cpp \
+    ImageCommands/meansmoothcommand.cpp \
+    Display/weightedsmoothargsdialog.cpp \
+    ImageCommands/weightedsmoothcommand.cpp \
+    Display/meansmoothargsdialog.cpp
 
 
 
@@ -62,7 +66,11 @@ HEADERS  += mainwindow.h \
         ImageCommands/spnoisecommand.h \
         Display/spnoiseargsdialog.h \
         Algorithms/dct.h \
-    ImageCommands/msmoothcommand.h
+    ImageCommands/mediansmoothcommand.h \
+    ImageCommands/meansmoothcommand.h \
+    Display/weightedsmoothargsdialog.h \
+    ImageCommands/weightedsmoothcommand.h \
+    Display/meansmoothargsdialog.h
 
 FORMS    += mainwindow.ui
 

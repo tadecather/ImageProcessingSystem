@@ -7,9 +7,9 @@ GNoiseArgsDialog::GNoiseArgsDialog(QWidget* parent) : QDialog(parent)
     k = 0;
 
     //标签
-    inputMu = new QLabel("输入均值", this);
-    inputSigma = new QLabel("输入方差", this);
-    inputK = new QLabel("输入K值", this);
+    inputMu = new QLabel("均值", this);
+    inputSigma = new QLabel("方差", this);
+    inputK = new QLabel("K值", this);
 
     //输入框
     muEdit = new QLineEdit("0", this);
@@ -80,8 +80,6 @@ double GNoiseArgsDialog::getMu()
 
 double GNoiseArgsDialog::getSigma()
 {
-    if(sigma == 0)
-        return 1.0;
     return this->sigma;
 }
 

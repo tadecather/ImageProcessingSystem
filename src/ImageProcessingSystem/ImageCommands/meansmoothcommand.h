@@ -9,15 +9,14 @@
 #include "mytabwidget.h"
 
 
-//这是一个command样例类，实现见ExampleCommand.cpp
-//下面的声明只能多不能少
-class MSmoothCommand : public ImageCommand
+class MeanSmoothCommand : public ImageCommand
 {
 private:
     int index;
     MyTabWidget* mainTab;
+    int size;
 public:
-    MSmoothCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
+    MeanSmoothCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index, int size);
     void undo();
     void redo();
 };

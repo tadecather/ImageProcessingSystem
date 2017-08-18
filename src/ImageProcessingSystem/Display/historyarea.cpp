@@ -11,10 +11,10 @@ void HistoryArea::wheelEvent(QWheelEvent* event)
 {
     if(event->delta() > 0)
     {
-        scrollBarx->setValue(scrollBarx->value()-18);
+        scrollBarx->setValue(scrollBarx->value()-21);
     }
     else
     {
-        scrollBarx->setValue(scrollBarx->value()+18);
+        scrollBarx->setValue(scrollBarx->value()+21);
     }
 }

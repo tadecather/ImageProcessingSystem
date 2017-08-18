@@ -36,17 +36,15 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
         image->setPixel(i / height , i % height, newPixel);
     }
     delete rgbList;
-    qDebug()<<"done";
 }
 
+//添加椒盐噪声
 void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
 {
     srand((unsigned int)(time(NULL)));
     //像素点个数
     for(int i = 0; i < image->width()*image->height()*(1.0-snr); i++)
     {
-
-        //qDebug()<<x<<y<<image->width()<<image->height();
         QRgb newPixel;
         if(rand()%2)
         {
@@ -64,48 +62,134 @@ void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
     }
 }
 
-QImage *ImageEnhancement::MeanSmoothing(QImage* image)
+//均值平滑
+QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
 {
-//    int width = image->width();
-//    int height = image->height();
-//    //得到一个从左到右，从上到下遍历的RGB像素点QList
-//    QList<QRgb> * rgbList =  ImagTranslate::imageToList(*image, width, height);
-//    QList<QRgb> * afterList = new QList<QRgb>();
-//    //每个像素点，取周围9个均值
-//    for(int i = 0; i < width * height; i++){
-//        QRgb pixel = rgbList->at(i);
-
-
-//        QRgb newPixel = qRgb(Red, Green, Blue);
-//    }
-//    // i % width 得到目前像素点的列值，i /width 得到当前像素点的行值
-//    image->setPixel(i / height , i % height, newPixel);
-//    delete rgbList;
-//    qDebug()<<"done";
     int x = 0;
     int y = 0;
+    int sum = 0;
+    //当前像素周围共times个像素
+    int times = 0;
+    //用于获取中心点周围size*size区域其他点的坐标
+    int diff = size/2;
+    qDebug()<<"diff"<<diff;
     QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());
     for(x = 0; x < image->width(); x++)
     {
         for(y = 0; y < image->height(); y++)
         {
-            //得到周围8个
-            int sum = 0;
-            int times = 0;
-            for(int a = x - 1; a <= x + 1; a++)
+            //得到周围像素
+            for(int a = x - diff; a <= x + diff; a++)
             {
-                for(int b = y - 1; b <= y + 1; b++)
+                for(int b = y - diff; b <= y + diff; b++)
                 {
                     if(a>=0&&a<image->width()&&b>=0&&b<image->height())
                     {
-                        times++;
+                        if(a == x && b == y)
+                            continue;
                         sum+=qRed(image->pixel(a, b));
+                        times++;
+                    }
+
+                }
+            }
+            sum = sum / times;
+            times = 0;
+            QRgb newPixel = qRgb(sum, sum, sum);
+            sum = 0;
+            afterSmooth->setPixel(x, y, newPixel);
+        }
+    }
+    delete image;
+    image = NULL;
+    return afterSmooth;
+}
+
+//中值平滑
+QImage* ImageEnhancement::MedianSmoothing(QImage* image, int size)
+{
+    int x = 0;
+    int y = 0;
+    //用于获取中心点周围size*size区域其他点的坐标
+    int diff = size/2;
+    QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());
+    std::vector<int> surround;
+    QRgb newPixel;
+    int median;
+    for(x = 0; x < image->width(); x++)
+    {
+        for(y = 0; y < image->height(); y++)
+        {
+            for(int a = x - diff; a <= x + diff; a++)
+            {
+                for(int b = y - diff; b <= y + diff; b++)
+                {
+                    if(a>=0&&a<image->width()&&b>=0&&b<image->height())
+                    {
+                        surround.push_back(qRed(image->pixel(a, b)));
                     }
                 }
             }
-            sum = sum / 9;
-            QRgb newPixel = qRgb(sum, sum, sum);
+            std::sort(surround.begin(), surround.end());
+            median = surround[surround.size()/2];
+            newPixel = qRgb(median, median, median);
             afterSmooth->setPixel(x, y, newPixel);
+            surround.clear();
+        }
+    }
+    delete image;
+    image = NULL;
+    return afterSmooth;
+}
+
+//加权平滑（高斯平滑）
+QImage* ImageEnhancement::GaussianSmoothing(QImage* image, int size, int theta)
+{
+    QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());
+    //高斯核，size需要>=3且为奇数
+    double gMask[size][size];
+    //中心元素的坐标
+    int medium = size/2;
+    //核的元素和，倒数即为规范系数
+    double sum = 0;
+    //可优化 因为高斯核中心对称
+    for(int i = 0; i < size; i++)
+    {
+        for(int j = 0; j < size; j++)
+        {
+            double param1 = (double)(1.0/(theta*theta));
+            double distance = (double)((i-medium)*(i-medium)+(j-medium)*(j-medium));
+            double param2 = (double)exp(((-1)*distance)/(2*(double)theta*(double)theta));
+            gMask[i][j] = (double)param1*param2;
+            sum+=gMask[i][j];
+        }
+    }
+    //遍历所有像素
+    int x;
+    int y;
+    //当前像素周围的像素
+    int a;
+    int b;
+    double result = 0.0;
+    QRgb newPixel;
+    for(x = 0; x < image->width(); x++)
+    {
+        for(y = 0; y < image->height(); y++)
+        {
+            //得到周围size^2个
+            for(a = x - medium; a <= x + medium; a++)
+            {
+                for(b = y - medium; b <= y + medium; b++)
+                {
+                    if(a>=0&&a<image->width()&&b>=0&&b<image->height())
+                    {
+                        result+=gMask[a-x+medium][b-y+medium]*(double)qRed(image->pixel(a, b))*(1.0/sum);
+                    }
+                }
+            }
+            newPixel = qRgb(result, result, result);
+            afterSmooth->setPixel(x, y, newPixel);
+            result = 0.0;
         }
     }
     delete image;

@@ -51,7 +51,7 @@ QImage *DCT::dctNewImage(QImage &image)
     QVector<QVector<QVector <double>>> grayImageDivoded = getDivodedImage(grayImage, 8);
 
     // 删除无用的 grayImage 矩阵
-    delete(*grayImage);
+    //delete(*grayImage);
 
     // 获取处理系数矩阵与转置矩阵
     QVector<QVector<double>> translateMatrix = getTranslateMatrix(8);

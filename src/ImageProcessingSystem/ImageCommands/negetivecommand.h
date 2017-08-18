@@ -14,7 +14,6 @@ private:
     MyTabWidget* mainTab;
 
 public:
-    //记得检测图像是否已经灰度化。推荐：负相算法检测是否已灰度化，然后向上抛出异常
     NegetiveCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
     void undo();
     void redo();
