@@ -7,8 +7,6 @@
 #include "imagegray.h"
 #include "mytabwidget.h"
 
-//这是一个command样例类，实现见ExampleCommand.cpp
-//下面的声明只能多不能少
 class ExampleCommand : public ImageCommand
 {
 private:

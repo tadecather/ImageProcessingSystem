@@ -50,6 +50,8 @@ QImage *DCT::dctNewImage(QImage &image)
     // 将数据进行分块，传入参数为 图像灰度表示矩阵，以及分块的参数
     QVector<QVector<QVector <double>>> grayImageDivoded = getDivodedImage(grayImage, 8);
 
+    // 删除无用的 grayImage 矩阵
+    //delete(*grayImage);
 
     // 获取处理系数矩阵与转置矩阵
     QVector<QVector<double>> translateMatrix = getTranslateMatrix(8);

@@ -5,7 +5,6 @@ NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWid
     name = new QString("反相");
 
     this->imageLeft = new QImage(*imageLeft);
-    //this->imageRight = imageRight;
     if(imageRight == NULL)
     {
         this->imageRight = NULL;
@@ -22,7 +21,6 @@ NegetiveCommand::NegetiveCommand(QImage *imageLeft, QImage *imageRight, MyTabWid
 
 void NegetiveCommand::redo()
 {
-    //处理
     if(firstTime)
         ImageGray::negetiveImage(*imageAfter);
     if(this->imageRight == NULL)

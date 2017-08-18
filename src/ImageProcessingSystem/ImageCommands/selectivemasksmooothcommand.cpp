@@ -1,9 +1,9 @@
-#include "spnoisecommand.h"
+#include "selectivemasksmooothcommand.h"
 
 //构造函数
-SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, double snr)
+SelectiveMaskSmooothCommand::SelectiveMaskSmooothCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
 {
-    name = new QString("椒盐噪声");
+    name = new QString("选择性掩模平滑");
 
     this->imageLeft = new QImage(*imageLeft);
     if(imageRight == NULL)
@@ -18,16 +18,14 @@ SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidge
     }
     this->mainTab = mainTab;
     this->index = index;
-    this->snr = snr;
-    qDebug()<<snr;
 }
 
 //redo方法
-void SpNoiseCommand::redo()
+void SelectiveMaskSmooothCommand::redo()
 {
     if(firstTime)
     {
-        ImageEnhancement::AddSaltPepperNoise(imageAfter, snr);
+        this->imageAfter = ImageEnhancement::SelectiveMaskSmoothing(this->imageAfter);
     }
     if(this->imageRight == NULL)
     {
@@ -42,7 +40,7 @@ void SpNoiseCommand::redo()
 }
 
 //undo方法
-void SpNoiseCommand::undo()
+void SelectiveMaskSmooothCommand::undo()
 {
     if(this->imageRight == NULL)
     {
