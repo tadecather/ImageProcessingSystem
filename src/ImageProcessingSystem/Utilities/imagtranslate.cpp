@@ -1,4 +1,4 @@
-#include "imagtranslate.h"
+﻿#include "imagtranslate.h"
 #include <QDebug>
 
 ImagTranslate::ImagTranslate()
@@ -39,4 +39,41 @@ QImage * ImagTranslate::listToImage(QList<QRgb> rgbList, int width, int height)
         }
     }
     return image;
+}
+
+//将二维矩阵转为灰度图
+void ImagTranslate::vector2GreyImage(vector<vector<float> > &result, QImage &img)
+{
+    int height = img.height(),
+        width  = img.width();
+
+    for(int i = 0;i < height;++i)
+    {
+        QRgb *line = (QRgb*)img.scanLine(i);
+        for(int j =0;j < width;++j)
+        {
+            int grey = (int) result[i][j];
+            line[j] = qRgb(grey,grey,grey);
+        }
+    }
+}
+//将灰度图转为二维矩阵
+void ImagTranslate::greyImage2Vector(QImage &img, vector<vector<float> > &result)
+{
+    int newHeight = img.height(),
+        newWidth = img.width();
+//读取图像中的像素灰度存入两层vector构成的矩阵
+    vector<vector<float>> tmp;
+    for(int i = 0;i < newHeight;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img.scanLine(i);
+        for(int j =0;j< newWidth;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        //将每一行加入矩阵中
+        tmp.push_back(oneline);
+    }
+    result = tmp;
 }

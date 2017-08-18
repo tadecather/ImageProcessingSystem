@@ -14,6 +14,7 @@
 #include "MyTabWidget.h"
 #include "imagetrans.h"
 #include "imgtransformdomainprocessing.h"
+using namespace std;
 namespace Ui {
 class MainWindow;
 }

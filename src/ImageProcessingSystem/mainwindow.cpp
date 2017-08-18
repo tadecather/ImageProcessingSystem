@@ -547,25 +547,22 @@ void MainWindow::transDomainProcessSlot()
     if(ui->actionHaar_Wavelet==QObject::sender())
     {
         image = myTab->getImageDisplay(0, 1)->getImage();
-        image = imgTransformdomainprocessing
-                ::imgSetValidPic(*image);
-        image = imgTransformdomainprocessing::
-                imgHaarWaveletTransform(*image,waveCount);
+        image = imgTransformdomainprocessing::imgHaar(image,3,waveCount);
         myTab->setImage(0, 1, image);
         qDebug()<<"wavecount:"<<waveCount;
 
     }
     if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
     {
-        imgTransformdomainprocessing::imgHaarWaveletTransformInversion(image,waveCount);
-         myTab->setImage(0, 1, image);
-         qDebug()<<"wavecount:"<<waveCount;
+        image = imgTransformdomainprocessing::imgHaarInversion(image,waveCount);
+        myTab->setImage(0, 1, image);
+        qDebug()<<"wavecount:"<<waveCount;
     }
     if(ui->actionset_whf_coeffecient_zero==QObject::sender())
     {
-        imgTransformdomainprocessing::imgSetWHFCoefficientZero(image,waveCount);
-         myTab->setImage(0, 1, image);
-         qDebug()<<"wavecount:"<<waveCount;
+//        imgTransformdomainprocessing::imgSetWHFCoefficientZero(image,waveCount);
+//         myTab->setImage(0, 1, image);
+//         qDebug()<<"wavecount:"<<waveCount;
     }
     if(ui->actionHard_Threshold_Method==QObject::sender())
     {
@@ -603,11 +600,16 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionRobert_Operator == QObject::sender()){
+       image = myTab->getImageDisplay(0, 1)->getImage();
+       image = ImageSegmentation::RobertOperator(image);
+       myTab->setImage(0, 1, image);
 
     }
 
     if(ui->actionSobel_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = ImageSegmentation::SobelOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionPrewitt_Operator == QObject::sender()){
@@ -615,11 +617,15 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionLaplacian_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = ImageSegmentation::LaplacianOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = ImageSegmentation::GaussLaplacianOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionKrisch_Operator == QObject::sender()){
