@@ -57,6 +57,8 @@ void imgTransformdomainprocessing::imgCopy(const QImage &src, QImage &newImg)
     }
 }
 
+
+
 QImage *imgTransformdomainprocessing::imgSetValidPic(const QImage &img)
 {
     int a = (img.width()%2)*2+(img.height()%2);
@@ -113,7 +115,7 @@ QImage *imgTransformdomainprocessing::imgSetValidPic(const QImage &img)
     //先将图片复制一遍，除了第一个不需要复制
 
 
-QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
+QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img, int &count)
 {
     QImage * newImg = new QImage(img);
     int newHeight = newImg->height(),
@@ -128,24 +130,30 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
         {
             oneline.push_back((float)qRed(*(line+j)));
         }
-        //   顺手先对行进行哈尔小波变换
-        for(int j =0;2*j< newWidth;++j)
-        {
-            oneline.at(j) = 0.5*(oneline.at(2*j)+oneline.at(2*j+1));
-            oneline.at(j+newWidth/2) = 0.5*(oneline.at(2*j)-oneline.at(2*j+1));
-        }
         //将每一行加入矩阵中
         tmp.push_back(oneline);
     }
-    //对列进行哈尔小波变换
+    vector<vector<float>> ltmp = tmp;
+
     for(int i =0;i<newWidth;++i)
     {
         for(int j=0;2*j<newHeight;++j)
         {
             //tmp.at(a).at(b)
             //a表示行，b表示列，a行b列
-            tmp.at(j).at(i) = 0.5*(tmp.at(2*j).at(i)+tmp.at(2*j).at(i));
-            tmp.at(j+newHeight/2).at(i) = 0.5*(tmp.at(2*j).at(i)-tmp.at(2*j).at(i));
+            ltmp.at(j).at(i) =(tmp.at(2*j).at(i)+tmp.at(2*j+1).at(i))/2;
+            ltmp.at(j+newHeight/2).at(i) = (tmp.at(2*j).at(i)-tmp.at(2*j+1).at(i))/2;
+        }
+    }
+
+    vector<vector<float>> result = ltmp;
+    //对列进行哈尔小波变换
+
+    for(int i = 0;i < newHeight;++i)
+    {
+        for(int j = 0;2*j<newWidth;++j){
+            result.at(i).at(j) = (ltmp.at(i).at(2*j)+ltmp.at(i).at(2*j+1))/2;
+            result.at(i).at(j+newWidth/2) =(ltmp.at(i).at(2*j)-ltmp.at(i).at(2*j+1))/2;
         }
     }
     //再将tmp矩阵的值赋回图像
@@ -154,11 +162,224 @@ QImage *imgTransformdomainprocessing::imgHaarWaveletTransform(const QImage &img)
         QRgb *line = (QRgb*)newImg->scanLine(i);
         for(int j =0;j < newWidth;++j)
         {
+            int grey = (int) result.at(i).at(j);
+            line[j] = qRgb(grey,grey,grey);
+        }
+    }
+    count ++;
+    return newImg;
+}
+
+void imgTransformdomainprocessing::imgHaarWaveletTransformInversion(QImage *img, int &count)
+{
+    int height = img->height(),
+        width = img->width();
+    vector<vector<float>> tmp;
+    for(int i = 0;i < height;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j<width;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        tmp.push_back(oneline);
+    }
+
+     vector<vector<float>> ltmp =tmp;
+    for(int i = 0;2*i < height;++i)
+    {
+        for(int j = 0;j<width;++j){
+            ltmp.at(2*i).at(j)   = tmp.at(i).at(j)+tmp.at(i+height/2).at(j);
+            ltmp.at(2*i+1).at(j) = tmp.at(i).at(j)-tmp.at(i+height/2).at(j);
+        }
+    }
+//    for(int i =0;i<newWidth;++i)
+//    {
+//        for(int j=0;2*j<newHeight;++j)
+//        {
+//            //tmp.at(a).at(b)
+//            //a表示行，b表示列，a行b列
+//            ltmp.at(j).at(i) =(tmp.at(2*j).at(i)+tmp.at(2*j+1).at(i))/2;
+//            ltmp.at(j+newHeight/2).at(i) = (tmp.at(2*j).at(i)-tmp.at(2*j+1).at(i))/2;
+//        }
+//    }
+    vector<vector<float>> result = ltmp;
+   for(int i = 0;i < height;++i)
+   {
+       for(int j = 0;2*j<width;++j){
+           result.at(i).at(2*j)   = ltmp.at(i).at(j)+ltmp.at(i).at(j+width/2);
+           result.at(i).at(2*j+1) = ltmp.at(i).at(j)-ltmp.at(i).at(j+width/2);
+       }
+   }
+   for(int i = 0;i < height;++i)
+   {
+       QRgb *line = (QRgb*)img->scanLine(i);
+       for(int j =0;j < width;++j)
+       {
+           int grey = (int) result.at(i).at(j);
+           line[j] = qRgb(grey,grey,grey);
+       }
+   }
+   count--;
+}
+
+//高频系数置零
+void imgTransformdomainprocessing::imgSetWHFCoefficientZero(QImage *img, int &count)
+{
+    int height = img->height(),
+        width = img->width();
+    int saveHeight = height/pow(2,count),
+        saveWidth  = width/pow(2,count);
+    vector<vector<float>> tmp;
+    for(int i = 0;i < saveHeight;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j<saveWidth;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        for(int j =saveWidth;j<width;j++){
+            oneline.push_back((float)0);
+        }
+        tmp.push_back(oneline);
+    }
+    for(int i = saveHeight;i < height;++i)
+    {
+         vector<float> oneline;
+         for(int j =0;j<width;++j)
+         {
+             oneline.push_back((float)0);
+         }
+         tmp.push_back(oneline);
+    }
+
+    //矩阵转回图像
+    for(int i = 0;i < height;++i)
+    {
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j < width;++j)
+        {
             int grey = (int) tmp.at(i).at(j);
             line[j] = qRgb(grey,grey,grey);
         }
     }
-    return newImg;
+
 }
+
+void imgTransformdomainprocessing::imgHardThreshold(QImage *img, int &count, int lambda)
+{
+    //    λ范围在0~255之间
+    int height = img->height(),
+        width = img->width();
+    int saveHeight = height/pow(2,count),
+        saveWidth  = width/pow(2,count);
+    vector<vector<float>> tmp;
+    for(int i = 0;i < saveHeight;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j<saveWidth;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        for(int j =saveWidth;j<width;j++){
+            //系数的值的绝对值大于阈值，则返回，否则返回0
+            oneline.push_back(
+                         abs(qRed(*(line+j)))>lambda?qRed(*(line+j)):0
+                        );
+        }
+        tmp.push_back(oneline);
+    }
+    for(int i = saveHeight;i < height;++i)
+    {
+         vector<float> oneline;
+         QRgb *line = (QRgb*)img->scanLine(i);
+         for(int j =0;j<width;++j)
+         {
+             oneline.push_back(
+                         abs(qRed(*(line+j)))>lambda?qRed(*(line+j)):0
+                         );
+         }
+         tmp.push_back(oneline);
+    }
+
+    //转回图像，可封装
+    for(int i = 0;i < height;++i)
+    {
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j < width;++j)
+        {
+            int grey = (int) tmp.at(i).at(j);
+            line[j] = qRgb(grey,grey,grey);
+        }
+    }
+}
+/*
+ * 文献材料
+ * 非线性软阈值法
+ *    T = σ*sqrt(2logN)
+ * 或者T = 0.3*σ*sqrt(2logN)
+ * 或者T = σ*sqrt(2logN/n)
+ * 或者T = 3*σ;
+ * 其中σ=MED/0.6745，N为信号采样点数
+ * 具体实现方法参见Donoho Johnstone关于提出使用小波系数估计噪声方差的公式
+ *
+ * 这里考虑实现困难程度，采用普通软阈值法
+ * /
+ * */
+void imgTransformdomainprocessing::imgSoftThreshold(QImage *img, int &count, int lambda)
+{
+    int height = img->height(),
+        width = img->width();
+    int saveHeight = height/pow(2,count),
+        saveWidth  = width/pow(2,count);
+    vector<vector<float>> tmp;
+    for(int i = 0;i < saveHeight;++i)
+    {
+        vector<float> oneline;
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j<saveWidth;++j)
+        {
+            oneline.push_back((float)qRed(*(line+j)));
+        }
+        for(int j =saveWidth;j<width;j++){
+            //系数的值的绝对值大于阈值，则返回，否则返回0
+            oneline.push_back(
+                         abs(qRed(*(line+j)))>lambda?
+                                (qRed(*(line+j))>0?qRed(*(line+j))-lambda:qRed(*(line+j))+lambda)
+                                    :0
+                        );
+        }
+        tmp.push_back(oneline);
+    }
+    for(int i = saveHeight;i < height;++i)
+    {
+         vector<float> oneline;
+         QRgb *line = (QRgb*)img->scanLine(i);
+         for(int j =0;j<width;++j)
+         {
+             oneline.push_back(
+                         abs(qRed(*(line+j)))>lambda?
+                                (qRed(*(line+j))>0?qRed(*(line+j))-lambda:qRed(*(line+j))+lambda)
+                                    :0
+                         );
+         }
+         tmp.push_back(oneline);
+    }
+
+    //转回图像，可封装
+    for(int i = 0;i < height;++i)
+    {
+        QRgb *line = (QRgb*)img->scanLine(i);
+        for(int j =0;j < width;++j)
+        {
+            int grey = (int) tmp.at(i).at(j);
+            line[j] = qRgb(grey,grey,grey);
+        }
+    }
+}
+
 
 

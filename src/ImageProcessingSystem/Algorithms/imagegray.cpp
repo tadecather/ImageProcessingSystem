@@ -3,6 +3,8 @@
 
 #include "fileoperation.h"
 
+#include "imagesegmentation.h"
+
 
 #include <QDebug>
 #include <QMainWindow>
@@ -61,12 +63,11 @@ QImage *ImageGray::negetiveImage(QImage &image)
 
 
 //二值化
-QImage *ImageGray::binaryzation(QImage &image)
+QImage *ImageGray::binaryzation(QImage &image, int keyValue)
 {
-    QImage * binImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
-    // 获取二值化的阀值
-    int keyValue = getKeyValue(&image);
-    qDebug() << keyValue;
+    image.convertToFormat(QImage::Format_ARGB32);
+
+    qDebug() << "KeyValue" << keyValue;
 
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
@@ -77,10 +78,10 @@ QImage *ImageGray::binaryzation(QImage &image)
             }else{
                 newPixel = qRgb(0, 0, 0);
             }
-            binImage->setPixel(i, j, newPixel);
+            image.setPixel(i, j, newPixel);
         }
     }
-    return binImage;
+    return &image;
 }
 
 // 线性变换

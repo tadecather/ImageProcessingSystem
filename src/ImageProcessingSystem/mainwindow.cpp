@@ -18,6 +18,7 @@
 //临时include 及时清空
 #include "imageenhancement.h"
 #include "dct.h"
+#include "imagesegmentation.h"
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
 #include "spnoiseargsdialog.h"
@@ -72,8 +73,33 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
+
+
+            //小波变换5个子菜单
+            connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
     connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
+    //  Segmentation 模块 14个操作
+    connect(ui->actionOtsu_Law_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionInteractive_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRobert_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionSobel_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionPrewitt_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionLaplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionGauss_Laplacian_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionKrisch_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionCustom_Edges,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionRegion_Grow,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionContour_Extraction,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionBoundary_Tracking,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation,&QAction::triggered,this,&MainWindow::segmentationSlot);
+    connect(ui->actionHough_Transformation_Line_Detection,&QAction::triggered,this,&MainWindow::segmentationSlot);
 
 
 
@@ -544,15 +570,37 @@ void MainWindow::enhancementSlot()
 
 void MainWindow::transDomainProcessSlot()
 {
-
-    if(ui->menuWavelet_Transform==QObject::sender())
+    //小波变换5个子操作
+    if(ui->actionHaar_Wavelet==QObject::sender())
     {
-        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = myTab->getImageDisplay(0, 1)->getImage();
         image = imgTransformdomainprocessing
                 ::imgSetValidPic(*image);
-        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
+        image = imgTransformdomainprocessing::
+                imgHaarWaveletTransform(*image,waveCount);
         myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        qDebug()<<"wavecount:"<<waveCount;
+
+    }
+    if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
+    {
+        imgTransformdomainprocessing::imgHaarWaveletTransformInversion(image,waveCount);
+         myTab->setImage(0, 1, image);
+         qDebug()<<"wavecount:"<<waveCount;
+    }
+    if(ui->actionset_whf_coeffecient_zero==QObject::sender())
+    {
+        imgTransformdomainprocessing::imgSetWHFCoefficientZero(image,waveCount);
+         myTab->setImage(0, 1, image);
+         qDebug()<<"wavecount:"<<waveCount;
+    }
+    if(ui->actionHard_Threshold_Method==QObject::sender())
+    {
+
+    }
+    if(ui->actionSoft_Threshold_Method==QObject::sender())
+    {
+
     }
 
     if(ui->actionDCT==QObject::sender())
@@ -568,6 +616,70 @@ void MainWindow::transDomainProcessSlot()
     }
 }
 
+//ImaegSegmentation 模块
+void MainWindow::segmentationSlot()
+{
+    if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
+    {
+        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(0, 1, image);
+    }
+
+    if(ui->actionInteractive_Threshold_Segmentation == QObject::sender()){
+
+    }
+
+    if(ui->actionRobert_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionSobel_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionPrewitt_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionLaplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionKrisch_Operator == QObject::sender()){
+
+    }
+
+    if(ui->actionCustom_Edges == QObject::sender()){
+
+    }
+
+    if(ui->actionRegion_Grow == QObject::sender()){
+
+    }
+
+    if(ui->actionContour_Extraction == QObject::sender()){
+
+    }
+
+    if(ui->actionBoundary_Tracking == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation == QObject::sender()){
+
+    }
+
+    if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
+
+    }
+
+
+}
+
 
 
 
@@ -577,3 +689,5 @@ void MainWindow::transDomainProcessSlot()
 
 
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
+
+//在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
