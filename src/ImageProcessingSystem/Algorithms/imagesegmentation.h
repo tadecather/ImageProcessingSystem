@@ -13,6 +13,7 @@ public:
     static QImage * PrewittOperator(QImage *img);
     static QImage * LaplacianOperator(QImage *img);
     static QImage * GaussLaplacianOperator(QImage *img);
+    static QImage * KrischOperator(QImage *img);
 };
 
 #endif // SEGMENTATION_H

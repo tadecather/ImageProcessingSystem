@@ -14,7 +14,7 @@ public:
     static void imgHardThreshold(QImage *img,int & count,int lambda);
     static void imgSoftThreshold(QImage *img,int & count,int lambda);
     static QImage* imgHaar(QImage * img,int times,int &count);
-    static QImage* imgHaarInversion(QImage * img,int &count);
+    static void imgHaarInversion(QImage * img,int &count);
 private:
     static void haarWaveletTransform(vector<vector<float> > &tmp);
     static void haarWaveletTransformInversion(vector<vector<float> > &tmp);

@@ -36,8 +36,8 @@ QImage *imgTransformdomainprocessing::imgSetValidPic(QImage *img)
     case 0:
         newImg = new QImage(img->width(),img->height(),QImage::Format_RGB32);
         imgCopy(*img,*newImg);
-//        delete img;
-//        img = NULL;
+        delete img;
+        img = NULL;
         return newImg;
         break;
     case 1:
@@ -46,8 +46,8 @@ QImage *imgTransformdomainprocessing::imgSetValidPic(QImage *img)
         line = (QRgb *)img->scanLine(img->height()-1);
         newline = (QRgb *)newImg->scanLine(newImg->height()-1);
         memcpy(newline,line,img->bytesPerLine());
-//        delete img;
-//        img = NULL;
+        delete img;
+        img = NULL;
         return newImg;
         break;
     case 2:
@@ -58,8 +58,8 @@ QImage *imgTransformdomainprocessing::imgSetValidPic(QImage *img)
             QRgb rgb = img->pixel(img->width()-1,i);
             newImg->setPixel(newImg->width()-1,i,rgb);
         }
-//        delete img;
-//        img = NULL;
+        delete img;
+        img = NULL;
         return newImg;
         break;
     case 3:
@@ -75,13 +75,10 @@ QImage *imgTransformdomainprocessing::imgSetValidPic(QImage *img)
         }
         QRgb rgb = img->pixel(img->width()-1,img->height()-1);
         newImg->setPixel(newImg->width()-1,newImg->height()-1,rgb);
-//        delete img;
-//        img = NULL;
+        delete img;
+        img = NULL;
         return newImg;
         break;
-//    default:
-//        return NULL;
-//        break;
     }
 }
     //先将图片复制一遍，除了第一个不需要复制
@@ -279,7 +276,7 @@ QImage * imgTransformdomainprocessing::imgHaar(QImage *img, int times, int &coun
      return img;
 }
 
-QImage * imgTransformdomainprocessing::imgHaarInversion(QImage *img, int &count)
+void imgTransformdomainprocessing::imgHaarInversion(QImage *img, int &count)
 {
       vector<vector<float>> tmp;
       ImagTranslate::greyImage2Vector(*img,tmp);
@@ -289,7 +286,6 @@ QImage * imgTransformdomainprocessing::imgHaarInversion(QImage *img, int &count)
           count--;
       }
       ImagTranslate::vector2GreyImage(tmp,*img);
-      return img;
 }
 
 

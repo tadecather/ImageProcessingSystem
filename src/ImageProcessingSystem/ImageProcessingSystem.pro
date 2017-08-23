@@ -41,7 +41,8 @@ SOURCES += main.cpp\
         ImageCommands/weightedsmoothcommand.cpp \
         Display/meansmoothargsdialog.cpp \
         Algorithms/imagesegmentation.cpp \
-        ImageCommands/selectivemasksmooothcommand.cpp
+        ImageCommands/selectivemasksmooothcommand.cpp \
+    ImageCommands/tdpcommand.cpp
 
 
 
@@ -76,7 +77,8 @@ HEADERS  += mainwindow.h \
         ImageCommands/weightedsmoothcommand.h \
         Display/meansmoothargsdialog.h \
         Algorithms/imagesegmentation.h \ 
-        ImageCommands/selectivemasksmooothcommand.h
+        ImageCommands/selectivemasksmooothcommand.h \
+    ImageCommands/tdpcommand.h
 
 FORMS    += mainwindow.ui
 

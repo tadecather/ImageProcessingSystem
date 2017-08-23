@@ -13,6 +13,7 @@
 #include "mediansmoothcommand.h"
 #include "weightedsmoothcommand.h"
 #include "selectivemasksmooothcommand.h"
+#include "tdpcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -575,36 +576,80 @@ void MainWindow::enhancementSlot()
     }
 }
 
+
+/*
+ * 定义transform命令的索引号commandIndex；
+ * 0 ：哈尔小波变换
+ * 1 ：哈尔小波逆变换
+ * 2 ：设置高频分量为零
+ * 3 ：硬阈值法
+ * 4 ：软阈值法
+ *
+ * 3，4 输入阈值后，先不压入command栈。
+ */
 void MainWindow::transDomainProcessSlot()
 {
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片（负责这部分的不是粗鄙之人！）");
+        return;
+    }
     //小波变换5个子操作
     if(ui->actionHaar_Wavelet==QObject::sender())
     {
-        image = myTab->getImageDisplay(0, 1)->getImage();
-        image = imgTransformdomainprocessing::imgHaar(image,3,waveCount);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"wavecount:"<<waveCount;
-
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             0,
+                                             3);//这里3可以通过对话框提取出来
+        myTab->pushCurrentStack(command);
+        waveCount = command->getWaveCount();
+        return;
     }
     if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
     {
-        image = imgTransformdomainprocessing::imgHaarInversion(image,waveCount);
-        myTab->setImage(0, 1, image);
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             1,
+                                             waveCount);
+        myTab->pushCurrentStack(command);
         qDebug()<<"wavecount:"<<waveCount;
+        return;
     }
     if(ui->actionset_whf_coeffecient_zero==QObject::sender())
     {
-//        imgTransformdomainprocessing::imgSetWHFCoefficientZero(image,waveCount);
-//         myTab->setImage(0, 1, image);
-//         qDebug()<<"wavecount:"<<waveCount;
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             2,
+                                             waveCount);
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionHard_Threshold_Method==QObject::sender())
     {
-
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             3,
+                                             waveCount,
+                                             90);
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionSoft_Threshold_Method==QObject::sender())
     {
-
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             4,
+                                             waveCount,
+                                             90);
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionDCT==QObject::sender())
@@ -657,13 +702,15 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
-        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = myTab->getImageDisplay(0, 0)->getImage();
         image = ImageSegmentation::GaussLaplacianOperator(image);
         myTab->setImage(0, 1, image);
     }
 
     if(ui->actionKrisch_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 0)->getImage();
+        image = ImageSegmentation::KrischOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionCustom_Edges == QObject::sender()){

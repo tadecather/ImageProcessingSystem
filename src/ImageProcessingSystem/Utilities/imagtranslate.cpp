@@ -77,3 +77,45 @@ void ImagTranslate::greyImage2Vector(QImage &img, vector<vector<float> > &result
     }
     result = tmp;
 }
+//参数顺序为RGB
+void ImagTranslate::vector2ColorImage(vector<vector<float> > &resultR, vector<vector<float> > &resultG, vector<vector<float> > &resultB, QImage &img)
+{
+    int height = img.height(),
+        width  = img.width();
+    for(int i = 0;i < height;++i)
+    {
+        QRgb *line = (QRgb*)img.scanLine(i);
+        for(int j =0;j < width;++j)
+        {
+            int Red   = (int) resultR[i][j];
+            int Green = (int) resultG[i][j];
+            int Blue  = (int) resultB[i][j];
+            line[j] = qRgb(Red,Green,Blue);
+        }
+    }
+
+}
+
+void ImagTranslate::colorImage2Vector(QImage &img, vector<vector<float> > &resultR, vector<vector<float> > &resultG, vector<vector<float> > &resultB)
+{
+    int newHeight = img.height(),
+        newWidth = img.width();
+//读取图像中的像素灰度存入两层vector构成的矩阵
+    for(int i = 0;i < newHeight;++i)
+    {
+        vector<float> onelineR;
+        vector<float> onelineG;
+        vector<float> onelineB;
+        QRgb *line = (QRgb*)img.scanLine(i);
+        for(int j =0;j< newWidth;++j)
+        {
+            onelineR.push_back((float)qRed(*(line+j)));
+            onelineG.push_back((float)qGreen(*(line+j)));
+            onelineB.push_back((float)qBlue(*(line+j)));
+        }
+        //将每一行加入矩阵中
+        resultR.push_back(onelineR);
+        resultG.push_back(onelineG);
+        resultB.push_back(onelineB);
+    }
+}
