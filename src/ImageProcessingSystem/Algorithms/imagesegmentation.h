@@ -15,6 +15,8 @@ public:
     static QImage * GaussLaplacianOperator(QImage *img);
     static QImage * KrischOperator(QImage *img);
 
+    static QImage * regionGrowing(QImage *image);
+
     static QImage * houghTran(QImage & image);
 };
 

@@ -12,6 +12,7 @@ TARGET = ImageProcessingSystem
 TEMPLATE = app
 
 
+
 SOURCES += main.cpp\
         mainwindow.cpp \
         Display/imagedisplay.cpp \

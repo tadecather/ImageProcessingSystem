@@ -67,7 +67,7 @@ QImage *ImageGray::binaryzation(QImage &image, int keyValue)
 {
     image.convertToFormat(QImage::Format_ARGB32);
 
-    keyValue = getKeyValueHist(&image);
+//    keyValue = getKeyValueHist(&image);
 
     qDebug() << "KeyValue" << keyValue;
 

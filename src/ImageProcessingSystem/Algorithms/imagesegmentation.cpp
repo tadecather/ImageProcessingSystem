@@ -1,7 +1,8 @@
 ﻿#include "imagesegmentation.h"
 
-
+#include "dct.h"
 #include "imagegray.h"
+#include <QStack>
 
 using namespace std;
 // 大津阈值获取
@@ -545,6 +546,74 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
 }
 
 
+// 区域生长
+QImage *ImageSegmentation::regionGrowing(QImage *image)
+{
+    // 种子点周围的点
+    int connectPoint[8][2] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    QImage * newImage = new QImage(image->width(), image->height(), QImage::Format_RGB888);
+    // 标记是否被检查过
+    QVector<QVector<int>> flagMatrix(image->width(), QVector<int>(image->height()));
+
+    // 存放种子点的栈
+    QStack<int *> seedStack;
+
+    int  * seed;
+
+    // 初始牙入栈的三个种子
+    seed = new int[2];
+    seed[0] = 0;
+    seed[1] = 0;
+    seedStack.push(seed);
+
+    seed = new int[2];
+    seed[0] = image->width() - 1;
+    seed[1] = image->height() - 1;
+    seedStack.push(seed);
+
+    seed = new int[2];
+    seed[0] = image->width()/2 - 1;
+    seed[1] = image->height()/2 - 1;
+    seedStack.push(seed);
+
+   // 栈不为空，就继续遍历
+    while(!seedStack.isEmpty()){
+        int * point = seedStack.top();
+        int seedx = point[0];
+        int seedy = point[1];
+        seedStack.pop();
+        delete(point);
+
+        // 标记点
+        flagMatrix[seedx][seedy] = 1;
+
+        //遍历周围8个点
+
+        for(int i = 0; i < 8; i++){
+            int tempx = seedx + connectPoint[i][0];
+            int tempy = seedy + connectPoint[i][1];
+
+            // 出界，接受本次循环
+            if(tempx < 0 || tempy < 0 || tempx >= image->width() || tempy >= image->height()){
+                continue;
+            }
+
+            // 如果遍历到的点位前景点，并且没有被标记过
+            if(qRed(image->pixel(tempx, tempy)) >= 128 && flagMatrix[tempx][tempy] != 1){
+               newImage->setPixel(tempx, tempy, qRgb(255, 255, 255));    // 生长
+               flagMatrix[tempx][tempy] = 1; //标记
+               seed = new int[2];
+               seed[0] = tempx;
+               seed[1] = tempy;
+               seedStack.push(seed);   // 入栈
+            }
+        }
+    }
+    return newImage;
+
+}
+
+
 
 // Hough 变换识别图片中的直线
 QImage * ImageSegmentation::houghTran(QImage & image)
@@ -586,8 +655,6 @@ QImage * ImageSegmentation::houghTran(QImage & image)
         }
     }
 
-
-
     QImage * newImage = new QImage(width, height, QImage::Format_RGB888);
     int lineR = 0;
     int lineTheater = 0;
@@ -609,7 +676,6 @@ QImage * ImageSegmentation::houghTran(QImage & image)
                                 newImage->setPixel(i1, j1, qRgb(255, 0, 0));
                             }
                         }
-
 
                     }
 
