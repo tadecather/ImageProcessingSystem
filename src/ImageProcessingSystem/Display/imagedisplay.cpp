@@ -166,6 +166,11 @@ void ImageDisplay::createMenuActions()
     menu = new QMenu;
     newTabAction = new QAction("创建新选项卡", this);
     connect(newTabAction, &QAction::triggered, this, &ImageDisplay::emitNewTabSlot);
+    setReferenceAction = new QAction("设为参考图", this);
+    connect(setReferenceAction, &QAction::triggered, this, &ImageDisplay::emitSetReferenceSlot);
+    assessQualityAction = new QAction("图像质量评价", this);
+    connect(assessQualityAction, &QAction::triggered, this, &ImageDisplay::emitAssessQualitySlot);
+
 }
 
 //设置右键菜单内容
@@ -173,6 +178,8 @@ void ImageDisplay::contextMenuEvent(QContextMenuEvent *event)
 {
     menu->clear();
     menu->addAction(newTabAction);
+    menu->addAction(setReferenceAction);
+    menu->addAction(assessQualityAction);
     menu->exec(QCursor::pos());
 }
 
@@ -215,4 +222,26 @@ void ImageDisplay::emitNewTabSlot()
         return;
     }
     QMessageBox::warning(this, "错误", "空图片无法创建新选项卡！");
+}
+
+//对当前图片判空，然后发射“设置这张图片为参考图”的signal
+void ImageDisplay::emitSetReferenceSlot()
+{
+    if(this->image != NULL)
+    {
+        emit setReferenceSignal();
+        return;
+    }
+    QMessageBox::warning(this, "错误", "参考图片不能为空");
+}
+
+//对当前图片判空，然后发射“评估这张图片”的signal
+void ImageDisplay::emitAssessQualitySlot()
+{
+    if(this->image != NULL)
+    {
+        emit assessQualitySignal();
+        return;
+    }
+    QMessageBox::warning(this, "错误", "评估图片不能为空");
 }

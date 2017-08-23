@@ -11,6 +11,9 @@ MyTabWidget::MyTabWidget(QWidget *parent):QTabWidget(parent)
     //显示关闭按钮并连接槽函数
     this->setTabsClosable(true);
     connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTabSlot(int)));
+
+    referenceImage = NULL;
+    assessImage = NULL;
 }
 
 ////现无用
@@ -29,6 +32,7 @@ MyTabWidget::MyTabWidget(QWidget *parent):QTabWidget(parent)
 //    //连接newTabSignal信号与增加Ta槽函数
 //    connect(initContent->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
 //    connect(initContent->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+//需要连接更多槽函数，参考下面的构造方法
 
 //    //显示关闭按钮并连接槽函数
 //    this->setTabsClosable(true);
@@ -71,6 +75,12 @@ void MyTabWidget::newTab(QImage *image)
     //连接新建标签页内TabContent内两个imagedisplay的newTabSignal信号与增加Tab槽函数
     connect(content->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
     connect(content->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
+    //这是设置当前图片为参考图片的connect
+    connect(content->getImageDisplayL(), &ImageDisplay::setReferenceSignal, this, &MyTabWidget::setReferenceSlot);
+    connect(content->getImageDisplayR(), &ImageDisplay::setReferenceSignal, this, &MyTabWidget::setReferenceSlot);
+    //这是进行图像质量评估的connect
+    connect(content->getImageDisplayL(), &ImageDisplay::assessQualitySignal, this, &MyTabWidget::asseccQualitySlot);
+    connect(content->getImageDisplayR(), &ImageDisplay::assessQualitySignal, this, &MyTabWidget::asseccQualitySlot);
     //连接切换tab页面和tabcontent重绘history
     //connect(this, &QTabWidget::currentChanged, content, &TabContent::updateCommandHistory);
     this->setCurrentIndex(MyTabWidget::number);
@@ -275,3 +285,29 @@ void MyTabWidget::doToCommand()
     }
 }
 
+void MyTabWidget::setReferenceSlot()
+{
+    ImageDisplay* sender = (ImageDisplay*)QObject::sender();
+    //将当前图片设置为参考图片
+    if(referenceImage != NULL)
+        delete referenceImage;
+    referenceImage = new QImage(*sender->getImage());
+}
+
+void MyTabWidget::asseccQualitySlot()
+{
+    ImageDisplay* sender = (ImageDisplay*)QObject::sender();
+    //对当前图片进行质量评估
+    if(assessImage != NULL)
+        delete assessImage;
+    assessImage = new QImage(*sender->getImage());
+    //相对于referenceImage,对assessImage进行图片质量评估
+    double mse = ImageEnhancement::ImageQualityAssessment(referenceImage, assessImage);
+    if(mse == -1.0)
+    {
+        //图像大小不合要求
+        QMessageBox::information(this, "图片大小不正确", "要评估的图像不能比原图小");
+    }
+    double PSNR = 10.0*log10(255*255/mse);
+    QMessageBox::information(this, "result", QString("均方误差：")+QString::number(mse)+QString("<br>")+QString("峰值信噪比：")+QString::number(PSNR));
+}

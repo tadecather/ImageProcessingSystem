@@ -358,6 +358,28 @@ QImage* ImageEnhancement::SelectiveMaskSmoothing(QImage* image)
     return afterSmooth;
 }
 
+//图像质量评价，输出MSE(可进而计算得到PTNR)
+double ImageEnhancement::ImageQualityAssessment(QImage* ref, QImage* img)
+{
+    //图片为MxN, 计算公式为(1/(m*n))*(每个点的灰度值差值平方 和)
+    //要评估的图像需比参考图大
+    if(!(img->width()>=ref->width()&&img->height()>=ref->height()))
+    {
+        return -1.0;
+    }
+    //方误差
+    double squareError = 0.0;
+    for(int i = 0; i < ref->width(); i++)
+    {
+        for(int j = 0; j < ref->height(); j++)
+        {
+            //获得要评估的图像和参考图的每个像素点
+            squareError+=pow((qRed(ref->pixel(i, j))-qRed(img->pixel(i, j))), 2);
+        }
+    }
+    squareError/=ref->width()*ref->height();
+    return squareError;
+}
 
 //以下是内部方法
 
