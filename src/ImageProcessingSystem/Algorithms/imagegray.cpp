@@ -67,6 +67,8 @@ QImage *ImageGray::binaryzation(QImage &image, int keyValue)
 {
     image.convertToFormat(QImage::Format_ARGB32);
 
+    keyValue = getKeyValueHist(&image);
+
     qDebug() << "KeyValue" << keyValue;
 
     for(int i = 0; i < image.width(); i++){
@@ -344,16 +346,19 @@ int ImageGray::getKeyValueHist(QImage *image)
         indexSecondMax = temp;
     }
 
-    int keyValue = histgram[indexSecondMax];
-    int indexKeyValue = indexSecondMax;
-    for(int i = indexSecondMax; i < indexMax; i++){
-        if(histgram[i] < keyValue){
-            keyValue = histgram[i];
-            indexKeyValue = i;
-        }
-    }
+     int keyValue = (indexMax  + indexSecondMax) / 2 + 0.5;
+     return keyValue;
 
-    return indexKeyValue;
+//    int keyValue = histgram[indexSecondMax];
+//    int indexKeyValue = indexSecondMax;
+//    for(int i = indexSecondMax; i < indexMax; i++){
+//        if(histgram[i] < keyValue){
+//            keyValue = histgram[i];
+//            indexKeyValue = i;
+//        }
+//    }
+
+//    return indexKeyValue;
 }
 
 

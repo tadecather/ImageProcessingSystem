@@ -36,7 +36,8 @@ SOURCES += main.cpp\
         Display/spnoiseargsdialog.cpp \
         Algorithms/dct.cpp \
     	Algorithms/imagesegmentation.cpp \
-    	ImageCommands/msmoothcommand.cpp
+    	ImageCommands/msmoothcommand.cpp \
+    Display/graydialog.cpp
 
 
 
@@ -65,7 +66,8 @@ HEADERS  += mainwindow.h \
         Display/spnoiseargsdialog.h \
         Algorithms/dct.h \
         Algorithms/imagesegmentation.h \
-        ImageCommands/msmoothcommand.h
+        ImageCommands/msmoothcommand.h \
+    Display/graydialog.h
 
 FORMS    += mainwindow.ui
 

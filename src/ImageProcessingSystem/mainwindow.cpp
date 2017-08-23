@@ -19,6 +19,7 @@
 #include "imagesegmentation.h"
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
+#include "graydialog.h"
 #include "spnoiseargsdialog.h"
 
 
@@ -567,7 +568,20 @@ void MainWindow::segmentationSlot()
         myTab->setImage(0, 1, image);
     }
 
-    if(ui->actionInteractive_Threshold_Segmentation == QObject::sender()){
+    if(ui->actionInteractive_Threshold_Segmentation == QObject::sender())
+    {
+        GrayDialog * dialog = new GrayDialog(this);
+
+        while(true){
+            if(dialog->exec() == QDialog::Rejected)
+            {
+                dialog->deleteLater();
+                return;
+            }
+            QImage * newImage = ImageGray::binaryzation(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()), dialog->getGrayValue());
+            myTab->setImage(myTab->currentIndex(), 1, newImage);
+            dialog->setVisible(true);
+        }
 
     }
 
@@ -616,7 +630,8 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
-
+        image = ImageSegmentation::houghTran(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        myTab->setImage(myTab->currentIndex(), 1, image);
     }
 
 
