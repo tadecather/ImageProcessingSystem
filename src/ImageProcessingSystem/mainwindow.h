@@ -14,6 +14,7 @@
 #include "MyTabWidget.h"
 #include "imagetrans.h"
 #include "imgtransformdomainprocessing.h"
+using namespace std;
 namespace Ui {
 class MainWindow;
 }
@@ -34,6 +35,7 @@ private:
     QImage * image;
     //暂时定义图片的高和宽
     int imageHeight, imagewidth;
+    int waveCount =0;
     QString saveFileName;
     QString currentPath;
     QStringList* recentFileList;

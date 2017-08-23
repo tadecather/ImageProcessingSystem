@@ -6,7 +6,6 @@
 #include<QImage>
 #include <QString>
 #include "imagegray.h"
-//#include"mytabwidget.h"
 
 class MyTabWidget;
 
@@ -17,15 +16,12 @@ private:
     MyTabWidget* mainTab;
 
 public:
-
-//     GrayCommand();
         QImage * color2Gray(QImage * img);
 public:
     Color2GrayCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index);
     void undo();
     void redo();
     QString* getName();
-    //bool mergeWith(const QUndoCommand *other);
 };
 
 

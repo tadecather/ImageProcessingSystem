@@ -9,7 +9,11 @@
 #include "binaryzationcommand.h"
 #include "gnoisecommand.h"
 #include "spnoisecommand.h"
-#include "msmoothcommand.h"
+#include "meansmoothcommand.h"
+#include "mediansmoothcommand.h"
+#include "weightedsmoothcommand.h"
+#include "selectivemasksmooothcommand.h"
+#include "tdpcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -21,6 +25,8 @@
 #include "gnoiseargsdialog.h"
 #include "graydialog.h"
 #include "spnoiseargsdialog.h"
+#include "weightedsmoothargsdialog.h"
+#include "meansmoothargsdialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -70,6 +76,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
     	
     //    TDP 共三个大模块
+
+
+            //小波变换5个子菜单
+            connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+            connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+
     connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
@@ -323,21 +338,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 
 void MainWindow::graySlot(){
-
-//    示例代码
-//    //此行需改消息来源
-//    if(ui->actionGraying==QObject::sender())
-//    {
-//        if(MyTabWidget::getNumber() == -1)
-//        {
-//            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-//            return;
-//        }
-//        //此行需要改command类名
-//        Color2GrayCommand* command = new Color2GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
-//        myTab->pushCurrentStack(command);
-//    }
-
     if(ui->actionGraying==QObject::sender())
     {
         if(MyTabWidget::getNumber() == -1)
@@ -480,13 +480,12 @@ void MainWindow::enhancementSlot()
         }
         //对话框输入一个值：snr
         SPNoiseArgsDialog* dialog = new SPNoiseArgsDialog(this);
-        qDebug()<<dialog->getSnr();
+        //qDebug()<<dialog->getSnr();
         if(dialog->exec() == QDialog::Rejected)
         {
             dialog->deleteLater();
             return;
         }
-        qDebug()<<"snr:"<<dialog->getSnr();
         SpNoiseCommand* command = new SpNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSnr());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
@@ -503,21 +502,66 @@ void MainWindow::enhancementSlot()
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
             return;
         }
-        MSmoothCommand* command = new MSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        MeanSmoothArgsDialog* dialog = new MeanSmoothArgsDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        MeanSmoothCommand* command = new MeanSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize());
+        dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionMedian_Smoothing==QObject::sender())
     {
-
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能中值平滑你知道不啦？");
+            return;
+        }
+        //中值平滑跟均值平滑一样，参数只有一个矩阵大小，因此使用均值平滑的dialog
+        MeanSmoothArgsDialog* dialog = new MeanSmoothArgsDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        MedianSmoothCommand* command = new MedianSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionWeighted_Smoothing==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        //对话框输入两个值：size, theta
+        WeightedSmoothArgsDialog* dialog = new WeightedSmoothArgsDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        WeightedSmoothCommand* command = new WeightedSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize(), dialog->getTheta());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionChoose_Mask_Smoothing==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        SelectiveMaskSmooothCommand* command = new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
     {
@@ -533,17 +577,80 @@ void MainWindow::enhancementSlot()
     }
 }
 
+
+/*
+ * 定义transform命令的索引号commandIndex；
+ * 0 ：哈尔小波变换
+ * 1 ：哈尔小波逆变换
+ * 2 ：设置高频分量为零
+ * 3 ：硬阈值法
+ * 4 ：软阈值法
+ *
+ * 3，4 输入阈值后，先不压入command栈。
+ */
 void MainWindow::transDomainProcessSlot()
 {
-
-    if(ui->menuWavelet_Transform==QObject::sender())
+    if(MyTabWidget::getNumber() == -1)
     {
-        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
-        image = imgTransformdomainprocessing
-                ::imgSetValidPic(*image);
-        qDebug()<<"width:"<<image->width()<<"height:"<<image->height();
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        QMessageBox::about(this, "请先打开图片", "没图片（负责这部分的不是粗鄙之人！）");
+        return;
+    }
+    //小波变换5个子操作
+    if(ui->actionHaar_Wavelet==QObject::sender())
+    {
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             0,
+                                             3);//这里3可以通过对话框提取出来
+        myTab->pushCurrentStack(command);
+        waveCount = command->getWaveCount();
+        return;
+    }
+    if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
+    {
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             1,
+                                             waveCount);
+        myTab->pushCurrentStack(command);
+        qDebug()<<"wavecount:"<<waveCount;
+        return;
+    }
+    if(ui->actionset_whf_coeffecient_zero==QObject::sender())
+    {
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             2,
+                                             waveCount);
+        myTab->pushCurrentStack(command);
+    }
+    if(ui->actionHard_Threshold_Method==QObject::sender())
+    {
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             3,
+                                             waveCount,
+                                             90);
+        myTab->pushCurrentStack(command);
+    }
+    if(ui->actionSoft_Threshold_Method==QObject::sender())
+    {
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             4,
+                                             waveCount,
+                                             90);
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionDCT==QObject::sender())
@@ -586,11 +693,16 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionRobert_Operator == QObject::sender()){
+       image = myTab->getImageDisplay(0, 1)->getImage();
+       image = ImageSegmentation::RobertOperator(image);
+       myTab->setImage(0, 1, image);
 
     }
 
     if(ui->actionSobel_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = ImageSegmentation::SobelOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionPrewitt_Operator == QObject::sender()){
@@ -598,15 +710,21 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionLaplacian_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 1)->getImage();
+        image = ImageSegmentation::LaplacianOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 0)->getImage();
+        image = ImageSegmentation::GaussLaplacianOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionKrisch_Operator == QObject::sender()){
-
+        image = myTab->getImageDisplay(0, 0)->getImage();
+        image = ImageSegmentation::KrischOperator(image);
+        myTab->setImage(0, 1, image);
     }
 
     if(ui->actionCustom_Edges == QObject::sender()){
@@ -644,8 +762,7 @@ void MainWindow::segmentationSlot()
 //现静态算法可以有返回值，具体调用变化，见exampleCommand类中,redo方法的注释
 //只是有一点，一定记得在算法的最后delete掉传入的参数并赋NULL，这是为了防止内存泄漏
 
-//如需关联已实现的算法和mainwindow，示例已经做好：
-//ExampleCommand类为command的示例类，只需复制代码，改改名字，添加一句实现即可
-//mainwindow.cpp中，command的多重if判断区，头部也有示例，复制粘贴 改改就行
 
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
+
+//在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件

@@ -1,9 +1,8 @@
-#include "spnoisecommand.h"
+#include "meansmoothcommand.h"
 
-//构造函数
-SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, double snr)
+MeanSmoothCommand::MeanSmoothCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index, int size)
 {
-    name = new QString("椒盐噪声");
+    name = new QString("均值平滑");
 
     this->imageLeft = new QImage(*imageLeft);
     if(imageRight == NULL)
@@ -18,16 +17,17 @@ SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidge
     }
     this->mainTab = mainTab;
     this->index = index;
-    this->snr = snr;
-    qDebug()<<snr;
+    this->size = size;
 }
 
+
+
 //redo方法
-void SpNoiseCommand::redo()
+void MeanSmoothCommand::redo()
 {
     if(firstTime)
     {
-        ImageEnhancement::AddSaltPepperNoise(imageAfter, snr);
+        this->imageAfter = ImageEnhancement::MeanSmoothing(this->imageAfter, size);
     }
     if(this->imageRight == NULL)
     {
@@ -42,7 +42,7 @@ void SpNoiseCommand::redo()
 }
 
 //undo方法
-void SpNoiseCommand::undo()
+void MeanSmoothCommand::undo()
 {
     if(this->imageRight == NULL)
     {

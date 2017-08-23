@@ -22,18 +22,13 @@ Color2GrayCommand::Color2GrayCommand(QImage *imageLeft, QImage *imageRight, MyTa
 
 void Color2GrayCommand::redo()
 {
-    //处理
-    //imageAfter = 拷贝构造 算法类：：灰度化算法(imageRight)
     if(this->imageRight == NULL)
     {
-        //处理左，结果放到右
-        //静态算法处理imageAfter
         ImageGray::colorToGrey(*imageAfter);
         mainTab->setImage(index, 1, imageAfter);
     }
     else
     {
-        //静态算法处理imageAfter
         ImageGray::colorToGrey(*imageAfter);
         mainTab->setImage(index, 0, imageRight);
         mainTab->setImage(index, 1, imageAfter);
@@ -55,6 +50,7 @@ void Color2GrayCommand::undo()
     }
 }
 
+//现在用不到的方法
 QImage * Color2GrayCommand::color2Gray(QImage * img)
 {
 
