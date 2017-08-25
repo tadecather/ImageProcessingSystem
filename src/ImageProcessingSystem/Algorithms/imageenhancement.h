@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <qmath.h>
 #include "imagtranslate.h"
+#include "imagesegmentation.h"
 
 class ImageEnhancement
 {
@@ -20,6 +21,8 @@ public:
     static QImage* MedianSmoothing(QImage* image, int size);
     static QImage* GaussianSmoothing(QImage* image, int size, int theta);
     static QImage* SelectiveMaskSmoothing(QImage* image);
+    static QImage* GradientSharpening(QImage* image, int operatorNo, double multiplier);
+    static QImage* LaplacianSharpening(QImage* image, double multiplier);
     static double ImageQualityAssessment(QImage* ref, QImage* img);
 private:
     static double GenerateGaussianNoise(double mu, double sigma);

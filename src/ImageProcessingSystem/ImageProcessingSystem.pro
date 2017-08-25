@@ -43,7 +43,12 @@ SOURCES += main.cpp\
         ImageCommands/weightedsmoothcommand.cpp \
         Display/meansmoothargsdialog.cpp \
         ImageCommands/selectivemasksmooothcommand.cpp \
-    	ImageCommands/tdpcommand.cpp
+    	ImageCommands/tdpcommand.cpp \
+    ImageCommands/gradientsharpencommand.cpp \
+    Display/gradientsharpendialog.cpp \
+    ImageCommands/laplaciansharpencommand.cpp \
+    Display/laplaciansharpendialog.cpp \
+    ImageCommands/boundarytrackcommand.cpp
 
 
 
@@ -80,7 +85,12 @@ HEADERS  += mainwindow.h \
         ImageCommands/weightedsmoothcommand.h \
         Display/meansmoothargsdialog.h \
         ImageCommands/selectivemasksmooothcommand.h \
-    	ImageCommands/tdpcommand.h
+    	ImageCommands/tdpcommand.h \
+    ImageCommands/gradientsharpencommand.h \
+    Display/gradientsharpendialog.h \
+    ImageCommands/laplaciansharpencommand.h \
+    Display/laplaciansharpendialog.h \
+    ImageCommands/boundarytrackcommand.h
 
 FORMS    += mainwindow.ui
 

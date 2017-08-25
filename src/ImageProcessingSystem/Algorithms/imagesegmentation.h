@@ -3,6 +3,8 @@
 
 #include <QImage>
 #include <QVector>
+#include <QPolygonF>
+#include <QPainterPath>
 
 class ImageSegmentation
 {
@@ -14,7 +16,8 @@ public:
     static QImage * LaplacianOperator(QImage *img);
     static QImage * GaussLaplacianOperator(QImage *img);
     static QImage * KrischOperator(QImage *img);
-
+    static QImage * ContourExtraction(QImage *img);
+    static QImage * BoundaryTracking(QImage *img);
     static QImage * houghTran(QImage & image);
 };
 

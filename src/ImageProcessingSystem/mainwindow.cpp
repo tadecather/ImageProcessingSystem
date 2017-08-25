@@ -14,6 +14,9 @@
 #include "weightedsmoothcommand.h"
 #include "selectivemasksmooothcommand.h"
 #include "tdpcommand.h"
+#include "gradientsharpencommand.h"
+#include "laplaciansharpencommand.h"
+#include "boundarytrackcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -27,6 +30,8 @@
 #include "spnoiseargsdialog.h"
 #include "weightedsmoothargsdialog.h"
 #include "meansmoothargsdialog.h"
+#include "gradientsharpendialog.h"
+#include "laplaciansharpendialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -565,11 +570,37 @@ void MainWindow::enhancementSlot()
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        GradientSharpenDialog* dialog = new GradientSharpenDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        GradientSharpenCommand* command = new GradientSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getOperatorNo(), dialog->getMulti());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionLaplacian_Sharpening==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        LaplacianSharpenDialog* dialog = new LaplacianSharpenDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        LaplacianSharpenCommand* command = new LaplacianSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getMulti());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionImage_Quality_Assessment==QObject::sender())
     {
@@ -740,7 +771,13 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionBoundary_Tracking == QObject::sender()){
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        BoundaryTrackCommand* command = new BoundaryTrackCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionHough_Transformation == QObject::sender()){
@@ -766,3 +803,6 @@ void MainWindow::segmentationSlot()
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
 
 //在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
+
+//bug
+//打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空

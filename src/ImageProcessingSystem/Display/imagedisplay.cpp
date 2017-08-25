@@ -55,6 +55,8 @@ ImageDisplay::~ImageDisplay()
 //展示当前image
 void ImageDisplay::updateImage()
 {
+    delete scene;
+    scene = new QGraphicsScene(this);
     scene->addPixmap(QPixmap::fromImage(*image));
     this->setScene(scene);
     this->show();

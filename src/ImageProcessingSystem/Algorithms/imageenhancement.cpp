@@ -22,13 +22,13 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
     // 循环遍历QList 进行像素点的操作，然后对Image 对象进行逐个像素点的赋值
     for(int i = 0; i < width * height; i++){
         QRgb pixel = rgbList->at(i);
-        int Red = qRed(pixel) + k*GenerateGaussianNoise(0, 1);
+        int Red = qRed(pixel) + k*GenerateGaussianNoise(mu, sigma);
         if(Red > 255) Red = 255;
         if(Red < 0) Red = 0;
-        int Green = qGreen(pixel)+ k*GenerateGaussianNoise(0, 1);
+        int Green = qGreen(pixel)+ k*GenerateGaussianNoise(mu, sigma);
         if(Green > 255) Green = 255;
         if(Green < 0) Green = 0;
-        int Blue = qBlue(pixel)+ k*GenerateGaussianNoise(0, 1);
+        int Blue = qBlue(pixel)+ k*GenerateGaussianNoise(mu, sigma);
         if(Blue > 255) Blue = 255;
         if(Blue < 0) Blue = 0;
         QRgb newPixel = qRgb(Red, Green, Blue);
@@ -356,6 +356,79 @@ QImage* ImageEnhancement::SelectiveMaskSmoothing(QImage* image)
     delete image;
     image = NULL;
     return afterSmooth;
+}
+
+QImage* ImageEnhancement::GradientSharpening(QImage* image, int operatorNo, double multiplier)
+{
+    //operatorNo为选择的锐化算子序号(0~2)，0为Roberts, 1为Sobel, 2为Prewitt, multiplier为叠加时算子处理后图像的乘数
+
+    //算子处理后的图像
+    QImage* after = new QImage(*image);
+
+    //最终图像
+    QImage* result = new QImage(*image);
+
+    if(operatorNo == 0)
+    {
+        //Roberts算子
+        after = ImageSegmentation::RobertOperator(after);
+    }
+    else if(operatorNo == 1)
+    {
+        //Sobel算子
+        after = ImageSegmentation::SobelOperator(after);
+    }
+    else
+    {
+        //Prewitt算子
+        after = ImageSegmentation::PrewittOperator(after);
+    }
+
+    for(int i = 0; i < image->width()-1; i++)
+    {
+        for(int j = 0; j < image->height() - 1; j++)
+        {
+            double resultP = (double)qRed(image->pixel(i, j))-multiplier*(double)qRed(after->pixel(i, j));
+            if(resultP < 0) resultP = 0;
+            result->setPixel(i, j, qRgb((int)resultP, (int)resultP, (int)resultP));
+        }
+    }
+
+    delete after;
+    after = NULL;
+    return result;
+}
+
+//拉普拉斯锐化
+QImage* ImageEnhancement::LaplacianSharpening(QImage* image, double multiplier)
+{
+    //算子处理后的图像
+    QImage* after = new QImage(*image);
+
+    //最终图像
+    QImage* result = new QImage(*image);
+
+
+    after = ImageSegmentation::LaplacianOperator(after);
+
+
+    for(int i = 0; i < image->width()-1; i++)
+    {
+        for(int j = 0; j < image->height() - 1; j++)
+        {
+            if(qRed(after->pixel(i, j))>=0)
+            {
+                double resultP = (double)qRed(image->pixel(i, j))-multiplier*(double)qRed(after->pixel(i, j));
+                if(resultP < 0 ) resultP = 0;
+                result->setPixel(i, j, qRgb((int)resultP, (int)resultP, (int)resultP));
+            }
+
+        }
+    }
+
+    delete after;
+    after = NULL;
+    return result;
 }
 
 //图像质量评价，输出MSE(可进而计算得到PTNR)
