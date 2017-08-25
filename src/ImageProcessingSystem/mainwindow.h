@@ -28,6 +28,8 @@ public:
     ~MainWindow();
     //判断当前图片有没有经过灰度化
     bool afterGray();
+    //判断当前图片有没有经过二值化
+    bool afterBin();
 
 
 private:

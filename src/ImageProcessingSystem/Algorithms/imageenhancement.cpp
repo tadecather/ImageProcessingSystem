@@ -10,17 +10,15 @@ ImageEnhancement::ImageEnhancement()
 }
 //以下是外部接口
 
-//添加高斯噪声。mu为均值, sigma为方差，k为噪声系数，均需外部传入
+//添加高斯噪声。mu为均值, sigma为方差，k为噪声系数，均需外部传入S
 void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, int k)
 {
     srand((unsigned int)(time(NULL)));
     int width = 0;
     int height = 0;
-    //得到一个从左到右，从上到下遍历的RGB像素点QList
     QList<QRgb> * rgbList =  ImagTranslate::imageToList(*image, width, height);
-    //image.convertToFormat(QImage::Format_ARGB32);
-    // 循环遍历QList 进行像素点的操作，然后对Image 对象进行逐个像素点的赋值
-    for(int i = 0; i < width * height; i++){
+    for(int i = 0; i < width * height; i++)
+    {
         QRgb pixel = rgbList->at(i);
         int Red = qRed(pixel) + k*GenerateGaussianNoise(mu, sigma);
         if(Red > 255) Red = 255;
@@ -38,7 +36,7 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
     delete rgbList;
 }
 
-//添加椒盐噪声
+//添加椒盐噪声， snr为信噪比
 void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
 {
     srand((unsigned int)(time(NULL)));
@@ -62,7 +60,7 @@ void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
     }
 }
 
-//均值平滑
+//均值平滑, size为均值平滑矩阵大小
 QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
 {
     int x = 0;
@@ -93,6 +91,7 @@ QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
 
                 }
             }
+            //得到均值
             sum = sum / times;
             times = 0;
             QRgb newPixel = qRgb(sum, sum, sum);
@@ -105,7 +104,7 @@ QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
     return afterSmooth;
 }
 
-//中值平滑
+//中值平滑， size为中值平滑矩阵大小
 QImage* ImageEnhancement::MedianSmoothing(QImage* image, int size)
 {
     int x = 0;
@@ -157,12 +156,13 @@ QImage* ImageEnhancement::GaussianSmoothing(QImage* image, int size, int theta)
     {
         for(int j = 0; j < size; j++)
         {
-            double param1 = (double)(1.0/(theta*theta));
-            double distance = (double)((i-medium)*(i-medium)+(j-medium)*(j-medium));
-            double param2 = (double)exp(((-1)*distance)/(2*(double)theta*(double)theta));
-            gMask[i][j] = (double)param1*param2;
-            sum+=gMask[i][j];
+                double param1 = (double)(1.0/(theta*theta));
+                double distance = (double)((i-medium)*(i-medium)+(j-medium)*(j-medium));
+                double param2 = (double)exp(((-1)*distance)/(2*(double)theta*(double)theta));
+                gMask[i][j] = (double)param1*param2;
+                sum+=gMask[i][j];
         }
+        //qDebug()<<gMask[i][0]<<"    "<<gMask[i][1]<<"    "<<gMask[i][2]<<"    "<<gMask[i][3]<<"    "<<gMask[i][4];
     }
     //遍历所有像素
     int x;

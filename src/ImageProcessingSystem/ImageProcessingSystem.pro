@@ -100,3 +100,5 @@ INCLUDEPATH += Display/
 INCLUDEPATH += ImageCommands/
 INCLUDEPATH += Utilities/
 
+RC_FILE = Resource/IPS.rc
+
