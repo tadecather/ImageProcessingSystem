@@ -49,6 +49,7 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
+    void closeEvent(QCloseEvent *event);
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
     void transformSlot();

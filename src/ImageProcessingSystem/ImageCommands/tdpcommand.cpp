@@ -1,4 +1,5 @@
 ﻿#include "tdpcommand.h"
+#include "dct.h"
 
 
 /*
@@ -8,6 +9,7 @@
  * 2 ：设置高频分量为零
  * 3 ：硬阈值法
  * 4 ：软阈值法
+ * 5. DCT 及逆变换
  */
 
 TDPCommand::TDPCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab,
@@ -36,6 +38,9 @@ TDPCommand::TDPCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainT
         name = new QString("软阈值法");
         this->waveCount = args1;
         this->lambda = lambda;
+        break;
+    case 5:
+        name = new QString("DCT及逆变换");
         break;
     }
     this->imageLeft = new QImage(*imageLeft);
@@ -79,6 +84,8 @@ void TDPCommand::redo()
         case 4:
              imgTransformdomainprocessing::imgSoftThreshold(this->imageAfter,waveCount,lambda);
             break;
+        case 5:
+            this->imageAfter = DCT::dctNewImage(this->imageAfter);
         }
      }
     if(this->imageRight == NULL)

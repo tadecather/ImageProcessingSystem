@@ -17,13 +17,14 @@ ImageGray::ImageGray()
 
 
 //传入一个 QImage 对象，返回一个 QImage 指针
-QImage * ImageGray::colorToGrey(QImage &image)
+QImage * ImageGray::colorToGrey(QImage * image)
 {
     int width = 0;
     int height = 0;
     //得到一个从左到右，从上到下遍历的RGB像素点QList
-    QList<QRgb> * rgbList =  ImagTranslate::imageToList(image, width, height);
-    image.convertToFormat(QImage::Format_ARGB32);
+    QList<QRgb> * rgbList =  ImagTranslate::imageToList(*image, width, height);
+
+    QImage * grayImage = new QImage(image->width(), image->height(), QImage::Format_ARGB32);
     // 循环遍历QList 进行像素点的操作，然后对Image 对象进行逐个像素点的赋值
     for(int i = 0; i < width * height; i++){
         QRgb pixel = rgbList->at(i);
@@ -33,67 +34,83 @@ QImage * ImageGray::colorToGrey(QImage &image)
         int Grey = 0.3 * Red + 0.59 * Green + 0.11 * Blue;
         QRgb newPixel = qRgb(Grey, Grey, Grey);
         // i % width 得到目前像素点的列值，i /width 得到当前像素点的 行值
-        image.setPixel(i / height , i % height, newPixel);
+        grayImage->setPixel(i / height , i % height, newPixel);
     }
     delete rgbList;
-    return &image;
+    delete image;
+    return grayImage;
 }
 
-QImage *ImageGray::GrayToColor(QImage &image)
+QImage *ImageGray::GrayToColor(QImage *image)
 {
 
 }
 
 
 // 图片负相处理
-QImage *ImageGray::negetiveImage(QImage &image)
+QImage *ImageGray::negetiveImage(QImage * image)
 {
-    image.convertToFormat(QImage::Format_ARGB32);
 
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int Gray = qRed(image.pixel(i, j));
+    QImage * negImage = new QImage(image->width(), image->height(), QImage::Format_ARGB32);
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int Gray = qRed(image->pixel(i, j));
             QRgb newPixel = qRgb(255 - Gray, 255 - Gray, 255 - Gray);
-            image.setPixel(i, j, newPixel);
+            negImage->setPixel(i, j, newPixel);
         }
     }
 
-    return &image;
+    delete image;
+    return negImage;
 }
 
 
 //二值化
-QImage *ImageGray::binaryzation(QImage &image, int keyValue)
+QImage *ImageGray::binaryzation(QImage *image, int keyValueType, int keyValue)
 {
-    image.convertToFormat(QImage::Format_ARGB32);
+    QImage * binImage = new QImage(image->width(), image->height(), QImage::Format_RGB888);
 
-//    keyValue = getKeyValueHist(&image);
+    // 参数传递为0 使用127， 1， 使用传递进来的阈值， 2 ，平均值， 3 直方图阈值
+    if(keyValueType == 0){
+        keyValue = 127;
+    } else if(keyValueType == 1){
+        keyValue = keyValue;
+    } else if(keyValueType == 2){
+        keyValue = getKeyValue(image);
+    } else if(keyValueType == 3){
+        keyValue = getKeyValueHist(image);
+    }
 
     qDebug() << "KeyValue" << keyValue;
 
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int Gray = qRed(image.pixel(i, j));
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int Gray = qRed(image->pixel(i, j));
             QRgb newPixel;
             if( Gray >= keyValue){
                 newPixel = qRgb(255, 255, 255);
             }else{
                 newPixel = qRgb(0, 0, 0);
             }
-            image.setPixel(i, j, newPixel);
+            binImage->setPixel(i, j, newPixel);
         }
     }
-    return &image;
+    delete image;
+    image = NULL;
+    return binImage;
 }
 
-// 线性变换
-QImage *ImageGray::linearStretch(QImage &image)
+// 线性变换 如果参数传递进来是0， 0 则使用默认参数 k = 0.3, d = 0.5
+QImage *ImageGray::linearStretch(QImage *image, double k, double d)
 {
-    QImage * lineImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
+
+    QImage * lineImage = new QImage(image->width(), image->height(), QImage::Format_RGB888);
     QVector<int> map(256);
 
-    float k = 0.3;
-    int d = 0.5;
+    if(k == 0 && d == 0){
+        k = 0.3;
+        d = 0.5;
+    }
 
     for(int i = 0; i < 256; i++){
         map[i] = int(i * k + d);
@@ -105,27 +122,30 @@ QImage *ImageGray::linearStretch(QImage &image)
         }
     }
 
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int gray = qRed(image.pixel(i, j));
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int gray = qRed(image->pixel(i, j));
 
             QRgb newPixel = qRgb(map[gray], map[gray], map[gray]);
             lineImage->setPixel(i, j, newPixel);
         }
     }
 
+    delete image;
     return lineImage;
 
 }
 
-// 指数变换
-QImage *ImageGray::exponentialStretch(QImage &image)
+// 指数变换 默认值是c = 1 和 r = 2
+QImage *ImageGray::exponentialStretch(QImage *image, double c, double r)
 {
-    QImage * expImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
+    QImage * expImage = new QImage(image->width(), image->height(), QImage::Format_RGB888);
     QVector<int> map(256);
 
-    float c = 1.0 / 255;
-    float r = 2;
+    if(c == 0 && r == 0){
+        c = 1.0 / 255;
+        r = 2;
+    }
 
     for(int i = 0; i < 256; i++){
         float temp = pow((c * i), r);
@@ -140,28 +160,33 @@ QImage *ImageGray::exponentialStretch(QImage &image)
 
     }
 
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int gray = qRed(image.pixel(i, j));
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int gray = qRed(image->pixel(i, j));
 
             QRgb newPixel = qRgb(map[gray], map[gray], map[gray]);
             expImage->setPixel(i, j, newPixel);
         }
     }
 
+    delete image;
     return expImage;
 
 }
 
-// 对数变换
-QImage *ImageGray::logarithmicStretch(QImage &image)
+// 对数变换 默认参数 V = 50
+QImage *ImageGray::logarithmicStretch(QImage *image, double v1)
 {
 
     //c*log2(1 + v*src_img)/log2(v+1)
-    QImage * logImage = new QImage(image.width(), image.height(), QImage::Format_RGB888);
+    QImage * logImage = new QImage(image->width(), image->height(), QImage::Format_RGB888);
     QVector<int> map(256);
 
-    int  v = 50;
+    if(v1 == 0){
+        v1 = 50;
+    }
+
+    int  v = (int) v1;
 
     for(int i = 0; i < 256; i++){
         float temp = log2(1 + v * (i * 1.0 / 255)) / log2(v + 1);
@@ -176,43 +201,45 @@ QImage *ImageGray::logarithmicStretch(QImage &image)
     }
 
 
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int gray = qRed(image.pixel(i, j));
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int gray = qRed(image->pixel(i, j));
 
             QRgb newPixel = qRgb(map[gray], map[gray], map[gray]);
             logImage->setPixel(i, j, newPixel);
         }
     }
 
+    delete image;
     return logImage;
 }
 
 
 // 绘制直方图，需要接受一个灰度表示的图片，返回一张代表灰度分布的直方图
-QImage * ImageGray::plotHistogram(QImage &image)
+QImage * ImageGray::plotHistogram(QImage *image)
 {
 
     // 获取灰度数据
-    QVector<int>  histgram = countGrayHistogram(&image);
+    QVector<int>  histgram = countGrayHistogram(image);
 
     QImage * grayHistgramImage = drawHistogram(histgram);
 
 
+    delete image;
     return grayHistgramImage;
 }
 
 // 均衡直方图的映射，然后返回经过映射后的图片
-QImage * ImageGray::balanceHistogram(QImage &image)
+QImage * ImageGray::balanceHistogram(QImage *image)
 {
-    QImage * blanceHist = new QImage(image.width(), image.height(), QImage::Format_RGB888);
+    QImage * blanceHist = new QImage(image->width(), image->height(), QImage::Format_RGB888);
 
 
-    std::vector<int> grayCount = countGrayHistogram(&image).toStdVector();
+    std::vector<int> grayCount = countGrayHistogram(image).toStdVector();
 
-    std::vector<int> culmCountZero(256);
+    QVector<int> culmCountZero(256);
 
-    int numPixel = image.width() *image.height();
+    int numPixel = image->width() *image->height();
 
     culmCountZero[0] = 1.0 * grayCount[0] / numPixel * 255;
     int sum = grayCount[0];
@@ -222,16 +249,19 @@ QImage * ImageGray::balanceHistogram(QImage &image)
         culmCountZero[i] = 1.0 * sum /numPixel * 255;
     }
     // 对图片的灰度进行重新映射
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            int Red = qRed(image.pixel(i, j));
+    for(int i = 0; i < image->width(); i++){
+        for(int j = 0; j < image->height(); j++){
+            int Red = qRed(image->pixel(i, j));
             QRgb newPixel = qRgb(culmCountZero[Red], culmCountZero[Red], culmCountZero[Red]);
             blanceHist->setPixel(i, j, newPixel);
         }
     }
 
-//    FileOperation::saveAs(*blanceHist);
+    QImage * balanceHistgramImage = drawHistogram(culmCountZero);
+    QString fileName = "balanceHist.jpg";
+    FileOperation::save(*balanceHistgramImage, fileName);
 
+    delete image;
     return blanceHist;
 
 }
@@ -349,16 +379,6 @@ int ImageGray::getKeyValueHist(QImage *image)
      int keyValue = (indexMax  + indexSecondMax) / 2 + 0.5;
      return keyValue;
 
-//    int keyValue = histgram[indexSecondMax];
-//    int indexKeyValue = indexSecondMax;
-//    for(int i = indexSecondMax; i < indexMax; i++){
-//        if(histgram[i] < keyValue){
-//            keyValue = histgram[i];
-//            indexKeyValue = i;
-//        }
-//    }
-
-//    return indexKeyValue;
 }
 
 

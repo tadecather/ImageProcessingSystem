@@ -35,11 +35,11 @@ QImage * ImageSegmentation::ostu(QImage &image)
         }
         double u0 = sum * 1.0 / N0;
 
-        sum = 0;
+        int sum1 = 0;
         for( int n = i + 1; n < 256; n++){
-            sum += n * grayHist[i];
+            sum1 += n * grayHist[i];
         }
-        double u1 = sum * 1.0 / N1;
+        double u1 = sum1 * 1.0 / N1;
 
         double g = w0*w1*(u0-u1)*(u0-u1);
 
@@ -50,7 +50,7 @@ QImage * ImageSegmentation::ostu(QImage &image)
 
     }
 
-    QImage * newImage = ImageGray::binaryzation(image, max);
+    QImage * newImage = ImageGray::binaryzation(&image, 1, max);
 
     return newImage;
 

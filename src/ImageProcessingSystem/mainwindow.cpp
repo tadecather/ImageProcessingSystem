@@ -4,16 +4,16 @@
 #include "imagegray.h"
 
 //请将include Command类写在这条注释以下，优化时全部丢到一个新建的.h中去
-#include "graycommand.h"
-#include "negetivecommand.h"
-#include "binaryzationcommand.h"
+
 #include "gnoisecommand.h"
 #include "spnoisecommand.h"
 #include "meansmoothcommand.h"
 #include "mediansmoothcommand.h"
 #include "weightedsmoothcommand.h"
 #include "selectivemasksmooothcommand.h"
+#include "grayscommand.h"
 #include "tdpcommand.h"
+
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -27,6 +27,9 @@
 #include "spnoiseargsdialog.h"
 #include "weightedsmoothargsdialog.h"
 #include "meansmoothargsdialog.h"
+
+#include <QLabel>
+#include <QPixmap>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -276,6 +279,14 @@ void MainWindow::exitSlot(){
     exit(0);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    exitSlot();
+
+}
+
+
+
 void MainWindow::openRecentFile(){
     QAction * subAction = (QAction *)QObject::sender();
     qDebug()  << subAction->text();
@@ -338,15 +349,23 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 
 void MainWindow::graySlot(){
+
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        return;
+    }
+
     if(ui->actionGraying==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
-        Color2GrayCommand* command = new Color2GrayCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             1);
         myTab->pushCurrentStack(command);
+        return;
+
     }
 
 
@@ -357,59 +376,130 @@ void MainWindow::graySlot(){
 
     if(ui->actionNegetive==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
-        NegetiveCommand* command = new NegetiveCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             3);
         myTab->pushCurrentStack(command);
+        return;
     }
 
     if(ui->actionBinaryzation==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
+        GrayDialog * dialog = new GrayDialog(this, 4);
+        if(dialog->exec() == QDialog::Rejected)
         {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            dialog->deleteLater();
             return;
         }
-        BinaryzationCommand* command = new BinaryzationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             4,
+                                            dialog->getArgs1()); // 还可以有一个参数
         myTab->pushCurrentStack(command);
+        dialog->deleteLater();
+        return;
     }
 
     if(ui->actionLinear_Stretch==QObject::sender())
     {
-        image = ImageGray::linearStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actionLinear_Stretch operation...";
+        GrayDialog * dialog = new GrayDialog(this, 1);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                 myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                 this->myTab,
+                                                 myTab->currentIndex(),
+                                                 5,
+                                                 dialog->getArgs1(),
+                                                 dialog->getArgs2());
+        myTab->pushCurrentStack(command);
+        dialog->deleteLater();
+        return;
     }
 
     if(ui->actionExponential_Stretch==QObject::sender())
     {
-        image = ImageGray::exponentialStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actionExponential_Stretch operation...";
+        GrayDialog * dialog = new GrayDialog(this, 2);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             6,
+                                              dialog->getArgs1(),
+                                              dialog->getArgs2());
+        myTab->pushCurrentStack(command);
+        dialog->deleteLater();
+        return;
+
     }
 
     if(ui->actionLogarithmic_Stretch==QObject::sender())
     {
-        image = ImageGray::logarithmicStretch(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actionLogarithmic_Stretch operation...";
+        GrayDialog * dialog = new GrayDialog(this, 3);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             7,
+                                            dialog->getArgs1());
+        myTab->pushCurrentStack(command);
+        dialog->deleteLater();
+        return;
+
     }
 
     if(ui->actionPlot_Histogram==QObject::sender())
     {
-        //test
-        ImageGray::plotHistogram(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             8); // 还可以有两个参数
+        myTab->pushCurrentStack(command);
+        return;
     }
 
     if(ui->actionBalance_Histogram==QObject::sender())
     {
-        //test
-        image = ImageGray::balanceHistogram(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
-        ImageGray::plotHistogram(*image);
-        qDebug()<<"actionBalance_Histogram operation...";
+        GraysCommand * command = new GraysCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             9); // 还可以有两个参数
+        myTab->pushCurrentStack(command);
+
+        QDialog * dialog = new QDialog(this);
+        QImage * newImage = FileOperation::open("balanceHist.jpg", *recentFileList);
+
+        dialog->setFixedSize(newImage->width(), image->height());
+        QLabel * balancedHist = new QLabel(dialog);
+        balancedHist->setPixmap(QPixmap::fromImage(*newImage));
+
+        if( dialog->exec() == QDialog::Rejected){
+            balancedHist->deleteLater();
+            dialog->deleteLater();
+        }
+
+
+        return;
     }
 
 }
@@ -655,9 +745,12 @@ void MainWindow::transDomainProcessSlot()
 
     if(ui->actionDCT==QObject::sender())
     {
-        image = DCT::dctNewImage(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-
-        myTab->setImage(0, 1, image);
+        TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             5);
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionDCTI==QObject::sender())
@@ -671,24 +764,23 @@ void MainWindow::segmentationSlot()
 {
     if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
     {
-        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
+        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
         myTab->setImage(0, 1, image);
     }
 
     if(ui->actionInteractive_Threshold_Segmentation == QObject::sender())
     {
-        GrayDialog * dialog = new GrayDialog(this);
+        GrayDialog * dialog = new GrayDialog(this, 0);
 
-        while(true){
-            if(dialog->exec() == QDialog::Rejected)
-            {
-                dialog->deleteLater();
-                return;
-            }
-            QImage * newImage = ImageGray::binaryzation(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()), dialog->getGrayValue());
-            myTab->setImage(myTab->currentIndex(), 1, newImage);
-            dialog->setVisible(true);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
         }
+        QImage * newImage = ImageGray::binaryzation(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), dialog->getGrayValue());
+//        myTab->setImage(myTab->currentIndex(), 1, newImage);
+        dialog->deleteLater();
+
 
     }
 
