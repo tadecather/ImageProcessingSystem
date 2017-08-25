@@ -42,7 +42,13 @@ SOURCES += main.cpp\
         Display/meansmoothargsdialog.cpp \
         ImageCommands/selectivemasksmooothcommand.cpp \
     	ImageCommands/tdpcommand.cpp \
-    ImageCommands/grayscommand.cpp
+        ImageCommands/grayscommand.cpp \
+        ImageCommands/gradientsharpencommand.cpp \
+        Display/gradientsharpendialog.cpp \
+        ImageCommands/laplaciansharpencommand.cpp \
+        Display/laplaciansharpendialog.cpp \
+        ImageCommands/boundarytrackcommand.cpp
+
 
 
 
@@ -77,7 +83,13 @@ HEADERS  += mainwindow.h \
         Display/meansmoothargsdialog.h \
         ImageCommands/selectivemasksmooothcommand.h \
     	ImageCommands/tdpcommand.h \
-    ImageCommands/grayscommand.h
+        ImageCommands/grayscommand.h \
+        ImageCommands/gradientsharpencommand.h \
+        Display/gradientsharpendialog.h \
+        ImageCommands/laplaciansharpencommand.h \
+        Display/laplaciansharpendialog.h \
+        ImageCommands/boundarytrackcommand.h
+
 
 FORMS    += mainwindow.ui
 
@@ -85,4 +97,6 @@ INCLUDEPATH += Algorithms/
 INCLUDEPATH += Display/
 INCLUDEPATH += ImageCommands/
 INCLUDEPATH += Utilities/
+
+RC_FILE = Resource/IPS.rc
 

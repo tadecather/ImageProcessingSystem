@@ -13,6 +13,9 @@
 #include "selectivemasksmooothcommand.h"
 #include "grayscommand.h"
 #include "tdpcommand.h"
+#include "gradientsharpencommand.h"
+#include "laplaciansharpencommand.h"
+#include "boundarytrackcommand.h"
 
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
@@ -27,6 +30,8 @@
 #include "spnoiseargsdialog.h"
 #include "weightedsmoothargsdialog.h"
 #include "meansmoothargsdialog.h"
+#include "gradientsharpendialog.h"
+#include "laplaciansharpendialog.h"
 
 #include <QLabel>
 #include <QPixmap>
@@ -156,16 +161,78 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//判断当前图片是否经过灰度化
 bool MainWindow::afterGray()
 {
-    QUndoStack* currStack = myTab->getCurrentStack();
-    for(int i = 0; i < currStack->index(); i++)
+//    QUndoStack* currStack = myTab->getCurrentStack();
+//    for(int i = 0; i < currStack->index(); i++)
+//    {
+//        ImageCommand* command = (ImageCommand*)currStack->command(i);
+//        if(*(command->getName()) == "灰度化")
+//            return true;
+//    }
+//    return false;
+    QImage* image;
+    //优先获取当前选项卡右边图片，为NULL则获取左边图片
+    if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()!=NULL)
     {
-        ImageCommand* command = (ImageCommand*)currStack->command(i);
-        if(*(command->getName()) == "灰度化")
-            return true;
+        image = myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage();
     }
-    return false;
+    else
+    {
+        image = myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage();
+    }
+
+    for(int i = 0; i < image->width(); i++)
+    {
+        for(int j = 0; j < image->height(); j++)
+        {
+            if(qRed(image->pixel(i, j))==qGreen(image->pixel(i, j))&&qGreen(image->pixel(i, j))==qBlue(image->pixel(i, j)))
+            {
+                continue;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool MainWindow::afterBin()
+{
+    if(!this->afterGray())
+    {
+        return false;
+    }
+    QImage* image;
+    //优先获取当前选项卡右边图片，为NULL则获取左边图片
+    if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()!=NULL)
+    {
+        image = myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage();
+    }
+    else
+    {
+        image = myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage();
+    }
+
+    for(int i = 0; i < image->width(); i++)
+    {
+        for(int j = 0; j < image->height(); j++)
+        {
+            if(qRed(image->pixel(i, j))!=255||qRed(image->pixel(i, j))!=0)
+            {
+                continue;
+            }
+            else
+            {
+                qDebug()<<i<<j<<qRed(image->pixel(i, j));
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 void MainWindow::openFileSlot()
@@ -387,6 +454,12 @@ void MainWindow::graySlot(){
 
     if(ui->actionBinaryzation==QObject::sender())
     {
+    	 if(!this->afterGray())
+        {
+            QMessageBox::about(this, "图片不符合要求", "二值化处理需要灰度图片");
+            return;
+        }
+
         GrayDialog * dialog = new GrayDialog(this, 4);
         if(dialog->exec() == QDialog::Rejected)
         {
@@ -399,6 +472,7 @@ void MainWindow::graySlot(){
                                              myTab->currentIndex(),
                                              4,
                                             dialog->getArgs1()); // 还可以有一个参数
+
         myTab->pushCurrentStack(command);
         dialog->deleteLater();
         return;
@@ -632,6 +706,11 @@ void MainWindow::enhancementSlot()
             QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
             return;
         }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能加权平滑你知道不啦？");
+            return;
+        }
         //对话框输入两个值：size, theta
         WeightedSmoothArgsDialog* dialog = new WeightedSmoothArgsDialog(this);
         if(dialog->exec() == QDialog::Rejected)
@@ -650,16 +729,57 @@ void MainWindow::enhancementSlot()
             QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
             return;
         }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能掩模平滑你知道不啦？");
+            return;
+        }
         SelectiveMaskSmooothCommand* command = new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
         myTab->pushCurrentStack(command);
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "图片不符合要求", "梯度锐化需要灰度图");
+            return;
+        }
+        GradientSharpenDialog* dialog = new GradientSharpenDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        GradientSharpenCommand* command = new GradientSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getOperatorNo(), dialog->getMulti());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionLaplacian_Sharpening==QObject::sender())
     {
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "图片不符合要求", "拉普拉斯锐化需要灰度图");
+            return;
+        }
+        LaplacianSharpenDialog* dialog = new LaplacianSharpenDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        LaplacianSharpenCommand* command = new LaplacianSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getMulti());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
     }
     if(ui->actionImage_Quality_Assessment==QObject::sender())
     {
@@ -833,7 +953,18 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionBoundary_Tracking == QObject::sender()){
-
+        if(MyTabWidget::getNumber() == -1)
+        {
+            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            return;
+        }
+        if(!afterBin())
+        {
+            QMessageBox::about(this, "图片不符合要求", "需要二值化后才可以进行边界追踪");
+            return;
+        }
+        BoundaryTrackCommand* command = new BoundaryTrackCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        myTab->pushCurrentStack(command);
     }
 
     if(ui->actionHough_Transformation == QObject::sender()){
@@ -859,3 +990,6 @@ void MainWindow::segmentationSlot()
 //新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
 
 //在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
+
+//bug
+//打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空
