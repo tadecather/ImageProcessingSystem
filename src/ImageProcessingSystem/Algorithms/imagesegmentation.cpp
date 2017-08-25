@@ -122,6 +122,8 @@ QImage *ImageSegmentation::SobelOperator(QImage *img)
     }
     //转回图像
     ImagTranslate::vector2ColorImage(resultR,resultG,resultB,*newImg);
+    delete img;
+    img = NULL;
     return newImg;
 }
 
@@ -161,6 +163,8 @@ QImage *ImageSegmentation::PrewittOperator(QImage *img)
     }
     //转回图像
      ImagTranslate::vector2ColorImage(resultR,resultG,resultB,*newImg);
+     delete img;
+     img = NULL;
     return newImg;
 }
 
@@ -194,7 +198,9 @@ QImage *ImageSegmentation::LaplacianOperator(QImage *img)
     }
     //转回图像
      ImagTranslate::vector2ColorImage(resultR,resultG,resultB,*newImg);
-    return newImg;
+     delete img;
+     img = NULL;
+     return newImg;
 }
 
 QImage *ImageSegmentation::GaussLaplacianOperator(QImage *img)
@@ -238,6 +244,8 @@ QImage *ImageSegmentation::GaussLaplacianOperator(QImage *img)
    }
    //转回图像
    ImagTranslate::vector2ColorImage(resultR,resultG,resultB,*newImg);
+   delete img;
+   img = NULL;
    return newImg;
 }
 
@@ -541,6 +549,248 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
             ImagTranslate::vector2ColorImage(tmpR,tmpG,tmpB,*newImg);
         }
         //将tmpR,tmpG,tmpB转回图像中
+        delete img;
+        img = NULL;
         return newImg;
 }
+
+QImage *ImageSegmentation::CustomEdge(QImage *img,int * selfTemplate)
+{
+     QImage * newImg = new QImage(*img);
+    int newHeight = newImg->height(),
+            newWidth = newImg->width();
+    vector<vector<float>> tmpR;
+    vector<vector<float>> tmpG;
+    vector<vector<float>> tmpB;
+    ImagTranslate::colorImage2Vector(*img,tmpR,tmpG,tmpB);
+    vector<vector<float>> resultR = tmpR;
+    vector<vector<float>> resultG = tmpG;
+    vector<vector<float>> resultB = tmpB;
+    /*
+     * selfTemplate 的顺序
+     *  0  1  2
+     *  3  4  5
+     *  6  7  8
+     *
+     */
+    for(int i = 1;i < newHeight-1;++i)
+    {
+        for(int j =1;j< newWidth-1;++j)
+        {
+            for(int k =0;k<9;++k)
+            {
+                resultR[i][j] = tmpR[i-1][j-1] * selfTemplate[0]    + tmpR[i-1][j] * selfTemplate[1] + tmpR[i-1][j+1] * selfTemplate[2]
+                              + tmpR[i][j-1] * selfTemplate[3]      + tmpR[i][j] * selfTemplate[4]   + tmpR[i][j+1] * selfTemplate[5]
+                              + tmpR[i+1][j-1] * selfTemplate[6]    + tmpR[i+1][j] * selfTemplate[7] + tmpR[i+1][j+1] * selfTemplate[8];
+                resultG[i][j] = tmpG[i-1][j-1] * selfTemplate[0]    + tmpG[i-1][j] * selfTemplate[1] + tmpG[i-1][j+1] * selfTemplate[2]
+                              + tmpG[i][j-1] * selfTemplate[3]      + tmpG[i][j] * selfTemplate[4]   + tmpG[i][j+1] * selfTemplate[5]
+                              + tmpG[i+1][j-1] * selfTemplate[6]    + tmpG[i+1][j] * selfTemplate[7] + tmpG[i+1][j+1] * selfTemplate[8];
+                resultB[i][j] = tmpB[i-1][j-1] * selfTemplate[0]    + tmpB[i-1][j] * selfTemplate[1] + tmpB[i-1][j+1] * selfTemplate[2]
+                              + tmpB[i][j-1] * selfTemplate[3]      + tmpB[i][j] * selfTemplate[4]   + tmpB[i][j+1] * selfTemplate[5]
+                              + tmpB[i+1][j-1] * selfTemplate[6]    + tmpB[i+1][j] * selfTemplate[7] + tmpB[i+1][j+1] * selfTemplate[8];
+
+            }
+
+            resultR[i][j] = resultR[i][j]>0?(resultR[i][j]>255?255:resultR[i][j]):0;
+            resultG[i][j] = resultG[i][j]>0?(resultG[i][j]>255?255:resultG[i][j]):0;
+            resultB[i][j] = resultB[i][j]>0?(resultB[i][j]>255?255:resultB[i][j]):0;
+        }
+    }
+    //转回图像
+     ImagTranslate::vector2ColorImage(resultR,resultG,resultB,*newImg);
+     delete img;
+     img = NULL;
+     return newImg;
+}
+
+//这里img默认输入为二值化后的图片
+//size为gauss平滑的时候输入矩阵大小，t 为高斯平滑的标准差
+//Ostu表示外部获得的大津阈值
+//rat表示低阈值获取时高阈值所乘的系数因子
+//实现过程中使用的算法都是较为简单处理的版本
+QImage *ImageSegmentation::ContourExtraction(QImage *img,int size,int t ,int Ostu,float rat)
+{
+    QImage * newImg = ImageEnhancement::GaussianSmoothing(img,size,t);
+   int newHeight = newImg->height(),
+           newWidth = newImg->width();
+   vector<vector<float>> tmp;
+   ImagTranslate::greyImage2Vector(*newImg,tmp);
+   //theta用于存储各点的梯度方向角
+   vector<vector<float> > theta = tmp;
+   //MRange用于梯度计算
+   vector<vector<float> > MRange = tmp;
+   //   上面直接赋值为tmp是为了避免计算最边缘的一个像素
+   float resultX,resultY;
+   for(int i = 1;i < newHeight-1;++i)
+   {
+       for(int j =1;j< newWidth-1;++j)
+       {
+               resultX      = tmp[i-1][j+1] + 2*tmp[i][j+1] + tmp[i+1][j+1]-(tmp[i-1][j-1] + 2*tmp[i][j-1] + tmp[i+1][j-1]);
+               resultY      = tmp[i+1][j+1] + 2*tmp[i+1][j] + tmp[i+1][j-1]-(tmp[i-1][j+1] + 2*tmp[i-1][j] + tmp[i-1][j-1]);
+               //               这里resultX和resultY的方向有可能放反了,前面求横向梯度和纵向梯度可能都求反了，不过不影响前面的结果
+               //               求梯度方向角，并转换成角度制
+               MRange[i][j] = sqrt( resultX* resultX+ resultY* resultY);
+               theta[i][j]  = atan2(resultY,resultX)*57.3;
+               int cesi1 = theta[i][j];
+               //小于0度转换为反向角度值
+               theta[i][j]  = theta[i][j] >0? theta[i][j] : theta[i][j] + 180;
+               cesi1 = theta[i][j];
+               if(theta[i][j]>22.5&&theta[i][j]<77.5)
+               {
+                   //这里认为1表示45°
+                   theta[i][j] = 1;
+                   cesi1 = theta[i][j];
+               }
+               else if(theta[i][j]>=77.5&&theta[i][j]<112.5)
+               {
+                   //这里认为2表示90°
+                   theta[i][j] = 2;
+                   cesi1 = theta[i][j];
+               }
+               else if(theta[i][j]>=112.5&&theta[i][j]<157.5)
+               {
+                   //这里认为3表示135°
+                   theta[i][j] = 3;
+                   cesi1 = theta[i][j];
+               }
+               else
+               {
+                   //                   这里认为0代表水平方向
+                   theta[i][j] = 0;
+                   cesi1 = theta[i][j];
+               }
+       }
+   }
+   //   非极大值抑制
+   vector<vector<float>> NRange = MRange;
+   float HighThreshold = Ostu;
+   float LowThreshold = Ostu*rat;
+   //下面有两种处理方式
+   //   第一种直接将该点像素与梯度方向上的相邻像素比较，之后进行滞后阈值处理
+   //   第二种是通过计算四个点之间的线性插值
+
+   //这里采用第一种处理方式
+   for(int i = 1;i < newHeight-1;++i)
+   {
+       for(int j =1;j< newWidth-1;++j)
+       {
+           //下面非极大值抑制的时候 可能不需要等号
+           switch ((int)theta[i][j]) {
+           case 0:
+                if(MRange[i][j]>=MRange[i][j-1]&&MRange[i][j]>=MRange[i][j+1])
+                {
+                    NRange[i][j] = MRange[i][j];
+                }
+                else
+                {
+                    NRange[i][j] = 0;
+                }
+               break;
+           case 1:
+               if(MRange[i][j]>=MRange[i+1][j-1]&&MRange[i][j]>=MRange[i-1][j+1])
+               {
+                   NRange[i][j] = MRange[i][j];
+               }
+               else
+               {
+                   NRange[i][j] = 0;
+               }
+               break;
+           case 2:
+               if(MRange[i][j]>=MRange[i-1][j]&&MRange[i][j]>=MRange[i+1][j])
+               {
+                   NRange[i][j] = MRange[i][j];
+               }
+               else
+               {
+                   NRange[i][j] = 0;
+               }
+               break;
+           case 3:
+               if(MRange[i][j]>=MRange[i-1][j-1]&&MRange[i][j]>=MRange[i+1][j+1])
+               {
+                   NRange[i][j] = MRange[i][j];
+               }
+               else
+               {
+                   NRange[i][j] = 0;
+               }
+               break;
+           }
+
+       }
+   }
+   // 因为使用sobel算子求梯度   处理完了对图片最外层一个像素全部置零处理
+
+   //for(){
+   //}
+
+   //   再进行双阈值分割
+   //   这里双阈值阈值的选取有两种取法
+   //   一通过统计直方图来取
+   //   二通过大津阈值分割来取得高阈值
+
+   //   这里选用外部传递过来的大津阈值
+
+   QSize * sz  = new  QSize ;
+   *sz = newImg->size();
+   vector<vector<float>> result = NRange;
+   for(int i = 1;i < newHeight-1;++i)
+   {
+       for(int j =1;j< newWidth-1;++j)
+       {
+           //这里将结果与高阈值比较，若大于则为强边界
+           if(NRange[i][j] >= HighThreshold)
+           {
+                result[i][j] = 255;
+                //i表示深度
+                TraceEdge(i,j,LowThreshold,result,NRange,sz);
+           }
+       }
+   }
+
+   for(int i = 0;i < newHeight;++i)
+   {
+       for(int j =0;j< newWidth;++j)
+       {
+            if(result[i][j] != 255)
+            {
+                result[i][j] = 0;
+            }
+       }
+   }
+   //转回图像
+
+
+    ImagTranslate::vector2GreyImage(result,*newImg);
+    return newImg;
+}
+
+void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<float>> &res, vector<vector<float>> &pMag, QSize *sz)
+{
+    //对8邻域像素进行查询
+    int xNum[8] = {1,1,0,-1,-1,-1,0,1};
+    int yNum[8] = {0,1,1,1,0,-1,-1,-1};
+    int yy,xx,k;
+    for(k=0;k<8;k++)
+    {
+        yy = y+yNum[k];
+        xx = x+xNum[k];
+        if(yy<sz->rheight()&&xx<sz->rwidth()&&yy>=0&&xx>=0){
+            if(pMag[yy][xx]>=nThrLow )
+            {
+                //该点设为边界点
+                res[yy][xx] =255;
+                //以该点为中心再进行跟踪
+                TraceEdge(yy,xx,nThrLow,res,pMag,sz);
+            }
+        }
+        else
+        {
+         return;
+        }
+
+    }
+}
+
 

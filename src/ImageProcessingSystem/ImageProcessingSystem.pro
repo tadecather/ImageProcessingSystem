@@ -42,7 +42,10 @@ SOURCES += main.cpp\
         Display/meansmoothargsdialog.cpp \
         Algorithms/imagesegmentation.cpp \
         ImageCommands/selectivemasksmooothcommand.cpp \
-    ImageCommands/tdpcommand.cpp
+    ImageCommands/tdpcommand.cpp \
+    Display/tdpdialog.cpp \
+    Display/customedge.cpp \
+    ImageCommands/segmentationcommand.cpp
 
 
 
@@ -78,7 +81,10 @@ HEADERS  += mainwindow.h \
         Display/meansmoothargsdialog.h \
         Algorithms/imagesegmentation.h \ 
         ImageCommands/selectivemasksmooothcommand.h \
-    ImageCommands/tdpcommand.h
+    ImageCommands/tdpcommand.h \
+    Display/tdpdialog.h \
+    Display/customedge.h \
+    ImageCommands/segmentationcommand.h
 
 FORMS    += mainwindow.ui
 
@@ -86,4 +92,6 @@ INCLUDEPATH += Algorithms/
 INCLUDEPATH += Display/
 INCLUDEPATH += ImageCommands/
 INCLUDEPATH += Utilities/
+
+DISTFILES +=
 

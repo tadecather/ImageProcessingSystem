@@ -55,7 +55,6 @@ private slots:
     void enhancementSlot();
     void transDomainProcessSlot();
     void segmentationSlot();
-
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();

@@ -14,6 +14,7 @@
 #include "weightedsmoothcommand.h"
 #include "selectivemasksmooothcommand.h"
 #include "tdpcommand.h"
+#include "segmentationcommand.h"
 //请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
 
 
@@ -26,6 +27,8 @@
 #include "spnoiseargsdialog.h"
 #include "weightedsmoothargsdialog.h"
 #include "meansmoothargsdialog.h"
+#include "tdpdialog.h"
+#include "customedge.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -631,25 +634,93 @@ void MainWindow::transDomainProcessSlot()
     }
     if(ui->actionHard_Threshold_Method==QObject::sender())
     {
+        int lambda = -1;
+        tdpDialog *tdialog = new tdpDialog(this,"threshold");
+        QImage * tmp;
+        //下面这么写是为了少写个mainWindow的槽函数
+        if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage() == NULL)
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage());
+        }
+        else
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
+        }
+        while (true)
+        {
+            if(tdialog->exec() == QDialog::Rejected)
+            {
+                if(lambda != tdialog->getThreshold()){
+                    lambda = tdialog->getThreshold();
+                    //每一次循环复制一个新的tmp ，因为下面两个函数会对原图像造成改变
+                    QImage * loopTmp = new QImage(*tmp);
+                    int tmpcount = waveCount;
+                    imgTransformdomainprocessing::imgHardThreshold(loopTmp,tmpcount,lambda);
+                    //进行逆变换观察效果
+                    imgTransformdomainprocessing::imgHaarInversion(loopTmp,tmpcount);
+                    myTab->setImage(myTab->currentIndex(),1,loopTmp);
+                    delete loopTmp;
+                    loopTmp = NULL;
+                }
+                continue;
+            }
+            lambda = tdialog->getThreshold();
+            break;
+        }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             tmp,
                                              this->myTab,
                                              myTab->currentIndex(),
                                              3,
                                              waveCount,
-                                             90);
+                                             lambda);
         myTab->pushCurrentStack(command);
+        tdialog->deleteLater();
     }
     if(ui->actionSoft_Threshold_Method==QObject::sender())
     {
+        int lambda = -1;
+        tdpDialog *tdialog = new tdpDialog(this,"threshold");
+        QImage * tmp;
+        //下面这么写是为了少写个mainWindow的槽函数
+        if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage() == NULL)
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage());
+        }
+        else
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
+        }
+        while (true)
+        {
+            if(tdialog->exec() == QDialog::Rejected)
+            {
+                if(lambda != tdialog->getThreshold()){
+                    lambda = tdialog->getThreshold();
+                    //每一次循环复制一个新的tmp ，因为下面两个函数会对原图像造成改变
+                    QImage * loopTmp = new QImage(*tmp);
+                    int tmpcount = waveCount;
+                    imgTransformdomainprocessing::imgSoftThreshold(loopTmp,tmpcount,lambda);
+                    //进行逆变换观察效果
+                    imgTransformdomainprocessing::imgHaarInversion(loopTmp,tmpcount);
+                    myTab->setImage(myTab->currentIndex(),1,loopTmp);
+                    delete loopTmp;
+                    loopTmp = NULL;
+                }
+                continue;
+            }
+            lambda = tdialog->getThreshold();
+            break;
+        }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
                                              myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
                                              this->myTab,
                                              myTab->currentIndex(),
                                              4,
                                              waveCount,
-                                             90);
+                                             lambda);
         myTab->pushCurrentStack(command);
+        tdialog->deleteLater();
     }
 
     if(ui->actionDCT==QObject::sender())
@@ -666,73 +737,138 @@ void MainWindow::transDomainProcessSlot()
 }
 
 //ImaegSegmentation 模块
+/*
+ * 0 ostu
+ * 1 interactive threshold segmentation
+ * 2 robert
+ * 3 sobel
+ * 4 PriWitt
+ * 5 laplacian
+ * 6 gauss_laplacian
+ * 7 Krisch
+ * 8 Custom Edge
+ *
+ * 9 Region Growing 区域生长
+ * 10 Contour Extraction 轮廓提取
+ * 11 Boundary Tracking 边界跟踪
+ *
+ * 12 Hough Transformation                  Hough变换
+ * 13 Hough Transformation Line Detection    Hough变换做线检测
+ */
 void MainWindow::segmentationSlot()
 {
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片（负责这部分的不是粗鄙之人！）");
+        return;
+    }
+
+    //    大津阈值
     if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
     {
         image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
         myTab->setImage(0, 1, image);
     }
-
+    //交互式阈值分割
     if(ui->actionInteractive_Threshold_Segmentation == QObject::sender()){
 
     }
-
+    //Robert算子
     if(ui->actionRobert_Operator == QObject::sender()){
-       image = myTab->getImageDisplay(0, 1)->getImage();
-       image = ImageSegmentation::RobertOperator(image);
-       myTab->setImage(0, 1, image);
-
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             RobertOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //Sobel算子
     if(ui->actionSobel_Operator == QObject::sender()){
-        image = myTab->getImageDisplay(0, 1)->getImage();
-        image = ImageSegmentation::SobelOperator(image);
-        myTab->setImage(0, 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             SobelOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //Prewitt算子
     if(ui->actionPrewitt_Operator == QObject::sender()){
-
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             PrewittOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //Laplacian算子
     if(ui->actionLaplacian_Operator == QObject::sender()){
-        image = myTab->getImageDisplay(0, 1)->getImage();
-        image = ImageSegmentation::LaplacianOperator(image);
-        myTab->setImage(0, 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             LaplacianOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //Gauss-Laplacian算子
     if(ui->actionGauss_Laplacian_Operator == QObject::sender()){
-        image = myTab->getImageDisplay(0, 0)->getImage();
-        image = ImageSegmentation::GaussLaplacianOperator(image);
-        myTab->setImage(0, 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             GaussLaplacianOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //Krisch算子
     if(ui->actionKrisch_Operator == QObject::sender()){
-        image = myTab->getImageDisplay(0, 0)->getImage();
-        image = ImageSegmentation::KrischOperator(image);
-        myTab->setImage(0, 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             KrischOp);
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //自定义模板边缘
     if(ui->actionCustom_Edges == QObject::sender()){
-
+        CustomEdgeDialog * dialog = new CustomEdgeDialog(this);
+        if(dialog->exec() == QDialog::Rejected)
+        {
+            dialog->deleteLater();
+            return;
+        }
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             CINDEX::CustomEdge,dialog->getTemplate());
+        dialog->deleteLater();
+        myTab->pushCurrentStack(command);
+        return;
     }
-
+    //区域生长
     if(ui->actionRegion_Grow == QObject::sender()){
 
     }
-
+    //轮廓提取
     if(ui->actionContour_Extraction == QObject::sender()){
-
+        image = myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage();
+        image = ImageSegmentation::ContourExtraction(image,3,1,164);
+        myTab->setImage(0,1,image);
     }
-
+    //边界追踪
     if(ui->actionBoundary_Tracking == QObject::sender()){
 
     }
-
+    //Hough变换
     if(ui->actionHough_Transformation == QObject::sender()){
 
     }
-
+    //Hough变换线性检测
     if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
 
     }

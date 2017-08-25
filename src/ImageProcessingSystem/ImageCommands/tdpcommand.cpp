@@ -28,12 +28,12 @@ TDPCommand::TDPCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainT
         this->waveCount = args1;
         break;
     case 3:
-        name = new QString("硬阈值法");
+        name = new QString("硬阈值法:"+QString::number(lambda));
         this->waveCount = args1;
         this->lambda = lambda;
         break;
     case 4:
-        name = new QString("软阈值法");
+        name = new QString("软阈值法"+QString::number(lambda));
         this->waveCount = args1;
         this->lambda = lambda;
         break;
