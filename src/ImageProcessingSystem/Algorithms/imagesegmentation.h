@@ -18,6 +18,7 @@ public:
     static QImage * KrischOperator(QImage *img);
     static QImage * ContourExtraction(QImage *img);
     static QImage * BoundaryTracking(QImage *img);
+    static QImage * regionGrowing(QImage *image);
     static QImage * houghTran(QImage & image);
 };
 

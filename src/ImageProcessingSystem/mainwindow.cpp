@@ -763,7 +763,8 @@ void MainWindow::segmentationSlot()
     }
 
     if(ui->actionRegion_Grow == QObject::sender()){
-
+        image = ImageSegmentation::regionGrowing(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
+        myTab->setImage(myTab->currentIndex(), 1, image);
     }
 
     if(ui->actionContour_Extraction == QObject::sender()){
