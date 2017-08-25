@@ -42,10 +42,10 @@ QImage *DCT::dctImage(QImage &image)
 
 
 // dct 变换，分块 8 * 8
-QImage *DCT::dctNewImage(QImage &image)
+QImage *DCT::dctNewImage(QImage *image)
 {
 //    double ** imageMatrix = new double * [];
-    QVector<QVector<double>> grayImage = getGrayImageMatrix(image);
+    QVector<QVector<double>> grayImage = getGrayImageMatrix(*image);
 
     // 将数据进行分块，传入参数为 图像灰度表示矩阵，以及分块的参数
     QVector<QVector<QVector <double>>> grayImageDivoded = getDivodedImage(grayImage, 8);
@@ -67,8 +67,8 @@ QImage *DCT::dctNewImage(QImage &image)
         }
     }
 
-    int newWidth = image.width() + ((8 - (image.width() % 8)) % 8);
-    int newHeight = image.height() + ((8 - (image.height() % 8)) % 8);
+    int newWidth = image->width() + ((8 - (image->width() % 8)) % 8);
+    int newHeight = image->height() + ((8 - (image->height() % 8)) % 8);
 
     QImage * dctImage = new QImage(newWidth, newHeight, QImage::Format_RGB888);
     for(int i = 0; i < newWidth; i++){
@@ -93,7 +93,7 @@ QImage *DCT::dctNewImage(QImage &image)
         QVector<QVector<QVector<double>>> partDataMatrix = getPartData(grayImageDivoded, n);
         //传入图扩大之后图片的宽和高，和数组，进行复原操作
         QImage *dctedImage = dctINewImage(partDataMatrix, newWidth, newHeight);
-        QString name = "dct" + QString::number(n, 10) + ".jpg";
+        QString name = "dcta" + QString::number(n, 10) + ".jpg";
         FileOperation::save(*dctedImage, name);
         delete(dctedImage);
     }

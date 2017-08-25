@@ -3,6 +3,7 @@
 
 #include "imagecommand.h"
 #include "imagesegmentation.h"
+#include "mytabwidget.h"
 /*
  * 0 ostu 大津阈值分割
  * 1 interactive threshold segmentation

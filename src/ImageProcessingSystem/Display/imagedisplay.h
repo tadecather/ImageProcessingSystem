@@ -41,13 +41,21 @@ private:
     QTimer* timer;
     QMenu* menu;
     QAction* newTabAction;
+    QAction* setReferenceAction;
+    QAction* assessQualityAction;
     double scaleRatio;
 
 signals:
     void newTabSignal();
     void focusOnSignal();
+    //设为图像质量评估用的原图
+    void setReferenceSignal();
+    //开始图像质量评估
+    void assessQualitySignal();
 public slots:
     void emitNewTabSlot();
+    void emitSetReferenceSlot();
+    void emitAssessQualitySlot();
     void mouseClick();
 };
 

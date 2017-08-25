@@ -11,14 +11,14 @@
 #include <QUndoGroup>
 #include <QUndoView>
 #include "imagedisplay.h"
-#include "MyTabWidget.h"
+
 #include "imagetrans.h"
 #include "imgtransformdomainprocessing.h"
-using namespace std;
 namespace Ui {
 class MainWindow;
 }
 
+class MyTabWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +28,8 @@ public:
     ~MainWindow();
     //判断当前图片有没有经过灰度化
     bool afterGray();
+    //判断当前图片有没有经过二值化
+    bool afterBin();
 
 
 private:
@@ -49,6 +51,7 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
+    void closeEvent(QCloseEvent *event);
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
     void transformSlot();

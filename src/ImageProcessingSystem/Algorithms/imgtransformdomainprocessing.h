@@ -1,6 +1,5 @@
 ﻿#ifndef IMGTRANSFORMDOMAINPROCESSING_H
 #define IMGTRANSFORMDOMAINPROCESSING_H
-#include "mainwindow.h"
 #include "imagtranslate.h"
 class imgTransformdomainprocessing
 {

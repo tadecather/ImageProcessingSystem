@@ -1,4 +1,4 @@
-#ifndef MYTABWIDGET_H
+﻿#ifndef MYTABWIDGET_H
 #define MYTABWIDGET_H
 
 #include <QTabWidget>
@@ -10,6 +10,7 @@
 #include <QUndoStack>
 #include <algorithm>
 #include "tabcontent.h"
+#include "imageenhancement.h"
 
 //自定义的TabWidget类
 class MyTabWidget : public QTabWidget
@@ -21,6 +22,8 @@ private:
     ImageDisplay *imageDisplayR;
     std::vector<TabContent*> contentVec;
     QUndoGroup* commandGroup;
+    QImage* referenceImage;
+    QImage* assessImage;
 public:
     MyTabWidget(QWidget *parent);
     //MyTabWidget(QWidget *parent, QImage *image);
@@ -44,6 +47,8 @@ private slots:
 public slots:
     void addTabSlot();
     void doToCommand();
+    void setReferenceSlot();
+    void asseccQualitySlot();
 
 };
 

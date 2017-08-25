@@ -1,8 +1,9 @@
-#include "binaryzationcommand.h"
+#include "laplaciansharpencommand.h"
 
-BinaryzationCommand::BinaryzationCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index)
+//构造函数
+LaplacianSharpenCommand::LaplacianSharpenCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, double multi)
 {
-    name = new QString("二值化");
+    name = new QString("拉普拉斯锐化");
 
     this->imageLeft = new QImage(*imageLeft);
     if(imageRight == NULL)
@@ -17,14 +18,15 @@ BinaryzationCommand::BinaryzationCommand(QImage *imageLeft, QImage *imageRight, 
     }
     this->mainTab = mainTab;
     this->index = index;
+    this->multi = multi;
 }
 
-
-void BinaryzationCommand::redo()
+//redo方法
+void LaplacianSharpenCommand::redo()
 {
     if(firstTime)
     {
-        ImageGray::binaryzation(*imageAfter);
+        imageAfter = ImageEnhancement::LaplacianSharpening(imageAfter, multi);
     }
     if(this->imageRight == NULL)
     {
@@ -35,10 +37,12 @@ void BinaryzationCommand::redo()
         mainTab->setImage(index, 0, imageRight);
         mainTab->setImage(index, 1, imageAfter);
     }
+    //标记为已经过处理
     firstTime = false;
 }
 
-void BinaryzationCommand::undo()
+//undo方法
+void LaplacianSharpenCommand::undo()
 {
     if(this->imageRight == NULL)
     {

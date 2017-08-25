@@ -1,4 +1,7 @@
-#include "imageenhancement.h"
+﻿#include "imageenhancement.h"
+
+
+#include "imagesegmentation.h"
 
 double ImageEnhancement::V1 = 0.0;
 double ImageEnhancement::V2 = 0.0;
@@ -10,25 +13,23 @@ ImageEnhancement::ImageEnhancement()
 }
 //以下是外部接口
 
-//添加高斯噪声。mu为均值, sigma为方差，k为噪声系数，均需外部传入
+//添加高斯噪声。mu为均值, sigma为方差，k为噪声系数，均需外部传入S
 void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, int k)
 {
     srand((unsigned int)(time(NULL)));
     int width = 0;
     int height = 0;
-    //得到一个从左到右，从上到下遍历的RGB像素点QList
     QList<QRgb> * rgbList =  ImagTranslate::imageToList(*image, width, height);
-    //image.convertToFormat(QImage::Format_ARGB32);
-    // 循环遍历QList 进行像素点的操作，然后对Image 对象进行逐个像素点的赋值
-    for(int i = 0; i < width * height; i++){
+    for(int i = 0; i < width * height; i++)
+    {
         QRgb pixel = rgbList->at(i);
-        int Red = qRed(pixel) + k*GenerateGaussianNoise(0, 1);
+        int Red = qRed(pixel) + k*GenerateGaussianNoise(mu, sigma);
         if(Red > 255) Red = 255;
         if(Red < 0) Red = 0;
-        int Green = qGreen(pixel)+ k*GenerateGaussianNoise(0, 1);
+        int Green = qGreen(pixel)+ k*GenerateGaussianNoise(mu, sigma);
         if(Green > 255) Green = 255;
         if(Green < 0) Green = 0;
-        int Blue = qBlue(pixel)+ k*GenerateGaussianNoise(0, 1);
+        int Blue = qBlue(pixel)+ k*GenerateGaussianNoise(mu, sigma);
         if(Blue > 255) Blue = 255;
         if(Blue < 0) Blue = 0;
         QRgb newPixel = qRgb(Red, Green, Blue);
@@ -38,7 +39,7 @@ void ImageEnhancement::AddGaussianNoise(QImage *image, double mu, double sigma, 
     delete rgbList;
 }
 
-//添加椒盐噪声
+//添加椒盐噪声， snr为信噪比
 void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
 {
     srand((unsigned int)(time(NULL)));
@@ -62,7 +63,7 @@ void ImageEnhancement::AddSaltPepperNoise(QImage* image, double snr)
     }
 }
 
-//均值平滑
+//均值平滑, size为均值平滑矩阵大小
 QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
 {
     int x = 0;
@@ -93,6 +94,7 @@ QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
 
                 }
             }
+            //得到均值
             sum = sum / times;
             times = 0;
             QRgb newPixel = qRgb(sum, sum, sum);
@@ -105,7 +107,7 @@ QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
     return afterSmooth;
 }
 
-//中值平滑
+//中值平滑， size为中值平滑矩阵大小
 QImage* ImageEnhancement::MedianSmoothing(QImage* image, int size)
 {
     int x = 0;
@@ -157,12 +159,13 @@ QImage* ImageEnhancement::GaussianSmoothing(QImage* image, int size, int theta)
     {
         for(int j = 0; j < size; j++)
         {
-            double param1 = (double)(1.0/(theta*theta));
-            double distance = (double)((i-medium)*(i-medium)+(j-medium)*(j-medium));
-            double param2 = (double)exp(((-1)*distance)/(2*(double)theta*(double)theta));
-            gMask[i][j] = (double)param1*param2;
-            sum+=gMask[i][j];
+                double param1 = (double)(1.0/(theta*theta));
+                double distance = (double)((i-medium)*(i-medium)+(j-medium)*(j-medium));
+                double param2 = (double)exp(((-1)*distance)/(2*(double)theta*(double)theta));
+                gMask[i][j] = (double)param1*param2;
+                sum+=gMask[i][j];
         }
+        //qDebug()<<gMask[i][0]<<"    "<<gMask[i][1]<<"    "<<gMask[i][2]<<"    "<<gMask[i][3]<<"    "<<gMask[i][4];
     }
     //遍历所有像素
     int x;
@@ -358,6 +361,101 @@ QImage* ImageEnhancement::SelectiveMaskSmoothing(QImage* image)
     return afterSmooth;
 }
 
+QImage* ImageEnhancement::GradientSharpening(QImage* image, int operatorNo, double multiplier)
+{
+    //operatorNo为选择的锐化算子序号(0~2)，0为Roberts, 1为Sobel, 2为Prewitt, multiplier为叠加时算子处理后图像的乘数
+
+    //算子处理后的图像
+    QImage* after = new QImage(*image);
+
+    //最终图像
+    QImage* result = new QImage(*image);
+
+    if(operatorNo == 0)
+    {
+        //Roberts算子
+        after = ImageSegmentation::RobertOperator(after);
+    }
+    else if(operatorNo == 1)
+    {
+        //Sobel算子
+        after = ImageSegmentation::SobelOperator(after);
+    }
+    else
+    {
+        //Prewitt算子
+        after = ImageSegmentation::PrewittOperator(after);
+    }
+
+    for(int i = 0; i < image->width()-1; i++)
+    {
+        for(int j = 0; j < image->height() - 1; j++)
+        {
+            double resultP = (double)qRed(image->pixel(i, j))-multiplier*(double)qRed(after->pixel(i, j));
+            if(resultP < 0) resultP = 0;
+            result->setPixel(i, j, qRgb((int)resultP, (int)resultP, (int)resultP));
+        }
+    }
+
+    delete after;
+    after = NULL;
+    return result;
+}
+
+//拉普拉斯锐化
+QImage* ImageEnhancement::LaplacianSharpening(QImage* image, double multiplier)
+{
+    //算子处理后的图像
+    QImage* after = new QImage(*image);
+
+    //最终图像
+    QImage* result = new QImage(*image);
+
+
+    after = ImageSegmentation::LaplacianOperator(after);
+
+
+    for(int i = 0; i < image->width()-1; i++)
+    {
+        for(int j = 0; j < image->height() - 1; j++)
+        {
+            if(qRed(after->pixel(i, j))>=0)
+            {
+                double resultP = (double)qRed(image->pixel(i, j))-multiplier*(double)qRed(after->pixel(i, j));
+                if(resultP < 0 ) resultP = 0;
+                result->setPixel(i, j, qRgb((int)resultP, (int)resultP, (int)resultP));
+            }
+
+        }
+    }
+
+    delete after;
+    after = NULL;
+    return result;
+}
+
+//图像质量评价，输出MSE(可进而计算得到PTNR)
+double ImageEnhancement::ImageQualityAssessment(QImage* ref, QImage* img)
+{
+    //图片为MxN, 计算公式为(1/(m*n))*(每个点的灰度值差值平方 和)
+    //要评估的图像需比参考图大
+    if(!(img->width()>=ref->width()&&img->height()>=ref->height()))
+    {
+        return -1.0;
+    }
+    //方误差
+    double squareError = 0.0;
+    for(int i = 0; i < ref->width(); i++)
+    {
+        for(int j = 0; j < ref->height(); j++)
+        {
+            //获得要评估的图像和参考图的每个像素点
+            squareError+=pow((qRed(ref->pixel(i, j))-qRed(img->pixel(i, j))), 2);
+        }
+    }
+    squareError/=ref->width()*ref->height();
+    return squareError;
+}
 
 //以下是内部方法
 

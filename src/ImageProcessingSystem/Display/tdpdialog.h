@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QGridLayout>
 
-#include "mainwindow.h"
 
 class tdpDialog :public QDialog
 {

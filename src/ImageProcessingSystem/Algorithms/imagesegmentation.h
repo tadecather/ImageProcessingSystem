@@ -4,10 +4,13 @@
 #include <QImage>
 #include <QVector>
 #include <QSize>
+#include <QPolygonF>
+#include <QPainterPath>
 
-#include "mainwindow.h"
-#include "imageenhancement.h"
+using namespace std;
 
+
+class ImageEnhancement;
 class ImageSegmentation
 {
 public:
@@ -21,6 +24,9 @@ public:
     static QImage * CustomEdge(QImage *img, int *selfTemplate);
     static QImage * ContourExtraction(QImage *img, int size, int t, int Ostu, float rat =0.5);
     static void TraceEdge(int y, int x, float nThrLow, vector<vector<float>> &res, vector<vector<float>> &pMag, QSize *sz);
+    static QImage * BoundaryTracking(QImage *img);
+    static QImage * regionGrowing(QImage *image);
+    static QImage * houghTran(QImage & image);
 };
 
 #endif // SEGMENTATION_H
