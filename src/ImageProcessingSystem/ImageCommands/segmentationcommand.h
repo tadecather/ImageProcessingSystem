@@ -40,6 +40,7 @@ public:
 private:
     int index;
     int * selftemplate;
+    int contourThreshold;
     MyTabWidget* mainTab;
     int commandIntdex;
     /*

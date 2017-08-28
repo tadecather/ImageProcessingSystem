@@ -44,6 +44,7 @@ SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, 
         break;
     case ContourExtraction:
         name = new QString("轮廓提取");
+        contourThreshold = *args1;
         break;
     case BoundaryTracking:
         name = new QString("边界追踪");
@@ -107,7 +108,8 @@ void SegmentationCommand::redo()
 //            this->imageAfter = ImageSegmentation::
             break;
         case ContourExtraction:
-//            this->imageAfter = ImageSegmentation::
+            //这里默认高斯平滑矩阵为3，1
+            this->imageAfter = ImageSegmentation::ContourExtraction(this->imageAfter,3,1,contourThreshold);
             break;
         case BoundaryTracking:
 //            this->imageAfter = ImageSegmentation::

@@ -902,6 +902,8 @@ void MainWindow::transDomainProcessSlot()
         {
             tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
         }
+
+
         while (true)
         {
             if(tdialog->exec() == QDialog::Rejected)
@@ -924,7 +926,7 @@ void MainWindow::transDomainProcessSlot()
             break;
         }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             tmp,
                                              this->myTab,
                                              myTab->currentIndex(),
                                              4,
@@ -971,6 +973,11 @@ void MainWindow::transDomainProcessSlot()
  */
 void MainWindow::segmentationSlot()
 {
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片（负责这部分的不是粗鄙之人！）");
+        return;
+    }
     if(MyTabWidget::getNumber() == -1)
     {
         QMessageBox::about(this, "请先打开图片", "没图片（负责这部分的不是粗鄙之人！）");
@@ -1085,9 +1092,48 @@ void MainWindow::segmentationSlot()
     }
     //轮廓提取
     if(ui->actionContour_Extraction == QObject::sender()){
-        image = myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage();
-        image = ImageSegmentation::ContourExtraction(image,3,1,164);
-        myTab->setImage(0,1,image);
+        int lambda = -1;
+        tdpDialog *tdialog = new tdpDialog(this,"threshold");
+        QImage * tmp;
+        if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage() == NULL)
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage());
+        }
+        else
+        {
+            tmp = new QImage(*myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
+        }
+        while (true)
+        {
+            if(tdialog->exec() == QDialog::Rejected)
+            {
+                if(lambda != tdialog->getThreshold()){
+                    lambda = tdialog->getThreshold();
+                    //每一次循环复制一个新的tmp ，因为下面两个函数会对原图像造成改变
+                    QImage * loopTmp = new QImage(*tmp);
+                    loopTmp = ImageSegmentation::ContourExtraction(loopTmp,3,1,lambda);
+                    myTab->setImage(myTab->currentIndex(),1,loopTmp);
+                    delete loopTmp;
+                    loopTmp = NULL;
+                }
+                continue;
+            }
+            lambda = tdialog->getThreshold();
+            break;
+        }
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                               tmp,
+                                                               this->myTab,
+                                                               myTab->currentIndex(),
+                                                               CINDEX::ContourExtraction,
+                                                               &lambda);
+
+        myTab->pushCurrentStack(command);
+        tdialog->deleteLater();
+
+//        image = ImageSegmentation::ContourExtraction(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+//                                                      3,1,164);
+//        myTab->setImage(myTab->currentIndex(), 1, image);
     }
     //边界追踪
     if(ui->actionBoundary_Tracking == QObject::sender()){

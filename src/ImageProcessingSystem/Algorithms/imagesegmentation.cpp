@@ -333,15 +333,12 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR1[i][j] +=Template1[k+1][l+1]*tmpR[i+k][j+l];
                         resultG1[i][j] +=Template1[k+1][l+1]*tmpG[i+k][j+l];
                         resultB1[i][j] +=Template1[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR1[i][j] = resultR1[i][j]>0?(resultR1[i][j]>255?255:resultR1[i][j]):0;
-                resultG1[i][j] = resultG1[i][j]>0?(resultG1[i][j]>255?255:resultG1[i][j]):0;
-                resultB1[i][j] = resultB1[i][j]>0?(resultB1[i][j]>255?255:resultB1[i][j]):0;
+
             }
         }
 
@@ -356,15 +353,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR2[i][j] +=Template2[k+1][l+1]*tmpR[i+k][j+l];
                         resultG2[i][j] +=Template2[k+1][l+1]*tmpG[i+k][j+l];
                         resultB2[i][j] +=Template2[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR2[i][j] = resultR2[i][j]>0?(resultR2[i][j]>255?255:resultR2[i][j]):0;
-                resultG2[i][j] = resultG2[i][j]>0?(resultG2[i][j]>255?255:resultG2[i][j]):0;
-                resultB2[i][j] = resultB2[i][j]>0?(resultB2[i][j]>255?255:resultB2[i][j]):0;
             }
         }
 
@@ -380,15 +373,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR3[i][j] +=Template3[k+1][l+1]*tmpR[i+k][j+l];
                         resultG3[i][j] +=Template3[k+1][l+1]*tmpG[i+k][j+l];
                         resultB3[i][j] +=Template3[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR3[i][j] = resultR3[i][j]>0?(resultR3[i][j]>255?255:resultR3[i][j]):0;
-                resultG3[i][j] = resultG3[i][j]>0?(resultG3[i][j]>255?255:resultG3[i][j]):0;
-                resultB3[i][j] = resultB3[i][j]>0?(resultB3[i][j]>255?255:resultB3[i][j]):0;
             }
         }
 
@@ -409,9 +398,6 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                         resultB4[i][j] +=Template4[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR4[i][j] = resultR4[i][j]>0?(resultR4[i][j]>255?255:resultR4[i][j]):0;
-                resultG4[i][j] = resultG4[i][j]>0?(resultG4[i][j]>255?255:resultG4[i][j]):0;
-                resultB4[i][j] = resultB4[i][j]>0?(resultB4[i][j]>255?255:resultB4[i][j]):0;
             }
         }
 
@@ -426,15 +412,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR5[i][j] +=Template5[k+1][l+1]*tmpR[i+k][j+l];
                         resultG5[i][j] +=Template5[k+1][l+1]*tmpG[i+k][j+l];
                         resultB5[i][j] +=Template5[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR5[i][j] = resultR5[i][j]>0?(resultR5[i][j]>255?255:resultR5[i][j]):0;
-                resultG5[i][j] = resultG5[i][j]>0?(resultG5[i][j]>255?255:resultG5[i][j]):0;
-                resultB5[i][j] = resultB5[i][j]>0?(resultB5[i][j]>255?255:resultB5[i][j]):0;
             }
         }
 
@@ -449,15 +431,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR6[i][j] +=Template6[k+1][l+1]*tmpR[i+k][j+l];
                         resultG6[i][j] +=Template6[k+1][l+1]*tmpG[i+k][j+l];
                         resultB6[i][j] +=Template6[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR6[i][j] = resultR6[i][j]>0?(resultR6[i][j]>255?255:resultR6[i][j]):0;
-                resultG6[i][j] = resultG6[i][j]>0?(resultG6[i][j]>255?255:resultG6[i][j]):0;
-                resultB6[i][j] = resultB6[i][j]>0?(resultB6[i][j]>255?255:resultB6[i][j]):0;
             }
         }
 
@@ -472,15 +450,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR7[i][j] +=Template7[k+1][l+1]*tmpR[i+k][j+l];
                         resultG7[i][j] +=Template7[k+1][l+1]*tmpG[i+k][j+l];
                         resultB7[i][j] +=Template7[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR7[i][j] = resultR7[i][j]>0?(resultR7[i][j]>255?255:resultR7[i][j]):0;
-                resultG7[i][j] = resultG7[i][j]>0?(resultG7[i][j]>255?255:resultG7[i][j]):0;
-                resultB7[i][j] = resultB7[i][j]>0?(resultB7[i][j]>255?255:resultB7[i][j]):0;
             }
         }
 
@@ -495,15 +469,11 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 {
                     for(int l =-1;l< 2;++l)
                     {
-
                         resultR8[i][j] +=Template8[k+1][l+1]*tmpR[i+k][j+l];
                         resultG8[i][j] +=Template8[k+1][l+1]*tmpG[i+k][j+l];
                         resultB8[i][j] +=Template8[k+1][l+1]*tmpB[i+k][j+l];
                     }
                 }
-                resultR8[i][j] = resultR8[i][j]>0?(resultR8[i][j]>255?255:resultR8[i][j]):0;
-                resultG8[i][j] = resultG8[i][j]>0?(resultG8[i][j]>255?255:resultG8[i][j]):0;
-                resultB8[i][j] = resultB8[i][j]>0?(resultB8[i][j]>255?255:resultB8[i][j]):0;
             }
         }
         int tempR[8] = {0,0,0,0,0,0,0,0};
@@ -549,9 +519,12 @@ QImage *ImageSegmentation::KrischOperator(QImage *img)
                 tmpG[i][j] = tmpG[i][j] > tempG[k]? tmpG[i][j] : tempG[k];
                 tmpB[i][j] = tmpB[i][j] > tempB[k]? tmpB[i][j] : tempB[k];
                 }
+                tmpR[i][j] = tmpR[i][j]>0?(tmpR[i][j]>255?255:tmpR[i][j]):0;
+                tmpG[i][j] = tmpG[i][j]>0?(tmpG[i][j]>255?255:tmpG[i][j]):0;
+                tmpB[i][j] = tmpB[i][j]>0?(tmpB[i][j]>255?255:tmpB[i][j]):0;
             }
-            ImagTranslate::vector2ColorImage(tmpR,tmpG,tmpB,*newImg);
         }
+         ImagTranslate::vector2ColorImage(tmpR,tmpG,tmpB,*newImg);
         //将tmpR,tmpG,tmpB转回图像中
         delete img;
         img = NULL;
@@ -615,7 +588,7 @@ QImage *ImageSegmentation::CustomEdge(QImage *img,int * selfTemplate)
 //实现过程中使用的算法都是较为简单处理的版本
 QImage *ImageSegmentation::ContourExtraction(QImage *img,int size,int t ,int Ostu,float rat)
 {
-    QImage * newImg = ImageEnhancement::GaussianSmoothing(img,size,t);
+   QImage * newImg = ImageEnhancement::GaussianSmoothing(img,size,t);
    int newHeight = newImg->height(),
            newWidth = newImg->width();
    vector<vector<float>> tmp;
@@ -636,33 +609,27 @@ QImage *ImageSegmentation::ContourExtraction(QImage *img,int size,int t ,int Ost
                //               求梯度方向角，并转换成角度制
                MRange[i][j] = sqrt( resultX* resultX+ resultY* resultY);
                theta[i][j]  = atan2(resultY,resultX)*57.3;
-               int cesi1 = theta[i][j];
                //小于0度转换为反向角度值
                theta[i][j]  = theta[i][j] >0? theta[i][j] : theta[i][j] + 180;
-               cesi1 = theta[i][j];
                if(theta[i][j]>22.5&&theta[i][j]<77.5)
                {
                    //这里认为1表示45°
                    theta[i][j] = 1;
-                   cesi1 = theta[i][j];
                }
                else if(theta[i][j]>=77.5&&theta[i][j]<112.5)
                {
                    //这里认为2表示90°
                    theta[i][j] = 2;
-                   cesi1 = theta[i][j];
                }
                else if(theta[i][j]>=112.5&&theta[i][j]<157.5)
                {
                    //这里认为3表示135°
                    theta[i][j] = 3;
-                   cesi1 = theta[i][j];
                }
                else
                {
                    //                   这里认为0代表水平方向
                    theta[i][j] = 0;
-                   cesi1 = theta[i][j];
                }
        }
    }
@@ -740,6 +707,10 @@ QImage *ImageSegmentation::ContourExtraction(QImage *img,int size,int t ,int Ost
    QSize * sz  = new  QSize ;
    *sz = newImg->size();
    vector<vector<float>> result = NRange;
+   if(HighThreshold ==0){
+       ImagTranslate::vector2GreyImage(result,*newImg);
+       return newImg;
+   }
    for(int i = 1;i < newHeight-1;++i)
    {
        for(int j =1;j< newWidth-1;++j)
@@ -771,7 +742,14 @@ QImage *ImageSegmentation::ContourExtraction(QImage *img,int size,int t ,int Ost
     return newImg;
 }
 
-void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<float>> &res, vector<vector<float>> &pMag, QSize *sz)
+
+/*
+ * 下面这段代码可以使用但是效果一般
+ *
+ */
+
+
+void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<float>> &res, vector<vector<float>> &pMag, QSize* sz)
 {
     //对8邻域像素进行查询
     int xNum[8] = {1,1,0,-1,-1,-1,0,1};
@@ -782,7 +760,8 @@ void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<flo
         yy = y+yNum[k];
         xx = x+xNum[k];
         if(yy<sz->rheight()&&xx<sz->rwidth()&&yy>=0&&xx>=0){
-            if(pMag[yy][xx]>=nThrLow )
+            //下面的判断条件是为了只遍历一遍弱边缘点
+            if(res[yy][xx]>=nThrLow&&res[yy][xx]!=255 )
             {
                 //该点设为边界点
                 res[yy][xx] =255;
@@ -797,6 +776,8 @@ void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<flo
 
     }
 }
+
+
 
 
 
