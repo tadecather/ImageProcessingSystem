@@ -1,4 +1,4 @@
-#ifndef MYTABWIDGET_H
+﻿#ifndef MYTABWIDGET_H
 #define MYTABWIDGET_H
 
 #include <QTabWidget>

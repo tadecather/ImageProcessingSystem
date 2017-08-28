@@ -4,8 +4,6 @@
 #include <QImage>
 
 
-#include "mainwindow.h"
-
 class imagetrans
 {
 public:

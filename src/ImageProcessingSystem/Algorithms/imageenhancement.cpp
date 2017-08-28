@@ -1,4 +1,7 @@
-#include "imageenhancement.h"
+﻿#include "imageenhancement.h"
+
+
+#include "imagesegmentation.h"
 
 double ImageEnhancement::V1 = 0.0;
 double ImageEnhancement::V2 = 0.0;

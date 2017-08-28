@@ -11,14 +11,14 @@
 #include <QUndoGroup>
 #include <QUndoView>
 #include "imagedisplay.h"
-#include "MyTabWidget.h"
+
 #include "imagetrans.h"
 #include "imgtransformdomainprocessing.h"
-using namespace std;
 namespace Ui {
 class MainWindow;
 }
 
+class MyTabWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,13 +51,13 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
+    void closeEvent(QCloseEvent *event);
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
     void transformSlot();
     void enhancementSlot();
     void transDomainProcessSlot();
     void segmentationSlot();
-
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();

@@ -1,4 +1,4 @@
-#ifndef IMAGEENHANCEMENT_H
+﻿#ifndef IMAGEENHANCEMENT_H
 #define IMAGEENHANCEMENT_H
 
 #include <QImage>
@@ -9,8 +9,9 @@
 #include <QMessageBox>
 #include <qmath.h>
 #include "imagtranslate.h"
-#include "imagesegmentation.h"
 
+
+class ImageSegmentation;
 class ImageEnhancement
 {
 public:

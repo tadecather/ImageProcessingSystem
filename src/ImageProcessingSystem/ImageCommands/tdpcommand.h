@@ -27,7 +27,6 @@ public:
     TDPCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index, int commandIntdex, int args1 =0,int lambda =0);
     void undo();
     void redo();
-    QString* getName();
     int getCommandIndex();
     int getWaveCount();
 };

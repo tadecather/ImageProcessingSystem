@@ -8,7 +8,7 @@ class DCT
 public:
    static QImage * dctImage(QImage & image);
 
-   static QImage * dctNewImage(QImage &image);
+   static QImage * dctNewImage(QImage *image);
 
    static QImage * dctIImage(QImage & image);
 
