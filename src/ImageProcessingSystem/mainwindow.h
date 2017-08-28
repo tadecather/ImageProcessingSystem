@@ -11,12 +11,14 @@
 #include <QUndoGroup>
 #include <QUndoView>
 #include "imagedisplay.h"
-#include "MyTabWidget.h"
 
+#include "imagetrans.h"
+#include "imgtransformdomainprocessing.h"
 namespace Ui {
 class MainWindow;
 }
 
+class MyTabWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -24,15 +26,20 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    //判断当前图片有没有经过灰度化
+    bool afterGray();
+    //判断当前图片有没有经过二值化
+    bool afterBin();
 
-    void setImage(QImage *newImg);
 
 private:
     QMenu *subMenu;
     QImage * image;
     //暂时定义图片的高和宽
     int imageHeight, imagewidth;
+    int waveCount =0;
     QString saveFileName;
+    QString currentPath;
     QStringList* recentFileList;
     MyTabWidget* myTab;
     QUndoStack* commandStack;
@@ -44,13 +51,20 @@ private slots:
     void printSlot();
     void printPreViewSlot();
     void exitSlot();
+    void closeEvent(QCloseEvent *event);
     void printPreviewSlot(QPrinter *printerPixmap);
     void graySlot();
-
+    void transformSlot();
+    void enhancementSlot();
+    void transDomainProcessSlot();
+    void segmentationSlot();
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();
     void clearAllRecentSlot();
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // MAINWINDOW_H

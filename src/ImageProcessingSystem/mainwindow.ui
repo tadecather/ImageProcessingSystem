@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -76,9 +76,36 @@
     <property name="title">
      <string>TDP</string>
     </property>
-    <addaction name="actionFourier_transform"/>
-    <addaction name="actionWavelet_Transform"/>
-    <addaction name="actionDiscrete_Cosine_Transform"/>
+    <widget class="QMenu" name="menuWavelet_Transform">
+     <property name="title">
+      <string>Wavelet Transform</string>
+     </property>
+     <addaction name="actionHaar_Wavelet"/>
+     <addaction name="actionHaar_Wavelet_Inversion"/>
+     <addaction name="actionset_whf_coeffecient_zero"/>
+     <addaction name="actionHard_Threshold_Method"/>
+     <addaction name="actionSoft_Threshold_Method"/>
+    </widget>
+    <widget class="QMenu" name="menuDiscrete_Cosine_Transform">
+     <property name="title">
+      <string>Discrete Cosine Transform</string>
+     </property>
+     <addaction name="actionDCT"/>
+     <addaction name="actionDCTI"/>
+    </widget>
+    <widget class="QMenu" name="menuFourier_Transform">
+     <property name="title">
+      <string>Fourier Transform</string>
+     </property>
+     <addaction name="actionFFT"/>
+     <addaction name="actionIFFT"/>
+     <addaction name="separator"/>
+     <addaction name="actionEFFT"/>
+     <addaction name="actionIEFFT"/>
+    </widget>
+    <addaction name="menuFourier_Transform"/>
+    <addaction name="menuWavelet_Transform"/>
+    <addaction name="menuDiscrete_Cosine_Transform"/>
    </widget>
    <widget class="QMenu" name="menuDivision">
     <property name="title">
@@ -254,21 +281,6 @@
     <string>Anticlockwise Rotation</string>
    </property>
   </action>
-  <action name="actionFourier_transform">
-   <property name="text">
-    <string>Fourier Transform</string>
-   </property>
-  </action>
-  <action name="actionWavelet_Transform">
-   <property name="text">
-    <string>Wavelet Transform</string>
-   </property>
-  </action>
-  <action name="actionDiscrete_Cosine_Transform">
-   <property name="text">
-    <string>Discrete Cosine Transform</string>
-   </property>
-  </action>
   <action name="actionOtsu_Law_Threshold_Segmentation">
    <property name="text">
     <string>Otsu Law Threshold Segmentation</string>
@@ -382,6 +394,61 @@
   <action name="actionImage_Quality_Assessment">
    <property name="text">
     <string>Image Quality Assessment</string>
+   </property>
+  </action>
+  <action name="actionHaar_Wavelet">
+   <property name="text">
+    <string>Haar Wavelet</string>
+   </property>
+  </action>
+  <action name="actionHaar_Wavelet_Inversion">
+   <property name="text">
+    <string>Haar Wavelet Inversion</string>
+   </property>
+  </action>
+  <action name="actionset_whf_coeffecient_zero">
+   <property name="text">
+    <string>Set WHF Coefficient Zero</string>
+   </property>
+  </action>
+  <action name="actionHard_Threshold_Method">
+   <property name="text">
+    <string>Hard Threshold Method</string>
+   </property>
+  </action>
+  <action name="actionSoft_Threshold_Method">
+   <property name="text">
+    <string>Soft Threshold Method</string>
+   </property>
+  </action>
+  <action name="actionDCT">
+   <property name="text">
+    <string>DCT</string>
+   </property>
+  </action>
+  <action name="actionDCTI">
+   <property name="text">
+    <string>DCTI</string>
+   </property>
+  </action>
+  <action name="actionFFT">
+   <property name="text">
+    <string>FFT</string>
+   </property>
+  </action>
+  <action name="actionIFFT">
+   <property name="text">
+    <string>IFFT</string>
+   </property>
+  </action>
+  <action name="actionEFFT">
+   <property name="text">
+    <string>EFFT</string>
+   </property>
+  </action>
+  <action name="actionIEFFT">
+   <property name="text">
+    <string>IEFFT</string>
    </property>
   </action>
  </widget>
