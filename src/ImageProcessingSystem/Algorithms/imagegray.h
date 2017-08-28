@@ -2,7 +2,6 @@
 #define GREYIMAGE_H
 
 #include <QImage>
-#include "mainwindow.h"
 
 class ImageGray
 {

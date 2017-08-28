@@ -3,6 +3,7 @@
 
 #include "imagecommand.h"
 #include "imgtransformdomainprocessing.h"
+#include "mytabwidget.h"
 
 class TDPCommand:public ImageCommand
 {
