@@ -32,25 +32,20 @@ class SegmentationCommand:public ImageCommand
 {
 public:
     //预留两个参数位置给各条命令
-    SegmentationCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index, int commandIntdex, int *args1 =NULL);
+    SegmentationCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index,
+                        int commandIntdex, int grayValue = 127, int *args1 =NULL);
     void undo();
     void redo();
     int getCommandIndex();
 
 private:
     int index;
+    int grayValue;
     int * selftemplate;
     int contourThreshold;
     MyTabWidget* mainTab;
     int commandIntdex;
-    /*
-     * 定义命令的索引号；
-     * 0 ：哈尔小波变换
-     * 1 ：哈尔小波逆变换
-     * 2 ：设置高频分量为零
-     * 3 ：硬阈值法
-     * 4 ：软阈值法
-     */
+
 };
 
 #endif // SEGMENTATIONCOMMAND_H

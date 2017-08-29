@@ -9,12 +9,12 @@
 
 using namespace std;
 // 大津阈值获取
-QImage * ImageSegmentation::ostu(QImage &image)
+QImage * ImageSegmentation::ostu(QImage *image)
 {
     // 方差最大时说明图片的前后背景色的划分为最合适
-    QVector<int> grayHist = ImageGray::countGrayHistogram(&image);
+    QVector<int> grayHist = ImageGray::countGrayHistogram(image);
 
-    int N = image.width() * image.height(); //图片总的像素点
+    int N = image->width() * image->height(); //图片总的像素点
     int N0 = 0; // 背景色所占的像素的总数
     int N1 = 0; // 前景色所占的像素的总数
     int max = 0; // 最大方差所取时的灰度值
@@ -53,7 +53,7 @@ QImage * ImageSegmentation::ostu(QImage &image)
 
     }
 
-    QImage * newImage = ImageGray::binaryzation(&image, 1, max);
+    QImage * newImage = ImageGray::binaryzation(image, 1, max);
 
     return newImage;
 
@@ -1297,10 +1297,10 @@ QImage *ImageSegmentation::regionGrowing(QImage *image)
 }
 
 // Hough 变换识别图片中的直线
-QImage * ImageSegmentation::houghTran(QImage & image)
+QImage * ImageSegmentation::houghTran(QImage * image)
 {
-    int width = image.width();
-    int height = image.height();
+    int width = image->width();
+    int height = image->height();
 
 
     int theaterMax = 90;
@@ -1313,7 +1313,6 @@ QImage * ImageSegmentation::houghTran(QImage & image)
         cosValue[i] = cos(i*3.1415926/180);
     }
 
-     qDebug() << sinValue;
 
     //累加数组
     QVector<QVector<int>> culmData(RMax, QVector<int>(91));
@@ -1322,8 +1321,7 @@ QImage * ImageSegmentation::houghTran(QImage & image)
     for(int i = 0; i < width; i++){
         for(int j =0; j < height; j++){
 
-            if(qRed(image.pixel(i, j)) >= 250){
-                qDebug() << qRed(image.pixel(i, j));
+            if(qRed(image->pixel(i, j)) >= 250){
                 for(int k = 0; k <= theaterMax; k++){
                     RValue = (int) (i * sinValue[k] + j * cosValue[k] + 0.5);
                     culmData[RValue][k] += 1;
@@ -1331,9 +1329,7 @@ QImage * ImageSegmentation::houghTran(QImage & image)
             }
 
         }
-        if( i % 100 == 0){
-            qDebug() << "caculing" << i;
-        }
+
     }
 
     QImage * newImage = new QImage(width, height, QImage::Format_RGB888);
@@ -1351,7 +1347,7 @@ QImage * ImageSegmentation::houghTran(QImage & image)
                 // 如果发现一条直线，那就遍历图像将直线所有的点设置为红色（效率低下）
                 for(int i1 = 0; i1 < width; i1++){
                     for(int j1 = 0; j1 < height; j1++){
-                        if(qRed(image.pixel(i1, j1)) >= 250){
+                        if(qRed(image->pixel(i1, j1)) >= 250){
                             int temp = i1 * sinValue[lineTheater] + j1 * cosValue[lineTheater] + 0.5;
                             if(temp <= lineR + 1 && temp >= lineR - 1 ){
                                 newImage->setPixel(i1, j1, qRgb(255, 0, 0));
@@ -1368,10 +1364,7 @@ QImage * ImageSegmentation::houghTran(QImage & image)
         }
     }
 
-    qDebug() << lineR << lineTheater;
 
-    delete(&sinValue);
-    delete(&cosValue);
 
     return newImage;
 }

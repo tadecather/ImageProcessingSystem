@@ -1,4 +1,5 @@
 ﻿#include "segmentationcommand.h"
+#include "imagegray.h"
 
 
 /*
@@ -6,7 +7,8 @@
     GaussLaplacianOp,KrischOp,CustomEdge,RegionGrowing,ContourExtraction,
     BoundaryTracking,HoughTrans,HoughTransLineDetect
  */
-SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, int commandIntdex, int *args1)
+SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab,
+                                         int index, int commandIntdex, int grayValue, int *args1)
 {
 
     switch (commandIntdex) {
@@ -15,6 +17,7 @@ SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, 
         break;
     case InteractiveThreshold:
         name = new QString("交互式阈值分割");
+        this->grayValue = grayValue;
         break;
     case RobertOp:
         name = new QString("Robert算子");
@@ -53,7 +56,7 @@ SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, 
         name = new QString("Hough变换");
         break;
     case HoughTransLineDetect:
-        name = new QString("Hough变换做线检测");
+        name = new QString("Hough变换线检测");
         break;
     }
     this->imageLeft = new QImage(*imageLeft);
@@ -78,10 +81,10 @@ void SegmentationCommand::redo()
     {
         switch (comIndex) {
         case Ostu:
-//            this->imageAfter = ImageSegmentation::
+            this->imageAfter = ImageSegmentation::ostu(this->imageAfter);
             break;
         case InteractiveThreshold:
-//            this->imageAfter = ImageSegmentation::
+            this->imageAfter = ImageGray::binaryzation(this->imageAfter, 1, this->grayValue);
             break;
         case RobertOp:
             this->imageAfter = ImageSegmentation::RobertOperator(this->imageAfter);
@@ -105,7 +108,7 @@ void SegmentationCommand::redo()
             this->imageAfter = ImageSegmentation::CustomEdge(this->imageAfter,selftemplate);
             break;
         case RegionGrowing:
-//            this->imageAfter = ImageSegmentation::
+            this->imageAfter = ImageSegmentation::regionGrowing(this->imageAfter);
             break;
         case ContourExtraction:
             //这里默认高斯平滑矩阵为3，1
@@ -118,7 +121,7 @@ void SegmentationCommand::redo()
 //            this->imageAfter = ImageSegmentation::
             break;
         case HoughTransLineDetect:
-//            this->imageAfter = ImageSegmentation::
+            this->imageAfter = ImageSegmentation::houghTran(this->imageAfter);
             break;
         }
      }

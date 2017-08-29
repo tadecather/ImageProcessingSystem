@@ -89,12 +89,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //    TDP 共三个大模块
 
 
-            //小波变换5个子菜单
-            connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
-            connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
-            connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
-            connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
-            connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    //小波变换5个子菜单
+    connect(ui->actionHaar_Wavelet,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionHaar_Wavelet_Inversion,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
+    connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
     connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
@@ -131,26 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
     myTab = new MyTabWidget(this);
     MainWindow::setCentralWidget(myTab);
 
-    //测试代码
 
-
-/*
-    QImage *image = new QImage;
-    QString fileName = QFileDialog::getOpenFileName(
-                    this, "open image file",
-                    ".",
-                    "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
-    image->load(fileName);
-
-    MyTabWidget *tab = new MyTabWidget(this, image);
-    MainWindow::setCentralWidget(tab);
-
-    tab->newTab(image);
-    tab->newTab(image);
-    tab->newTab(image);
-
-    delete image;
-*/
 }
 
 MainWindow::~MainWindow()
@@ -167,14 +148,7 @@ MainWindow::~MainWindow()
 //判断当前图片是否经过灰度化
 bool MainWindow::afterGray()
 {
-//    QUndoStack* currStack = myTab->getCurrentStack();
-//    for(int i = 0; i < currStack->index(); i++)
-//    {
-//        ImageCommand* command = (ImageCommand*)currStack->command(i);
-//        if(*(command->getName()) == "灰度化")
-//            return true;
-//    }
-//    return false;
+
     QImage* image;
     //优先获取当前选项卡右边图片，为NULL则获取左边图片
     if(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()!=NULL)
@@ -272,7 +246,6 @@ void MainWindow::openFileSlot()
          myTab->newTab(image);
     }
 
-
 }
 
 void MainWindow::saveFileSlot()
@@ -284,7 +257,9 @@ void MainWindow::saveFileSlot()
     }
     image = new QImage(*(myTab->getFocusedImage()));
     //保存容易出错 于是添加对话框，使用户确认
-    QMessageBox::StandardButton result = QMessageBox::question(this, "保存确认", "这将会覆盖原图，确认保存吗？", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    QMessageBox::StandardButton result = QMessageBox::question(this,
+                                                               "保存确认", "这将会覆盖原图，确认保存吗？",
+                                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
     if(result == QMessageBox::No)
         return;
     if(!FileOperation::save(*image, saveFileName)){
@@ -634,7 +609,13 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getMu(), dialog->getSigma(), dialog->getK());
+        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                   myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                   this->myTab,
+                                                   myTab->currentIndex(),
+                                                   dialog->getMu(),
+                                                   dialog->getSigma(),
+                                                   dialog->getK());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -653,7 +634,11 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        SpNoiseCommand* command = new SpNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSnr());
+        SpNoiseCommand* command = new SpNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                     myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                     this->myTab,
+                                                     myTab->currentIndex(),
+                                                     dialog->getSnr());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -675,7 +660,11 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        MeanSmoothCommand* command = new MeanSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize());
+        MeanSmoothCommand* command = new MeanSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                           myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                           this->myTab,
+                                                           myTab->currentIndex(),
+                                                           dialog->getSize());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -698,7 +687,11 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        MedianSmoothCommand* command = new MedianSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize());
+        MedianSmoothCommand* command = new MedianSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                               myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                               this->myTab,
+                                                               myTab->currentIndex(),
+                                                               dialog->getSize());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -721,7 +714,12 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        WeightedSmoothCommand* command = new WeightedSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getSize(), dialog->getTheta());
+        WeightedSmoothCommand* command = new WeightedSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                                   myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                                   this->myTab,
+                                                                   myTab->currentIndex(),
+                                                                   dialog->getSize(),
+                                                                   dialog->getTheta());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -737,7 +735,11 @@ void MainWindow::enhancementSlot()
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能掩模平滑你知道不啦？");
             return;
         }
-        SelectiveMaskSmooothCommand* command = new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        SelectiveMaskSmooothCommand* command =
+                new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                               myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                               this->myTab,
+                                               myTab->currentIndex());
         myTab->pushCurrentStack(command);
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
@@ -758,7 +760,12 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        GradientSharpenCommand* command = new GradientSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getOperatorNo(), dialog->getMulti());
+        GradientSharpenCommand* command = new GradientSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                                     myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                                     this->myTab,
+                                                                     myTab->currentIndex(),
+                                                                     dialog->getOperatorNo(),
+                                                                     dialog->getMulti());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -780,7 +787,12 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        LaplacianSharpenCommand* command = new LaplacianSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex(), dialog->getMulti());
+        LaplacianSharpenCommand* command =
+                new LaplacianSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                            myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                            this->myTab,
+                                            myTab->currentIndex(),
+                                            dialog->getMulti());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -987,8 +999,13 @@ void MainWindow::segmentationSlot()
     //    大津阈值
     if(ui->actionOtsu_Law_Threshold_Segmentation == QObject::sender())
     {
-        image = ImageSegmentation::ostu(*(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage()));
-        myTab->setImage(0, 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             Ostu);
+        myTab->pushCurrentStack(command);
+        return;
     }
 
     //交互式阈值分割
@@ -1003,9 +1020,16 @@ void MainWindow::segmentationSlot()
             dialog->deleteLater();
             return;
         }
-        QImage * newImage = ImageGray::binaryzation(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), dialog->getGrayValue());
-//        myTab->setImage(myTab->currentIndex(), 1, newImage);
-        dialog->deleteLater();
+
+
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             InteractiveThreshold,
+                                             dialog->getGrayValue());
+        myTab->pushCurrentStack(command);
+        return;
 
     }
     //Robert算子
@@ -1080,15 +1104,21 @@ void MainWindow::segmentationSlot()
                                              myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
                                              this->myTab,
                                              myTab->currentIndex(),
-                                             CINDEX::CustomEdge,dialog->getTemplate());
+                                             CINDEX::CustomEdge,
+                                             0,dialog->getTemplate());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
         return;
     }
     //区域生长
     if(ui->actionRegion_Grow == QObject::sender()){
-        image = ImageSegmentation::regionGrowing(myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage());
-        myTab->setImage(myTab->currentIndex(), 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             RegionGrowing);
+        myTab->pushCurrentStack(command);
+        return;
     }
     //轮廓提取
     if(ui->actionContour_Extraction == QObject::sender()){
@@ -1126,14 +1156,10 @@ void MainWindow::segmentationSlot()
                                                                this->myTab,
                                                                myTab->currentIndex(),
                                                                CINDEX::ContourExtraction,
-                                                               &lambda);
+                                                               0,&lambda);
 
         myTab->pushCurrentStack(command);
         tdialog->deleteLater();
-
-//        image = ImageSegmentation::ContourExtraction(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-//                                                      3,1,164);
-//        myTab->setImage(myTab->currentIndex(), 1, image);
     }
     //边界追踪
     if(ui->actionBoundary_Tracking == QObject::sender()){
@@ -1147,8 +1173,12 @@ void MainWindow::segmentationSlot()
             QMessageBox::about(this, "图片不符合要求", "需要二值化后才可以进行边界追踪");
             return;
         }
-        BoundaryTrackCommand* command = new BoundaryTrackCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(), myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(), this->myTab, myTab->currentIndex());
+        BoundaryTrackCommand* command = new BoundaryTrackCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                                 myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                                 this->myTab,
+                                                                 myTab->currentIndex());
         myTab->pushCurrentStack(command);
+        return;
     }
     //Hough变换
     if(ui->actionHough_Transformation == QObject::sender()){
@@ -1156,8 +1186,14 @@ void MainWindow::segmentationSlot()
     }
     //Hough变换线性检测
     if(ui->actionHough_Transformation_Line_Detection == QObject::sender()){
-        image = ImageSegmentation::houghTran(*(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage()));
-        myTab->setImage(myTab->currentIndex(), 1, image);
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             HoughTransLineDetect);
+        myTab->pushCurrentStack(command);
+        return;
+
     }
 
 

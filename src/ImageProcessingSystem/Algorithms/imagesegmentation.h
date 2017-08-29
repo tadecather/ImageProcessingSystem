@@ -14,7 +14,7 @@ class ImageEnhancement;
 class ImageSegmentation
 {
 public:
-    static QImage * ostu(QImage &image);
+    static QImage * ostu(QImage *image);
     static QImage * RobertOperator(QImage *img);
     static QImage * SobelOperator(QImage *img);
     static QImage * PrewittOperator(QImage *img);
@@ -26,7 +26,7 @@ public:
     static void TraceEdge(int y, int x, float nThrLow, vector<vector<float>> &res, vector<vector<float>> &pMag, QSize *sz);
     static QImage * BoundaryTracking(QImage *img);
     static QImage * regionGrowing(QImage *image);
-    static QImage * houghTran(QImage & image);
+    static QImage * houghTran(QImage * image);
 };
 
 #endif // SEGMENTATION_H
