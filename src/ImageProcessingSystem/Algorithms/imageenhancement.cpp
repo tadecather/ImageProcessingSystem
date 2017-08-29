@@ -144,7 +144,7 @@ QImage* ImageEnhancement::MedianSmoothing(QImage* image, int size)
     return afterSmooth;
 }
 
-//加权平滑（高斯平滑）
+//加权平滑（高斯平滑）, theta为标准差
 QImage* ImageEnhancement::GaussianSmoothing(QImage* image, int size, int theta)
 {
     QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());

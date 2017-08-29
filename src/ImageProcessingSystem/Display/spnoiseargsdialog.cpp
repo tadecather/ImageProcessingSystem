@@ -8,12 +8,10 @@ SPNoiseArgsDialog::SPNoiseArgsDialog(QWidget *parent) : QDialog(parent)
     inputSnr = new QLabel("信噪比", this);
 
     //输入框
-    snrEdit = new QLineEdit("0.0", this);
-
-    //输入限制
-    QRegExp regx("^[0].[0-9][0-9]$");
-    QValidator *validator = new QRegExpValidator(regx, this);
-    snrEdit->setValidator(validator);
+    snrSpin = new QDoubleSpinBox(this);
+    snrSpin->setRange(0.00, 1.00);
+    snrSpin->setDecimals(2);
+    snrSpin->setSingleStep(0.01);
 
     //确定按钮
     confirm = new QPushButton("确定", this);
@@ -27,12 +25,13 @@ SPNoiseArgsDialog::SPNoiseArgsDialog(QWidget *parent) : QDialog(parent)
     connect(this->cancel, &QPushButton::clicked, this, &QDialog::reject);
 
     //QLineEdit修改connect
-    connect(this->snrEdit, &QLineEdit::textChanged, this, &SPNoiseArgsDialog::snrChanged);
+    connect(snrSpin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &SPNoiseArgsDialog::snrChanged);
+
 
     //布局
     layout = new QGridLayout();
     layout->addWidget(inputSnr, 0, 0, 1, 2);
-    layout->addWidget(snrEdit, 0, 1, 1, 2);
+    layout->addWidget(snrSpin, 0, 1, 1, 2);
     layout->addWidget(confirm, 1, 0, 1, 1);
     layout->addWidget(cancel, 1, 1, 1, 1);
 
@@ -49,7 +48,7 @@ SPNoiseArgsDialog::~SPNoiseArgsDialog()
 {
     layout->deleteLater();
     inputSnr->deleteLater();
-    snrEdit->deleteLater();
+    snrSpin->deleteLater();
     confirm->deleteLater();
     cancel->deleteLater();
 }
@@ -61,6 +60,6 @@ double SPNoiseArgsDialog::getSnr()
 
 void SPNoiseArgsDialog::snrChanged()
 {
-    this->snr = snrEdit->text().toDouble();
+    this->snr = snrSpin->value();
     qDebug()<<snr;
 }

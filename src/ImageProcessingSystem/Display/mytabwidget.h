@@ -6,10 +6,11 @@
 #include <Vector>
 #include <QDebug>
 #include <QUndoGroup>
-#include "imagecommand.h"
 #include <QUndoStack>
 #include <algorithm>
 #include "tabcontent.h"
+#include "imagecommand.h"
+//因为enhancement中的图像评估算法需要在右键菜单直接调用
 #include "imageenhancement.h"
 
 //自定义的TabWidget类

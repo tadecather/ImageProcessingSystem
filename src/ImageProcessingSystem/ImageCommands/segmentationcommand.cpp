@@ -115,7 +115,7 @@ void SegmentationCommand::redo()
             this->imageAfter = ImageSegmentation::ContourExtraction(this->imageAfter,3,1,contourThreshold);
             break;
         case BoundaryTracking:
-//            this->imageAfter = ImageSegmentation::
+            this->imageAfter = ImageSegmentation::BoundaryTracking(imageAfter);
             break;
         case HoughTrans:
 //            this->imageAfter = ImageSegmentation::

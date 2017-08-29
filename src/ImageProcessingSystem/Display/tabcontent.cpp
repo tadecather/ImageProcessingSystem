@@ -70,9 +70,7 @@ void TabContent::setImage(int LR, QImage* image)
         //右
         this->imageDisplayR->setImage(image);
         //scale
-        qDebug()<<imageDisplayR->width()<<imageDisplayR->height();
         this->imageDisplayR->scaleToView(imageDisplayR->width(), imageDisplayR->height());
-        qDebug()<<"after scale";
     }
     else
     {
@@ -137,21 +135,17 @@ void TabContent::addLabel(CommandLabel* label)
 {
     labels.push_back(label);
     historyLayout->addWidget(label);
-
-    commandHistory->show();
 }
 
 //置灰最后一个label
 void TabContent::popLabel()
 {
     labels[commandStack->index()]->setGray();
-    commandHistory->show();
 }
 //置蓝最后一个label
 void TabContent::redoLabel()
 {
     labels[commandStack->index()-1]->setBlue();
-    commandHistory->show();
 }
 
 //删掉某个index之后的所有Label

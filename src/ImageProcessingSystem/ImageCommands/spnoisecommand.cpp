@@ -1,6 +1,6 @@
 #include "spnoisecommand.h"
 
-//构造函数
+//构造函数, snr为信噪比
 SpNoiseCommand::SpNoiseCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab, int index, double snr)
 {
     name = new QString("椒盐噪声");

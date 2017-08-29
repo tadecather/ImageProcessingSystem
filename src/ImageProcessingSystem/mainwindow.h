@@ -8,10 +8,9 @@
 //以下四个头文件已在tabcontent包含，适时删除此处头文件
 #include <QUndoCommand>
 #include <QUndoStack>
-#include <QUndoGroup>
 #include <QUndoView>
-#include "imagedisplay.h"
 
+#include "imagedisplay.h"
 #include "imagetrans.h"
 #include "imgtransformdomainprocessing.h"
 namespace Ui {
@@ -42,7 +41,6 @@ private:
     QString currentPath;
     QStringList* recentFileList;
     MyTabWidget* myTab;
-    QUndoStack* commandStack;
     Ui::MainWindow *ui;
 private slots:
     void openFileSlot();
@@ -58,6 +56,8 @@ private slots:
     void enhancementSlot();
     void transDomainProcessSlot();
     void segmentationSlot();
+    void on_actionAbout_triggered();
+
 public slots:
     void setRecentFileEnableSlot();
     void openRecentFile();

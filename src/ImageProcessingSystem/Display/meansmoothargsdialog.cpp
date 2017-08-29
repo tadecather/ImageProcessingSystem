@@ -25,6 +25,9 @@ MeanSmoothArgsDialog::MeanSmoothArgsDialog(QWidget *parent) : QDialog(parent)
     layout->addWidget(confirm, 1, 0, 1, 1);
     layout->addWidget(cancel, 1, 1, 1, 1);
 
+    layout->setColumnStretch(0, 1);
+    layout->setColumnStretch(1, 1);
+
     this->setLayout(layout);
 }
 

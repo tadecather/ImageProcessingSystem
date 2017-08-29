@@ -19,8 +19,6 @@ public:
     ImageDisplay(QWidget * parent);
     ImageDisplay(QWidget * parent, QImage *image);
     ~ImageDisplay();
-    void updateImage();
-    void showNULL();
     QImage* getImage();
     void setImage(QImage* image);
     void newTab();
@@ -32,8 +30,6 @@ public:
     void createMenuActions();
     void contextMenuEvent(QContextMenuEvent *event);
     void wheelEvent(QWheelEvent* event);
-    double getScaleRatio();
-    void setScaleRatio(double s);
 
 private:
     QImage* image;
@@ -44,6 +40,7 @@ private:
     QAction* setReferenceAction;
     QAction* assessQualityAction;
     double scaleRatio;
+    void updateImage();
 
 signals:
     void newTabSignal();

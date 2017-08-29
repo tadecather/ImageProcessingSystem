@@ -46,7 +46,6 @@ GraysCommand::GraysCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *m
         break;
         }
     this->imageLeft = new QImage(*imageLeft);
-    //this->imageRight = imageRight;
     if(imageRight == NULL)
     {
         this->imageRight = NULL;

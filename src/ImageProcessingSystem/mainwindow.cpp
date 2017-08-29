@@ -1,30 +1,14 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileoperation.h"
-#include "imagegray.h"
+#include "mytabwidget.h"
 
-//请将include Command类写在这条注释以下，优化时全部丢到一个新建的.h中去
-
-#include "gnoisecommand.h"
-#include "spnoisecommand.h"
-#include "meansmoothcommand.h"
-#include "mediansmoothcommand.h"
-#include "weightedsmoothcommand.h"
-#include "selectivemasksmooothcommand.h"
+//请将include Command类写在这条注释以下
 #include "grayscommand.h"
 #include "tdpcommand.h"
 #include "segmentationcommand.h"
-#include "gradientsharpencommand.h"
-#include "laplaciansharpencommand.h"
-#include "boundarytrackcommand.h"
+#include "enhancementcommand.h"
 
-//请将include Command类写在这条注释以上，优化时全部丢到一个新建的.h中去
-
-
-//临时include 及时清空
-#include "imageenhancement.h"
-#include "dct.h"
-#include "imagesegmentation.h"
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
 #include "graydialog.h"
@@ -39,7 +23,7 @@
 #include <QLabel>
 #include <QPixmap>
 
-#include "mytabwidget.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -75,18 +59,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionTranspose,&QAction::triggered,this,&MainWindow::transformSlot);
     connect(ui->actionAnticlockwise_Rotation,&QAction::triggered,this,&MainWindow::transformSlot);
 
-    //Enhancement 共9个操作
-    connect(ui->actionGaussian_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionSalt_and_Pepper_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionMean_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionMedian_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionWeighted_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionChoose_Mask_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionGradient_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionLaplacian_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
-    connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
+
     	
-    //    TDP 共三个大模块
+    //TDP 共三个大模块
 
 
     //小波变换5个子菜单
@@ -95,11 +70,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionset_whf_coeffecient_zero,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionHard_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionSoft_Threshold_Method,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
-
     connect(ui->actionDCT,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
     connect(ui->actionDCTI,&QAction::triggered,this,&MainWindow::transDomainProcessSlot);
 
-    //  Segmentation 模块 14个操作
+    //Segmentation 模块 14个操作
     connect(ui->actionOtsu_Law_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
     connect(ui->actionInteractive_Threshold_Segmentation,&QAction::triggered,this,&MainWindow::segmentationSlot);
     connect(ui->actionRobert_Operator,&QAction::triggered,this,&MainWindow::segmentationSlot);
@@ -115,18 +89,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionHough_Transformation,&QAction::triggered,this,&MainWindow::segmentationSlot);
     connect(ui->actionHough_Transformation_Line_Detection,&QAction::triggered,this,&MainWindow::segmentationSlot);
 
-
-
+    //Enhancement 共9个操作
+    connect(ui->actionGaussian_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionSalt_and_Pepper_Noise,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionMean_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionMedian_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionWeighted_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionChoose_Mask_Smoothing,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionGradient_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionLaplacian_Sharpening,&QAction::triggered,this,&MainWindow::enhancementSlot);
+    connect(ui->actionImage_Quality_Assessment,&QAction::triggered,this,&MainWindow::enhancementSlot);
 
     subMenu = new QMenu();
     FileOperation::readFromRecentFile(*recentFileList);
     FileOperation::recentFileChanged(this, *subMenu, *recentFileList);
     ui->actionRecent_file->setMenu(subMenu);
-
-    //初始化command stack
-    commandStack = new QUndoStack(this);
-    QUndoView* view = new QUndoView(commandStack);
-    //view->show();
 
     myTab = new MyTabWidget(this);
     MainWindow::setCentralWidget(myTab);
@@ -242,7 +219,7 @@ void MainWindow::openFileSlot()
 
 
     //如果没有打开文件，则不会创建标签页
-    if(!image == NULL){
+    if(image != NULL){
          myTab->newTab(image);
     }
 
@@ -595,13 +572,13 @@ void MainWindow::transformSlot()
 
 void MainWindow::enhancementSlot()
 {
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        return;
+    }
     if(ui->actionGaussian_Noise==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         //对话框输入三个值：mu, sigma, k
         GNoiseArgsDialog* dialog = new GNoiseArgsDialog(this);
         if(dialog->exec() == QDialog::Rejected)
@@ -609,23 +586,19 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        GNoiseCommand* command = new GNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                   myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                   this->myTab,
-                                                   myTab->currentIndex(),
-                                                   dialog->getMu(),
-                                                   dialog->getSigma(),
-                                                   dialog->getK());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::gNoise,
+                                                             dialog->getMu(),
+                                                             dialog->getSigma(),
+                                                             dialog->getK());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionSalt_and_Pepper_Noise==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         //对话框输入一个值：snr
         SPNoiseArgsDialog* dialog = new SPNoiseArgsDialog(this);
         //qDebug()<<dialog->getSnr();
@@ -634,21 +607,17 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        SpNoiseCommand* command = new SpNoiseCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                     myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                     this->myTab,
-                                                     myTab->currentIndex(),
-                                                     dialog->getSnr());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::spNoise,
+                                                             dialog->getSnr());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionMean_Smoothing==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
@@ -660,21 +629,17 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        MeanSmoothCommand* command = new MeanSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                           myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                           this->myTab,
-                                                           myTab->currentIndex(),
-                                                           dialog->getSize());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::meanSmooth,
+                                                             dialog->getSize());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionMedian_Smoothing==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能中值平滑你知道不啦？");
@@ -687,21 +652,17 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        MedianSmoothCommand* command = new MedianSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                               myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                               this->myTab,
-                                                               myTab->currentIndex(),
-                                                               dialog->getSize());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::medianSmooth,
+                                                             dialog->getSize());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionWeighted_Smoothing==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能加权平滑你知道不啦？");
@@ -714,41 +675,32 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        WeightedSmoothCommand* command = new WeightedSmoothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                                   myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                                   this->myTab,
-                                                                   myTab->currentIndex(),
-                                                                   dialog->getSize(),
-                                                                   dialog->getTheta());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::weightedSmooth,
+                                                             dialog->getSize(),
+                                                             dialog->getTheta());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionChoose_Mask_Smoothing==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能掩模平滑你知道不啦？");
             return;
         }
-        SelectiveMaskSmooothCommand* command =
-                new SelectiveMaskSmooothCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                               myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                               this->myTab,
-                                               myTab->currentIndex());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::maskSmooth);
         myTab->pushCurrentStack(command);
     }
     if(ui->actionGradient_Sharpening==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "图片不符合要求", "梯度锐化需要灰度图");
@@ -760,22 +712,18 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        GradientSharpenCommand* command = new GradientSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                                     myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                                     this->myTab,
-                                                                     myTab->currentIndex(),
-                                                                     dialog->getOperatorNo(),
-                                                                     dialog->getMulti());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::gradientSharpen,
+                                                             dialog->getOperatorNo(),
+                                                             dialog->getMulti());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
     if(ui->actionLaplacian_Sharpening==QObject::sender())
     {
-        if(MyTabWidget::getNumber() == -1)
-        {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
-            return;
-        }
         if(!this->afterGray())
         {
             QMessageBox::about(this, "图片不符合要求", "拉普拉斯锐化需要灰度图");
@@ -787,12 +735,12 @@ void MainWindow::enhancementSlot()
             dialog->deleteLater();
             return;
         }
-        LaplacianSharpenCommand* command =
-                new LaplacianSharpenCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                            myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                            this->myTab,
-                                            myTab->currentIndex(),
-                                            dialog->getMulti());
+        EnhancementCommand* command = new EnhancementCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                             this->myTab,
+                                                             myTab->currentIndex(),
+                                                             commands::laplacianSharpen,
+                                                             dialog->getMulti());
         dialog->deleteLater();
         myTab->pushCurrentStack(command);
     }
@@ -1173,10 +1121,11 @@ void MainWindow::segmentationSlot()
             QMessageBox::about(this, "图片不符合要求", "需要二值化后才可以进行边界追踪");
             return;
         }
-        BoundaryTrackCommand* command = new BoundaryTrackCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
-                                                                 myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
-                                                                 this->myTab,
-                                                                 myTab->currentIndex());
+        SegmentationCommand* command = new SegmentationCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                             myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                             this->myTab,
+                                             myTab->currentIndex(),
+                                             BoundaryTracking);
         myTab->pushCurrentStack(command);
         return;
     }
@@ -1199,17 +1148,18 @@ void MainWindow::segmentationSlot()
 
 }
 
-
-
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::information(this, "关于", "图像处理算法演示系统V0.3\nby 这里需要一个队名");
+}
 
 //注意
 //现静态算法可以有返回值，具体调用变化，见exampleCommand类中,redo方法的注释
 //只是有一点，一定记得在算法的最后delete掉传入的参数并赋NULL，这是为了防止内存泄漏
 
-
-//新需求：每个commandlabel颜色不同，比如多种蓝色。可以全局枚举变量。
-
 //在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
 
 //bug
-//打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空
+//打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空或者野指针 反正就是不能用
+
+

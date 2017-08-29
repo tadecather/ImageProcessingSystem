@@ -44,7 +44,6 @@ TDPCommand::TDPCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainT
         break;
     }
     this->imageLeft = new QImage(*imageLeft);
-    //this->imageRight = imageRight;
     if(imageRight == NULL)
     {
         this->imageRight = NULL;

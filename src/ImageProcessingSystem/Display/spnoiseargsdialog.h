@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QRegExpValidator>
+#include <QDoubleSpinBox>
 #include <QDebug>
 
 class SPNoiseArgsDialog : public QDialog
@@ -19,7 +20,7 @@ private:
     double snr;
     QGridLayout* layout;
     QLabel* inputSnr;
-    QLineEdit* snrEdit;
+    QDoubleSpinBox* snrSpin;
     QPushButton* confirm;
     QPushButton* cancel;
 

@@ -41,10 +41,6 @@ QImage * ImageGray::colorToGrey(QImage * image)
     return grayImage;
 }
 
-QImage *ImageGray::GrayToColor(QImage *image)
-{
-
-}
 
 
 // 图片负相处理

@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -45,7 +45,6 @@
      <string>Gray</string>
     </property>
     <addaction name="actionGraying"/>
-    <addaction name="actionGray_to_Clolr"/>
     <addaction name="separator"/>
     <addaction name="actionNegetive"/>
     <addaction name="actionBinaryzation"/>
@@ -61,13 +60,10 @@
     <property name="title">
      <string>Transformation</string>
     </property>
-    <addaction name="actionTranslation"/>
     <addaction name="actionTranspose"/>
     <addaction name="separator"/>
     <addaction name="actionHorizontal_Inversion"/>
     <addaction name="actionVertical_Inversion"/>
-    <addaction name="separator"/>
-    <addaction name="actionZoom"/>
     <addaction name="separator"/>
     <addaction name="actionClockwise_Rotation"/>
     <addaction name="actionAnticlockwise_Rotation"/>
@@ -93,17 +89,6 @@
      <addaction name="actionDCT"/>
      <addaction name="actionDCTI"/>
     </widget>
-    <widget class="QMenu" name="menuFourier_Transform">
-     <property name="title">
-      <string>Fourier Transform</string>
-     </property>
-     <addaction name="actionFFT"/>
-     <addaction name="actionIFFT"/>
-     <addaction name="separator"/>
-     <addaction name="actionEFFT"/>
-     <addaction name="actionIEFFT"/>
-    </widget>
-    <addaction name="menuFourier_Transform"/>
     <addaction name="menuWavelet_Transform"/>
     <addaction name="menuDiscrete_Cosine_Transform"/>
    </widget>
@@ -126,7 +111,6 @@
     <addaction name="actionContour_Extraction"/>
     <addaction name="actionBoundary_Tracking"/>
     <addaction name="separator"/>
-    <addaction name="actionHough_Transformation"/>
     <addaction name="actionHough_Transformation_Line_Detection"/>
    </widget>
    <widget class="QMenu" name="menuEnhancement">
@@ -144,17 +128,12 @@
     <addaction name="actionGradient_Sharpening"/>
     <addaction name="actionLaplacian_Sharpening"/>
     <addaction name="separator"/>
-    <addaction name="actionImage_Quality_Assessment"/>
-   </widget>
-   <widget class="QMenu" name="menuANN">
-    <property name="title">
-     <string>ANN</string>
-    </property>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGrey"/>
@@ -162,7 +141,6 @@
    <addaction name="menuTdp"/>
    <addaction name="menuDivision"/>
    <addaction name="menuEnhancement"/>
-   <addaction name="menuANN"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -449,6 +427,11 @@
   <action name="actionIEFFT">
    <property name="text">
     <string>IEFFT</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

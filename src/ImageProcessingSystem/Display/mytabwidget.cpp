@@ -16,30 +16,6 @@ MyTabWidget::MyTabWidget(QWidget *parent):QTabWidget(parent)
     assessImage = NULL;
 }
 
-////现无用
-//MyTabWidget::MyTabWidget(QWidget *parent, QImage *image):QTabWidget(parent)
-//{
-
-//    commandGroup = NULL;
-
-//    //初始化TabContentVector（用于存放每个Tab的内容）以及第一个元素
-//    TabContent* initContent = new TabContent(this, image);
-//    this->contentVec.push_back(initContent);
-
-//    //初始化第一个标签，此时不增加静态变量的值，因为从0开始
-//    this->addTab(contentVec[0], "Label");
-
-//    //连接newTabSignal信号与增加Ta槽函数
-//    connect(initContent->getImageDisplayL(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
-//    connect(initContent->getImageDisplayR(), &ImageDisplay::newTabSignal, this, &MyTabWidget::addTabSlot);
-//需要连接更多槽函数，参考下面的构造方法
-
-//    //显示关闭按钮并连接槽函数
-//    this->setTabsClosable(true);
-//    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTabSlot(int)));
-
-//}
-
 MyTabWidget::~MyTabWidget()
 {
     //删除所有不为NULL的Tab标签的内容，注意 删除Tab时，系统自动迭代删除其内容物（调用析构函数）
@@ -81,8 +57,7 @@ void MyTabWidget::newTab(QImage *image)
     //这是进行图像质量评估的connect
     connect(content->getImageDisplayL(), &ImageDisplay::assessQualitySignal, this, &MyTabWidget::asseccQualitySlot);
     connect(content->getImageDisplayR(), &ImageDisplay::assessQualitySignal, this, &MyTabWidget::asseccQualitySlot);
-    //连接切换tab页面和tabcontent重绘history
-    //connect(this, &QTabWidget::currentChanged, content, &TabContent::updateCommandHistory);
+
     this->setCurrentIndex(MyTabWidget::number);
 
     //第一次新建页面，立刻重绘选项卡左边的图片
@@ -199,7 +174,6 @@ void MyTabWidget::closeTabSlot(int index)
 {
     this->widget(index)->deleteLater();
     contentVec.erase(contentVec.begin() + index);
-    //contentVec[index] = NULL;
     MyTabWidget::decNumber();
 }
 
@@ -214,7 +188,6 @@ void MyTabWidget::scaleDisplayToView(int index)
         if(displayL->getImage() == NULL) return;
         int viewWidth = displayL->width();
         int viewHeight = displayL->height();
-        qDebug()<<viewWidth<<viewHeight;
         displayL->scaleToView(viewWidth, viewHeight);
     }
     if(displayR != NULL)
@@ -222,7 +195,6 @@ void MyTabWidget::scaleDisplayToView(int index)
         if(displayR->getImage() == NULL) return;
         int viewWidth = displayR->width();
         int viewHeight = displayR->height();
-        qDebug()<<viewWidth<<viewHeight;
         displayR->scaleToView(viewWidth, viewHeight);
     }
 }
@@ -231,6 +203,11 @@ void MyTabWidget::scaleDisplayToView(int index)
 void MyTabWidget::addTabSlot()
 {
     ImageDisplay* sender = (ImageDisplay*)QObject::sender();
+    if(sender->getImage()==NULL)
+    {
+        QMessageBox::warning(this, "错误", "空图片无法创建新选项卡！");
+        return;
+    }
     this->newTab(sender->getImage());
 }
 
@@ -264,7 +241,6 @@ void MyTabWidget::doToCommand()
     {
         //从currentCommand undo到这
         int commandNeedToUndo = this->getCurrentContent()->getStack()->index() - commandIndex -1;
-        qDebug()<<commandNeedToUndo;
         //第一条command也得支持撤销（致刚打开图片的状态）
         if(commandNeedToUndo == 0)
             this->popCurrentStack();
@@ -288,6 +264,11 @@ void MyTabWidget::doToCommand()
 void MyTabWidget::setReferenceSlot()
 {
     ImageDisplay* sender = (ImageDisplay*)QObject::sender();
+    if(sender->getImage()==NULL)
+    {
+        QMessageBox::warning(this, "错误", "参考图片不能为空");
+        return;
+    }
     //将当前图片设置为参考图片
     if(referenceImage != NULL)
         delete referenceImage;
@@ -297,6 +278,11 @@ void MyTabWidget::setReferenceSlot()
 void MyTabWidget::asseccQualitySlot()
 {
     ImageDisplay* sender = (ImageDisplay*)QObject::sender();
+    if(sender->getImage()==NULL)
+    {
+        QMessageBox::warning(this, "错误", "评估图片不能为空");
+        return;
+    }
     //对当前图片进行质量评估
     if(assessImage != NULL)
         delete assessImage;

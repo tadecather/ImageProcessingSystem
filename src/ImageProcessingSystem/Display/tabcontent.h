@@ -4,9 +4,9 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QScrollArea>
+#include <QUndoStack>
 #include "imagedisplay.h"
 #include "commandlabel.h"
-#include <QUndoStack>
 #include "imagecommand.h"
 #include "historyarea.h"
 
