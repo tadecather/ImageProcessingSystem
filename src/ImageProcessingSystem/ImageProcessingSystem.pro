@@ -50,7 +50,8 @@ SOURCES += main.cpp\
         Display/gradientsharpendialog.cpp \
         ImageCommands/laplaciansharpencommand.cpp \
         Display/laplaciansharpendialog.cpp \
-        ImageCommands/boundarytrackcommand.cpp
+        ImageCommands/boundarytrackcommand.cpp \
+    ImageCommands/transcommand.cpp
 
 
 
@@ -95,7 +96,8 @@ HEADERS  += mainwindow.h \
         Display/gradientsharpendialog.h \
         ImageCommands/laplaciansharpencommand.h \
         Display/laplaciansharpendialog.h \
-        ImageCommands/boundarytrackcommand.h
+        ImageCommands/boundarytrackcommand.h \
+    ImageCommands/transcommand.h
 
 
 FORMS    += mainwindow.ui
