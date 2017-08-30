@@ -43,7 +43,8 @@ SOURCES += main.cpp\
         ImageCommands/grayscommand.cpp \
         Display/gradientsharpendialog.cpp \
         Display/laplaciansharpendialog.cpp \
-    ImageCommands/enhancementcommand.cpp
+    ImageCommands/enhancementcommand.cpp \
+    ImageCommands/transcommand.cpp
 
 
 
@@ -81,7 +82,8 @@ HEADERS  += mainwindow.h \
         ImageCommands/grayscommand.h \
         Display/gradientsharpendialog.h \
         Display/laplaciansharpendialog.h \
-    ImageCommands/enhancementcommand.h
+    ImageCommands/enhancementcommand.h \
+    ImageCommands/transcommand.h
 
 
 FORMS    += mainwindow.ui
