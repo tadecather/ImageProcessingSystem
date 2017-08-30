@@ -8,6 +8,7 @@
 #include "tdpcommand.h"
 #include "segmentationcommand.h"
 #include "enhancementcommand.h"
+#include "transcommand.h"
 
 //请将include display类写在以下
 #include "gnoiseargsdialog.h"
@@ -535,38 +536,62 @@ void MainWindow::graySlot(){
 
 void MainWindow::transformSlot()
 {
+    if(MyTabWidget::getNumber() == -1)
+    {
+        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        return;
+    }
 
     if(ui->actionClockwise_Rotation==QObject::sender())
     {
         //test
-        image = imagetrans::imgClockwiseRotate90(*image);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        TransCommand * command = new TransCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                  myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                  this->myTab,
+                                                  myTab->currentIndex(),
+                                                  ClockwiseRotation);
+        myTab->pushCurrentStack(command);
+        return;
     }
     if(ui->actionAnticlockwise_Rotation==QObject::sender())
     {
-        //test
-        image = imagetrans::imgAnticlockwiseRotate90(*image);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        TransCommand * command = new TransCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                  myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                  this->myTab,
+                                                  myTab->currentIndex(),
+                                                  AnticlockwiseRotation);
+        myTab->pushCurrentStack(command);
+        return;
     }
     if(ui->actionHorizontal_Inversion==QObject::sender())
     {
-        image = imagetrans::imgHorizontalInversion(*image);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        TransCommand * command = new TransCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                  myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                  this->myTab,
+                                                  myTab->currentIndex(),
+                                                  HorizontalInversion);
+        myTab->pushCurrentStack(command);
+        return;
     }
     if(ui->actionVertical_Inversion==QObject::sender())
     {
-        image = imagetrans::imgVerticalInversion(*image);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        TransCommand * command = new TransCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                  myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                  this->myTab,
+                                                  myTab->currentIndex(),
+                                                  VerticalInversion);
+        myTab->pushCurrentStack(command);
+        return;
     }
     if(ui->actionTranspose==QObject::sender())
     {
-        image = imagetrans::imgTranspose(*image);
-        myTab->setImage(0, 1, image);
-        qDebug()<<"actiontransformation operation...";
+        TransCommand * command = new TransCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
+                                                  myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
+                                                  this->myTab,
+                                                  myTab->currentIndex(),
+                                                  Transpose);
+        myTab->pushCurrentStack(command);
+        return;
     }
 }
 
@@ -771,6 +796,11 @@ void MainWindow::transDomainProcessSlot()
     //小波变换5个子操作
     if(ui->actionHaar_Wavelet==QObject::sender())
     {
+        if(!this->afterGray())
+        {
+            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
+            return;
+        }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
                                              myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
                                              this->myTab,
@@ -783,6 +813,10 @@ void MainWindow::transDomainProcessSlot()
     }
     if(ui->actionHaar_Wavelet_Inversion==QObject::sender())
     {
+        if(waveCount<=0){
+            QMessageBox::about(this, "需要小波变换","请输入小波变换后的图片");
+            return;
+        }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
                                              myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
                                              this->myTab,
@@ -790,11 +824,14 @@ void MainWindow::transDomainProcessSlot()
                                              1,
                                              waveCount);
         myTab->pushCurrentStack(command);
-        qDebug()<<"wavecount:"<<waveCount;
         return;
     }
     if(ui->actionset_whf_coeffecient_zero==QObject::sender())
     {
+        if(waveCount<=0){
+              QMessageBox::about(this, "需要小波变换","请输入小波变换后的图片");
+            return;
+        }
         TDPCommand* command = new TDPCommand(myTab->getImageDisplay(myTab->currentIndex(), 0)->getImage(),
                                              myTab->getImageDisplay(myTab->currentIndex(), 1)->getImage(),
                                              this->myTab,
@@ -802,9 +839,14 @@ void MainWindow::transDomainProcessSlot()
                                              2,
                                              waveCount);
         myTab->pushCurrentStack(command);
+        return;
     }
     if(ui->actionHard_Threshold_Method==QObject::sender())
     {
+        if(waveCount<=0){
+            QMessageBox::about(this, "需要小波变换","请输入小波变换后的图片");
+            return;
+        }
         int lambda = -1;
         tdpDialog *tdialog = new tdpDialog(this,"threshold");
         QImage * tmp;
@@ -847,9 +889,14 @@ void MainWindow::transDomainProcessSlot()
                                              lambda);
         myTab->pushCurrentStack(command);
         tdialog->deleteLater();
+        return;
     }
     if(ui->actionSoft_Threshold_Method==QObject::sender())
     {
+        if(waveCount<=0){
+            QMessageBox::about(this, "需要小波变换","请输入小波变换后的图片");
+            return;
+        }
         int lambda = -1;
         tdpDialog *tdialog = new tdpDialog(this,"threshold");
         QImage * tmp;
@@ -894,6 +941,7 @@ void MainWindow::transDomainProcessSlot()
                                              lambda);
         myTab->pushCurrentStack(command);
         tdialog->deleteLater();
+        return;
     }
 
     if(ui->actionDCT==QObject::sender())

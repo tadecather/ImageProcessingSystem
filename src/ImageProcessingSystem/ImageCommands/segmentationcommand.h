@@ -33,7 +33,7 @@ class SegmentationCommand:public ImageCommand
 public:
     //预留两个参数位置给各条命令
     SegmentationCommand(QImage* imageLeft, QImage* imageRight, MyTabWidget* mainTab, int index,
-                        int commandIntdex, int grayValue = 127, int *args1 =NULL);
+                        int commandIndex, int grayValue = 127, int *args1 =NULL);
     void undo();
     void redo();
     int getCommandIndex();

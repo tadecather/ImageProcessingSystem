@@ -8,10 +8,10 @@
     BoundaryTracking,HoughTrans,HoughTransLineDetect
  */
 SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, MyTabWidget *mainTab,
-                                         int index, int commandIntdex, int grayValue, int *args1)
+                                         int index, int commandIndex, int grayValue, int *args1)
 {
 
-    switch (commandIntdex) {
+    switch (commandIndex) {
     case Ostu:
         name = new QString("大津阈值分割");
         break;
@@ -72,7 +72,7 @@ SegmentationCommand::SegmentationCommand(QImage *imageLeft, QImage *imageRight, 
     }
     this->mainTab = mainTab;
     this->index = index;
-    this->commandIntdex = commandIntdex;
+    this->commandIntdex = commandIndex;
 }
 void SegmentationCommand::redo()
 {
