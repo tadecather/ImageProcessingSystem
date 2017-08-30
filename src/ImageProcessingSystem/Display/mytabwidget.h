@@ -25,6 +25,12 @@ private:
     QUndoGroup* commandGroup;
     QImage* referenceImage;
     QImage* assessImage;
+    void popCurrentStack();
+    void redoCurrentStack();
+    static void incNumber();
+    static void decNumber();
+    QUndoStack* getCurrentStack();
+    TabContent* getCurrentContent();
 public:
     MyTabWidget(QWidget *parent);
     //MyTabWidget(QWidget *parent, QImage *image);
@@ -34,13 +40,9 @@ public:
     void setImage(int index, int LR, QImage* image);
     void newTab(QImage *image);
     QImage* getFocusedImage();
-    QUndoStack* getCurrentStack();
-    TabContent* getCurrentContent();
+
     void pushCurrentStack(ImageCommand* command);
-    void popCurrentStack();
-    void redoCurrentStack();
-    static void incNumber();
-    static void decNumber();
+
     static int getNumber();
 private slots:
     void closeTabSlot(int index);

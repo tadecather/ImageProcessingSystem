@@ -16,8 +16,6 @@ public:
     static void print(QWidget *  qwid);
     static void printPreview(QWidget * qwid);
     static void printSetting();
-    static void recentFile( const QStringList & qsl);
-    static void exit();
     static void recentFileChanged(MainWindow *mainWindow, QMenu &menu,QStringList & qstrl);
     static void readFromRecentFile( QStringList & qsl);
     static void saveRecentFile( const QStringList & qsl);
