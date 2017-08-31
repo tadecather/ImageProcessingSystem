@@ -786,214 +786,7 @@ void ImageSegmentation::TraceEdge(int y, int x, float nThrLow, vector<vector<flo
 //需要输入图像为二值图像{0, 255}
 QImage * ImageSegmentation::BoundaryTracking(QImage *img)
 {
-
-//    //方法1. 只能获取边界，无法获得链码
-//    //如果一个黑色点上下左右四个点都是黑色，那它就不是边界点
-//    QImage* image = new QImage(*img);
-//    int i, j;
-//    for(i = 1; i < img->width(); i++)
-//    {
-//        for(j = 1; j < img->height(); j++)
-//        {
-//            if(qRed(img->pixel(i, j))==0)
-//            {
-//                if((qRed(img->pixel(i-1, j))==0)
-//                 &&(qRed(img->pixel(i, j-1))==0)
-//                 &&(qRed(img->pixel(i, j+1))==0)
-//                 &&(qRed(img->pixel(i+1, j))==0))
-//                {
-//                    image->setPixel(i, j, qRgb(255, 255, 255));
-//                }
-//                else
-//                {
-//                    image->setPixel(i, j, qRgb(0, 0, 0));
-//                }
-//            }
-
-//        }
-//    }
-//    return image;
-
-
-//    //方法2. 改进的虫随法，只需平均检测5个点即可，但是只能检测最外边界，并且在某些特殊情况下有bug（单像素穿过多像素）
-//    QImage* image = new QImage(*img);
-//    typedef struct{
-//        int dx;
-//        int dy;
-//    }diff;
-//    diff directions[8] = {{1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}};
-
-//    int width = image->width();
-//    int height = image->height();
-
-//    qDebug()<<qRed(image->pixel(2, 3));
-//    for(int h = 1; h < height - 1; h++)
-//    {
-//        for(int w = 1; w < width - 1; w++)
-//        {
-//            //得到每个点
-
-//            //初始方向
-//            int direction = 0;
-//            //初始像素
-//            int startX, startY;
-//            //是否找到一个完整路径
-//            bool success = false;
-
-////            QPolygon border;
-////            QPainterPath path;
-
-//            //若这个点为黑色（应该被追踪）
-//            if(qRed(image->pixel(w, h))==0)
-//            {
-//                //如果是内部点，则跳过
-//                if((qRed(image->pixel(w-1, h))!=255)
-//                 &&(qRed(image->pixel(w, h-1))!=255)
-//                 &&(qRed(image->pixel(w, h+1))!=255)
-//                 &&(qRed(image->pixel(w+1, h))!=255))
-//                {
-//                    continue;
-//                }
-
-
-
-//                //初始点坐标
-//                startX = w;
-//                startY = h;
-//                qDebug()<<"start"<<w<<h;
-
-//                //当前点坐标
-//                int currentX = w;
-//                int currentY = h;
-//                //border<<QPoint(w, h);
-//                int flag = 0;
-
-
-//                while(!success)
-//                {
-//                    int i = 0;
-
-
-//                    int lastDirection = direction;
-//                    //从当前方向顺时针移动2开始
-////                    if(flag==0)
-////                    {
-//                        lastDirection-=2;
-//                        if(lastDirection < 0)
-//                            lastDirection = (lastDirection+8)%8;
-////                    }
-////                    if(flag==1)
-////                    {
-////                        lastDirection+=2;
-////                        if(lastDirection >= 8)
-////                            lastDirection%=8;
-////                    }
-
-//                    qDebug()<<"lastdirection-2"<<lastDirection;
-//                    //从direction开始++, >=8则%8, 检查5位
-
-//                    for(i = 0; i < 5; i++)
-//                    {
-//                        //i为0-4
-////                        if(flag==0)
-////                        {
-//                            direction = lastDirection + i;
-//                            if(direction >= 8)
-//                                direction%=8;
-////                        }
-////                        if(flag==1)
-////                        {
-////                            direction = lastDirection - i;
-////                            if(direction < 0)
-////                                direction = (direction+8)%8;
-////                        }
-
-
-//                        //检查某个方向
-//                        int tempX = currentX+directions[direction].dx;
-//                        int tempY = currentY+directions[direction].dy;
-//                        if(tempX>=0&&tempX<width&&tempY>=0&&tempY<height)
-//                        {
-//                            if(qRed(image->pixel(tempX, tempY))==0)
-//                            {
-//                                //是下一个边缘像素
-//                                //若回到了初始点
-//                                qDebug()<<"前"<<direction<<"进后";
-//                                if(tempX == startX&&tempY == startY)
-//                                {
-//                                    success = true;
-//                                    //qDebug()<<"x:"<<tempX<<"y:"<<tempY;
-//                                    //qDebug()<<"方向："<<direction;
-//                                    //qDebug()<<"回到了初始点";
-//                                    //border<<QPoint(tempX, tempY);
-//                                    //置灰
-//                                    qDebug()<<"起始点"<<tempX<<tempY;
-//                                    image->setPixel(tempX, tempY, qRgb(150, 150, 150));
-//                                    //qDebug()<<border.isClosed();
-//                                    //填充该封闭区域，break后寻找下一个0点
-//                                    break;
-//                                }
-//                                //压入polygon
-//                                //置灰
-//                                //border<<QPoint(tempX, tempY);
-//                                qDebug()<<tempX<<tempY;
-//                                image->setPixel(tempX, tempY, qRgb(150, 150, 150));
-//                                currentX = tempX;
-//                                currentY = tempY;
-//                                lastDirection = direction;
-//                                //qDebug()<<"x:"<<tempX<<"y:"<<tempY;
-//                                break;
-//                            }
-////                            else if((qRed(image->pixel(tempX-1, tempY))==150)
-////                                    ||(qRed(image->pixel(tempX, tempY-1))==150)
-////                                    ||(qRed(image->pixel(tempX, tempY+1))==150)
-////                                    ||(qRed(image->pixel(tempX+1, tempY))==150))
-////                            {
-////                                success = true;
-////                                break;
-////                            }
-//                            else
-//                            {
-//                                if(i==4)
-//                                {
-//                                    flag++;
-//                                    qDebug()<<"flag++";
-//                                    if(flag==1)
-//                                    {
-//                                        //qDebug()<<"终点";
-//                                        currentX = startX;
-//                                        currentY = startY;
-//                                        direction = 4;
-//                                        break;
-//                                    }
-//                                    if(flag==2)
-//                                    {
-//                                        //qDebug()<<"尽头";
-//                                        success = true;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        else
-//                        {
-//                            continue;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    for(int i = 0; i < image->width(); i++)
-//    {
-//        for(int j = 0; j < image->height(); j++)
-//        {
-//            if(qRed(image->pixel(i, j))==0)
-//                image->setPixel(i, j, qRgb(255, 255, 255));
-//        }
-//    }
-//    return image;
-
-    //方法3. 自己改进的虫随法，可以检测内外边界，能够处理多像素交叉。能够处理单像素穿过多像素的特殊情况，但该特殊情况下无法获得正确链码
+    //自己改进的虫随法，可以检测内外边界，能够处理多像素交叉。能够处理单像素穿过多像素的特殊情况，但该特殊情况下无法获得正确链码
     //
     //  3   2   1
     //  4   p   0
@@ -1022,10 +815,7 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
         {
             //得到每个点
 
-            //初始像素
-            int startX, startY;
-            //是否找到一个完整路径
-            bool success = false;
+
 
 
             //若这个点为黑色（应该被追踪）
@@ -1067,16 +857,22 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                     isOutSide = false;
                 }
 
+                //初始方向是根据后面的逻辑推知的
                 //初始方向，内圈为5，退2位，从3开始
                 int direction = 5;
                 //初始方向，外圈为4，退2位，从6（而不是3的对角7）开始（6是经验值，可以避免内圈有形如5、p、7三点，从5开始遍历时出现错误）
                 if(!isOutSide)
                     direction = 4;
 
+                //初始像素
+                int startX, startY;
+                //是否找到一个完整路径
+                bool success = false;
+
                 //初始点坐标
                 startX = w;
                 startY = h;
-                qDebug()<<"start from"<<w<<h;
+                //qDebug()<<"start from"<<w<<h;
 
                 //当前点坐标
                 int currentX = w;
@@ -1096,58 +892,51 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                     if(isOutSide&&(flag==0))
                     {
                         lastDirection-=2;
-                        if(lastDirection < 0)
-                        lastDirection = (lastDirection+8)%8;
                     }
                     //外圈，flag==1， 从3开始顺时针搜索
                     else if(isOutSide&&(flag==1))
                     {
                         lastDirection+=2;
-                        if(lastDirection >= 8)
-                        lastDirection%=8;
                     }
                     //内圈，flag==0， 从6开始顺时针搜索
                     else if((!isOutSide)&&(flag==0))
                     {
                         lastDirection+=2;
-                        if(lastDirection >= 8)
-                        lastDirection%=8;
                     }
                     //内圈，flag==1， 从6开始逆时针搜索
                     else
                     {
-                        lastDirection+=2;
-                        if(lastDirection >= 8)
-                        lastDirection%=8;
+                        lastDirection-=2;
                     }
 
-                    for(i = 0; i < 5; i++)
+                    if(lastDirection < 0)
+                    lastDirection = (lastDirection+8)%8;
+                    if(lastDirection >= 8)
+                    lastDirection%=8;
+
+                    for(i = 0; i < 8; i++)
                     {
                         if(isOutSide&&(flag==0))
                         {
                             direction = lastDirection + i;
-                            if(direction >= 8)
-                            direction%=8;
                         }
                         else if(isOutSide&&(flag==1))
                         {
                             direction = lastDirection - i;
-                            if(direction < 0)
-                            direction = (direction+8)%8;
                         }
                         else if((!isOutSide)&&(flag==0))
                         {
                             direction = lastDirection - i;
-                            if(direction < 0)
-                            direction = (direction+8)%8;
                         }
                         else
                         {
                             direction = lastDirection + i;
-                            if(direction >= 8)
-                            direction%=8;
-
                         }
+
+                        if(direction < 0)
+                        direction = (direction+8)%8;
+                        if(direction >= 8)
+                        direction%=8;
 
                         //检查该方向
                         int tempX = currentX+directions[direction].dx;
@@ -1162,6 +951,9 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                                 {
                                     success = true;
                                     image->setPixel(tempX, tempY, qRgb(color[colorNo], color[colorNo], color[colorNo]));
+                                    colorNo++;
+                                    if(colorNo>=6)
+                                        colorNo=0;
                                     break;
                                 }
                                 image->setPixel(tempX, tempY, qRgb(color[colorNo], color[colorNo], color[colorNo]));
@@ -1172,7 +964,8 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                             }
                             else
                             {
-                                if(i==4||((qRed(image->pixel(tempX, tempY))!=0)&&(qRed(image->pixel(tempX, tempY))!=255)))
+                                //灰色、搜完了邻域
+                                if(i==8||((qRed(image->pixel(tempX, tempY))!=0)&&(qRed(image->pixel(tempX, tempY))!=255)))
                                 {
                                     flag++;
                                     //若是一个方向到尽头了，则回到初始点，从反方向开始搜索
@@ -1185,7 +978,7 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                                         if(isOutSide)
                                             direction = 1;
                                         else
-                                            direction = 4;
+                                            direction = 0;
                                         break;
                                     }
                                     //若是从初始点走第二个方向又到头了，则认为找到了一条【不封闭的完整路径】，比如线段

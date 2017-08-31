@@ -21,8 +21,6 @@ public:
     ~ImageDisplay();
     QImage* getImage();
     void setImage(QImage* image);
-    void newTab();
-    void resize(double x, double y);
     void mousePressEvent(QMouseEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
     void setFocusBorder(bool b);

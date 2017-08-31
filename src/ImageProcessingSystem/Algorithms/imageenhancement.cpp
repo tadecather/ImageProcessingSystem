@@ -73,7 +73,6 @@ QImage *ImageEnhancement::MeanSmoothing(QImage* image, int size)
     int times = 0;
     //用于获取中心点周围size*size区域其他点的坐标
     int diff = size/2;
-    qDebug()<<"diff"<<diff;
     QImage* afterSmooth = new QImage(image->width(), image->height(), image->format());
     for(x = 0; x < image->width(); x++)
     {
@@ -371,28 +370,31 @@ QImage* ImageEnhancement::GradientSharpening(QImage* image, int operatorNo, doub
     //最终图像
     QImage* result = new QImage(*image);
 
-    if(operatorNo == 0)
+    switch(operatorNo)
     {
-        //Roberts算子
+    case 0 :
+    {
         after = ImageSegmentation::RobertOperator(after);
+        break;
     }
-    else if(operatorNo == 1)
+    case 1 :
     {
-        //Sobel算子
         after = ImageSegmentation::SobelOperator(after);
+        break;
     }
-    else
+    case 2 :
     {
-        //Prewitt算子
         after = ImageSegmentation::PrewittOperator(after);
+        break;
+    }
     }
 
     for(int i = 0; i < image->width()-1; i++)
     {
         for(int j = 0; j < image->height() - 1; j++)
         {
-            double resultP = (double)qRed(image->pixel(i, j))-multiplier*(double)qRed(after->pixel(i, j));
-            if(resultP < 0) resultP = 0;
+            double resultP = (double)qRed(image->pixel(i, j))+multiplier*(double)qRed(after->pixel(i, j));
+            if(resultP > 255) resultP = 255;
             result->setPixel(i, j, qRgb((int)resultP, (int)resultP, (int)resultP));
         }
     }
