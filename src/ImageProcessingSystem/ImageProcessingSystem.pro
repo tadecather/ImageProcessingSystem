@@ -96,4 +96,6 @@ INCLUDEPATH += Utilities/
 
 RC_FILE = Resource/IPS.rc
 
+STATECHARTS +=
+
 

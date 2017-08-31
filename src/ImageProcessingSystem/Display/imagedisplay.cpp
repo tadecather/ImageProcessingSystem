@@ -1,4 +1,4 @@
-#include "imagedisplay.h"
+﻿#include "imagedisplay.h"
 
 //初始化一个空ImageDisplay对象
 ImageDisplay::ImageDisplay(QWidget *parent):QGraphicsView(parent)
@@ -84,6 +84,7 @@ void ImageDisplay::setImage(QImage *image)
                 delete scene;
         this->scene = new QGraphicsScene;
         this->setScene(scene);
+        this->image = NULL;
     }
 }
 

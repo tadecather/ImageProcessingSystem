@@ -109,20 +109,11 @@ void FileOperation::readFromRecentFile( QStringList & qsl)
 
 void FileOperation::recentFileChanged(MainWindow *mainwindow,QMenu &menu, QStringList & qstrl)
 {
-//    connect(menu, &FileOperation::changgeRecentFileSignal, mainwindow, &MainWindow::setRecentFileEnableSlot);
     menu.clear();
-//    if(qstrl.isEmpty()){
-//        emit changgeRecentFileSignal();
-//        disconnect(menu, &FileOperation::changgeRecentFileSignal, mainwindow, &MainWindow::setRecentFileEnableSlot);
-
-//        return;
-//    }
     QAction *subAction  = new QAction();
     subAction->setText("clearAll");
     connect(subAction, &QAction::triggered, mainwindow, &MainWindow::clearAllRecentSlot);
     menu.addAction(subAction);
-
-
 
     if(qstrl.length()>0){
         while(qstrl.length()>8){
@@ -136,18 +127,8 @@ void FileOperation::recentFileChanged(MainWindow *mainwindow,QMenu &menu, QStrin
             menu.addAction(subAction);
         }
     }
-
-//    qlqa=menu.actions();
-//    //qlqa为QList<QAction*>
-//    if(qlqa.length()==2){
-////        qDebug()<<"发射信号"<<endl;
-////        emit mySignal(false);
-//    }
-//    else{
-////        emit mySignal(true);
-//    }
-
 }
+
 //openbyname
 QImage *  FileOperation::open(QString opFileName,QStringList& qstrl)
 {
