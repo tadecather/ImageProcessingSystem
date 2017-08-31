@@ -375,7 +375,7 @@ void MainWindow::graySlot(){
 
     if(MyTabWidget::getNumber() == -1)
     {
-        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        QMessageBox::about(this, "请先打开图片", "请先打开图片再处理");
         return;
     }
 
@@ -538,7 +538,7 @@ void MainWindow::transformSlot()
 {
     if(MyTabWidget::getNumber() == -1)
     {
-        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        QMessageBox::about(this, "请先打开图片", "请先打开图片再处理");
         return;
     }
 
@@ -599,7 +599,7 @@ void MainWindow::enhancementSlot()
 {
     if(MyTabWidget::getNumber() == -1)
     {
-        QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+        QMessageBox::about(this, "请先打开图片", "请先打开图片再处理");
         return;
     }
     if(ui->actionGaussian_Noise==QObject::sender())
@@ -645,7 +645,7 @@ void MainWindow::enhancementSlot()
     {
         if(!this->afterGray())
         {
-            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能均值平滑你知道不啦？");
+            QMessageBox::about(this, "需要灰度化", "请先对图片进行灰度化");
             return;
         }
         MeanSmoothArgsDialog* dialog = new MeanSmoothArgsDialog(this);
@@ -667,7 +667,7 @@ void MainWindow::enhancementSlot()
     {
         if(!this->afterGray())
         {
-            QMessageBox::about(this, "需要前置条件", "一般要灰度化后才能中值平滑你知道不啦？");
+            QMessageBox::about(this, "需要灰度化", "请先对图片进行灰度化");
             return;
         }
         //中值平滑跟均值平滑一样，参数只有一个矩阵大小，因此使用均值平滑的dialog
@@ -1161,7 +1161,7 @@ void MainWindow::segmentationSlot()
     if(ui->actionBoundary_Tracking == QObject::sender()){
         if(MyTabWidget::getNumber() == -1)
         {
-            QMessageBox::about(this, "请先打开图片", "没图片处理个奶子哟（粗鄙之人！）");
+            QMessageBox::about(this, "请先打开图片", "请先打开图片再处理");
             return;
         }
         if(!afterBin())
@@ -1198,17 +1198,7 @@ void MainWindow::segmentationSlot()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::information(this, "关于", "图像处理算法演示系统V0.3\nby 这里需要一个队名");
+    QMessageBox::information(this, "关于", "图像处理算法演示系统V0.3\nby 西电东软实训Team03\n队员：刘学真 刘斌 章孝武\n2017-8");
 }
 
-//注意
-//现静态算法可以有返回值，具体调用变化，见exampleCommand类中,redo方法的注释
-//只是有一点，一定记得在算法的最后delete掉传入的参数并赋NULL，这是为了防止内存泄漏
 
-//在硬阈值法和软阈值法点击事件处提供类似音量调节条类似的控件
-
-//bug
-//打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空或者野指针 反正就是不能用
-
-
-//快捷键
