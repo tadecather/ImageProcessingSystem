@@ -15,17 +15,11 @@ public:
     static bool saveAs(const QImage & image);
     static void print(QWidget *  qwid);
     static void printPreview(QWidget * qwid);
-    static void printSetting();
     static void recentFileChanged(MainWindow *mainWindow, QMenu &menu,QStringList & qstrl);
     static void readFromRecentFile( QStringList & qsl);
     static void saveRecentFile( const QStringList & qsl);
 private:
-
     void openRecentFile();
     static bool outputFile(const QImage & image, QString saveFileName);
-signals:
-    //void changgeRecentFileSignal();
-private slots:
-    //void paintRequestedSlot(QPrinter *printer);
 };
 #endif // FILEOPERATION_H
