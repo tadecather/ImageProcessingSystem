@@ -965,7 +965,7 @@ QImage * ImageSegmentation::BoundaryTracking(QImage *img)
                             else
                             {
                                 //灰色、搜完了邻域
-                                if(i==8||((qRed(image->pixel(tempX, tempY))!=0)&&(qRed(image->pixel(tempX, tempY))!=255)))
+                                if(i==7||((qRed(image->pixel(tempX, tempY))!=0)&&(qRed(image->pixel(tempX, tempY))!=255)))
                                 {
                                     flag++;
                                     //若是一个方向到尽头了，则回到初始点，从反方向开始搜索

@@ -1211,3 +1211,4 @@ void MainWindow::on_actionAbout_triggered()
 //打开一张图片后，再次选择“打开文件”但并不打开，弹出file does not exist, 此时全局Image已经为空或者野指针 反正就是不能用
 
 
+//快捷键

@@ -25,9 +25,6 @@ public:
 
 private:
     int index;
-    int grayValue;
-    int * selftemplate;
-    int contourThreshold;
     MyTabWidget* mainTab;
     int commandIntdex;
 };
